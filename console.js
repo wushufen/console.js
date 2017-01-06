@@ -9,7 +9,7 @@
 
     setTimeout(function() {
         document.body.appendChild(elMap.console);
-    }, 10);
+    }, 100);
 
     function parseTpl(tpl) {
         var elMap = {};
