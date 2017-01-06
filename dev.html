@@ -156,7 +156,7 @@
         function run(code) {
             // label
             var cmdEl = elMap.cmd.cloneNode(true);
-            cmdEl.innerHTML = '> ' + code.replace(/\n/g, '<br>').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            cmdEl.innerHTML = '> ' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
             consoleListEl.appendChild(cmdEl);
             // value
             code = code.match(/^\s*{/) ? '(' + code + ')' : code; // ({})
