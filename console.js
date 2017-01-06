@@ -3,7 +3,7 @@ var wrapEl = document.createElement('div');
 setTimeout(function() {
     document.body.appendChild(wrapEl);
 }, 10);
-wrapEl.innerHTML = '<style type="text/css"> .console {font-size: 12px; font-family: "微软雅黑"; position: fixed; bottom: 0; right: 0; width: 100%; max-width: 100%; background: rgba(255, 255, 255, .6); box-shadow: 0 0 10px 10px rgba(169, 163, 163, 0.06); text-shadow: 1px 1px 2px rgb(77, 150, 255); } .list {max-height: 250px; overflow: auto; padding-right: 16px; width: 100%; } .list pre {margin: 0; border-bottom: solid 1px #eee; margin-bottom: -1px; padding: 6px; } textarea {display: block; width: 100%; border: none; border-top: solid 1px #ccc; outline: none; } </style> <div class="console"> <div id="consoleListId" class="list"> </div> <textarea onkeyup="exe(this, event)"></textarea> </div> ';
+wrapEl.innerHTML = '<style type="text/css"> .console {font-size: 12px; font-family: "微软雅黑"; position: fixed; bottom: 0; right: 0; width: 100%; max-width: 100%; background: rgba(255, 255, 255, .6); box-shadow: 0 0 10px 10px rgba(169, 163, 163, 0.06); text-shadow: 1px 1px 2px rgb(77, 150, 255); } .list {max-height: 250px; overflow: auto; padding-right: 16px; width: 100%; } .list pre {margin: 0; border-bottom: solid 1px #eee; margin-bottom: -1px; padding: 6px; } textarea {display: block; width: 100%; border: none; border-top: solid 1px #ccc; outline: none; } </style> <div class="console"> <div id="consoleListId" class="list"> </div> <textarea onkeyup="exe(this, event)" placeholder="run js"></textarea> </div> ';
 
 // log
 function log(obj) {
