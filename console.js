@@ -53,7 +53,7 @@
         dir: function() {},
         error: function() {}
     };
-    var console = {
+    window.console = {
         run: run,
         log: function() {
             winConsole.log.apply(winConsole, arguments);
