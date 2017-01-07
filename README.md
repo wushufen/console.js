@@ -36,12 +36,12 @@ setTimeout(function() {
 * ie 6 7 没有控制台也可使用
 
 ## 使用方法
-1.在需要调试的页面引入 `console.js`，放在所有脚本最前面
+1.引入 `console.js`，尽量放在所有脚本最前面
 ```html
 <script src="../console.js"></script>
 ```
 
-2.在 url 上加入 "?console" 参数则打开，去掉则关闭
+2.需要调试时，在 url 上加入 "?console" 参数则打开，去掉则关闭
 ```
 http://domain/path/page?console
 ```
