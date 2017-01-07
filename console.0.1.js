@@ -73,13 +73,13 @@
         error: log
     };
     for (var key in console) {
-        (function() {
+        (function(key) {
             var fn = winConsole[key];
             winConsole[key] = function () {
                 fn.apply(winConsole, arguments);
                 console[key].apply(console, arguments);
             }
-        })();
+        })(key);
     }
 
 
