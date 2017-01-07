@@ -54,28 +54,33 @@
     }
 
     // console
-    var winConsole = window.console || {
-        log: function() {},
-        dir: function() {},
-        error: function() {}
-    };
-    window.console = {
+    function noop() {}
+    winConsole = window.console || (window.console = {
+        log: noop,
+        dir: noop,
+        info: noop,
+        warn: noop,
+        error: noop
+    });
+    var console = {
         run: run,
         log: function() {
-            winConsole.log.apply(winConsole, arguments);
             for (var i = 0; i < arguments.length; i++) {
                 log(arguments[i]);
             }
         },
-        dir: function(obj) {
-            winConsole.dir(obj);
-            log(obj);
-        },
-        error: function(obj) {
-            winConsole.error(obj);
-            log(obj);
-        }
+        dir: log,
+        error: log
     };
+    for (var key in console) {
+        (function() {
+            var fn = winConsole[key];
+            winConsole[key] = function () {
+                fn.apply(winConsole, arguments);
+                console[key].apply(console, arguments);
+            }
+        })();
+    }
 
 
     // run
