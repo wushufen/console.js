@@ -5,15 +5,79 @@
     <title></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <style type="text/css">
+    .container {
+        width: 860px;
+        max-width: 100%;
+        margin: auto;
+        font-family: "Microsoft Yahei";
+        color: #333;
+        padding-bottom: 300px;
+    }
+    
+    script,
+    .code {
+        display: block;
+        white-space: pre;
+        background: #272822;
+        color: #8BB7D0;
+        border-radius: 5px;
+        margin: 10px 0;
+        font-size: 14px;
+    }
+    </style>
     <script src="console.js"></script>
-    <script src="error.js"></script>
-    <script src="eventError.js"></script>
     <script>
-    	ss=sss;
+    if (!location.href.match(/[?&]console/)) {
+        location.href += '?console'
+    }
     </script>
 </head>
 
 <body>
+    <div class="container">
+        <h1>console.js</h1>
+        <h2>让手机浏览器拥有控制台</h2>
+        <script>
+        // 代码出错会被打印出来
+        window.xxfun();
+        </script>
+        <script>
+        setTimeout(function() {
+            console.log('log 会被显示:', {
+                name: 'wsf',
+                list: [1, 2, 3],
+                obj: {
+                    id: 1
+                }
+            });
+            console.log(navigator.userAgent);
+        }, 3000)
+        </script>
+        <h3>可在下方 run js</h3>
+        <div>
+            输入代码，回车执行。
+            <br> 支持单行和多行，多行语句加上分号再换行即可。
+            <br> 没有输入直接回车清空控制台。
+            <br>
+        </div>
+        <h2>为什么要使用</h2>
+        <ul>
+        	<li>微信web 开发调试</li>
+        	<li>混合型app 开发调试</li>
+        	<li>ie 6 7 没有控制台已可使用</li>
+        </ul>
+        <h2>使用方法</h2> 1. 在需要调试的页面引入 "console.js"，放在所有脚本最前面
+        <div class="code">
+  &lt;script src="../console.js"&gt;&lt;/script&gt;
+        </div>
+        2. 在 url 上加入 "?console" 参数则打开，去掉则关闭
+        <div class="code">
+  http://domain/path/page?console
+        </div>
+        <h3>下载</h3>
+        <a href="https://github.com/wusfen/console.js">https://github.com/wusfen/console.js</a>
+    </div>
 </body>
 
 </html>

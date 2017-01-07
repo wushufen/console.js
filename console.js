@@ -1,16 +1,19 @@
+/*!
+ * https://github.com/wusfen/console.js
+ */
 ;
 (function() {
     // toggle
     if (!location.href.match(/[?&]console/)) return;
 
     // view
-    var tpl = '<style type="text/css"> .console {font-size: 12px; font-family: "微软雅黑"; position: fixed; -position: absolute; z-index: 9999999999; bottom: 0; right: 0; width: 800px; width: 100%; max-width: 100%; background: rgba(255, 255, 255, .6); box-shadow: 0 0 10px 10px rgba(169, 163, 163, 0.06); text-shadow: 1px 1px 2px rgb(77, 150, 255); } .list {max-height: 250px; -height: 250px; overflow: auto; padding-right: 16px; width: 100%; } .cmd {margin: 0; border-bottom: solid 1px #eee; margin-bottom: -1px; padding: 6px; white-space: pre-wrap; word-wrap: break-word; color: red; padding-left: 1.5em; text-indent: -1em; } .row {margin: 0; border-bottom: solid 1px #eee; margin-bottom: -1px; padding: 6px; white-space: pre-wrap; word-wrap: break-word; } .input {display: block; width: 100%; border: none; border-top: solid 1px #ccc; outline: none; background: rgba(1,1,1,0); /*ie6 不能设为 none; 必须有背景，不然html标签跑到前面挡住*/ position: relative; z-index: 9999999999; height: 50px; } </style> <div class="console"> <div class="list"> <pre class="cmd">...</pre> <pre class="row">...</pre> </div> <textarea class="input" placeholder="run js" autofocus></textarea> </div>';
+    var tpl = '    <style type="text/css"> .console {font-size: 12px; position: fixed; -position: absolute; z-index: 9999999999; bottom: 0; right: 0; width: 800px; width: 100%; max-width: 100%; text-shadow: 1px 1px 2px rgb(0, 140, 160); color: #1900FF; } .listw {height: 250px; overflow: auto; overflow-x: hidden; padding-right: 16px; width: 100%; } .list {margin-top: 250px; max-height: 230px; -height: 250px; overflow: auto; padding-right: 32px; width: 100%; background: rgba(255, 255, 255, .8); box-shadow: 0 0 10px 10px rgba(1, 1, 1, 0.1); } .cmd {margin: 0; border-bottom: solid 1px #eee; margin-bottom: -1px; padding: 6px; white-space: pre-wrap; word-wrap: break-word; color: red; padding-left: 1.5em; text-indent: -1em; } .row {margin: 0; border-bottom: solid 1px #eee; margin-bottom: -1px; padding: 6px; white-space: pre-wrap; word-wrap: break-word; } .input {display: block; width: 100%; border: none; border-top: solid 1px #eee; outline: none; background: rgba(255, 255, 255, .8); height: 50px; box-shadow: 0 -8px 10px rgba(255, 255, 255, 0.8); } </style> <div class="console"> <div class="listw"> <div class="list"> <pre class="cmd">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> <pre class="row">...</pre> </div> </div> <textarea class="input" placeholder="run js" autofocus></textarea> </div>';
     var elMap = parseTpl(tpl);
-    var consoleListEl = elMap.list;
-    consoleListEl.innerHTML = '';
+    elMap.list.innerHTML = '';
 
     setTimeout(function() {
         document.body.appendChild(elMap.console);
+        elMap.listw.scrollTop = 999999;
     }, 100);
 
     function parseTpl(tpl) {
@@ -44,8 +47,9 @@
         var rowEl = elMap.row.cloneNode(true);
         var str = stringify(obj);
         rowEl.innerHTML = str;
-        consoleListEl.appendChild(rowEl);
-        consoleListEl.scrollTop = 999999;
+        elMap.list.appendChild(rowEl);
+        elMap.listw.scrollTop = 999999;
+        elMap.list.scrollTop = 999999;
         // alert(stringify(obj));
     }
 
@@ -79,7 +83,7 @@
         // label
         var cmdEl = elMap.cmd.cloneNode(true);
         cmdEl.innerHTML = '> ' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
-        consoleListEl.appendChild(cmdEl);
+        elMap.list.appendChild(cmdEl);
         // value
         code = code.match(/^\s*{/) ? '(' + code + ')' : code; // ({})
         try {
@@ -92,6 +96,10 @@
 
     // input code
     elMap.input.onkeydown = function() {
+        if (event.keyCode == 13 && this.value === '') {
+            elMap.list.innerHTML = '';
+            return false;
+        }
         if (event.keyCode == 13 && !this.value.match(/;\s{0,2}$/)) {
             console.run(this.value);
             this.value = '';
@@ -165,6 +173,11 @@
 
     }
 
+    /**
+     * array-like to array
+     * @param  {Object} arrayLike a object with length
+     * @return {Array}
+     */
     function toArray(arrayLike) {
         var arr = [];
         var length = arrayLike.length;
