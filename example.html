@@ -44,8 +44,10 @@
         </script>
         <script>
         setTimeout(function() {
-            console.log('log 会被显示');
-            console.log('点击对象展开:', navigator);
+            console.info('log 会被显示');
+            console.warn('warn');
+            console.dir('点击对象展开:', navigator);
+            console.log(document.body);
         }, 6000)
         </script>
         <h3>可在下方 run js</h3>

@@ -61,21 +61,53 @@
         objEl.appendChild(valueEl);
         objEl.appendChild(childrenEl);
 
+        // key
         key = key === undefined ? '< ' : key + ': ';
         keyEl.innerHTML = key;
-        valueEl.innerHTML = (obj + '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        // value
+        var value = obj + '';
+        value = value.replace(/</g, '&lt;').replace(/>/g, '&gt;'); // escape <>
+        if (obj && obj.nodeType) { // node
+            var isNode = true;
+            value = obj.nodeName;
+            if (obj.id) { value += '#' + obj.id }
+            if (obj.className) { value += '.' + obj.className }
+            if (obj.nodeType == 1) {
+                value = '<span style="color:red">' + value + '</span>';
+            }
+            if (obj.nodeValue) { value += ':' + obj.nodeValue }
+            obj = obj.childNodes; // each children
+        }
+        valueEl.innerHTML = value;
+
 
         if (typeof obj == 'object') {
             valueEl.onclick = function() {
+                // toggle
                 childrenEl.style.display = childrenEl.style.display != 'block' ? 'block' : 'none';
                 if (valueEl.hasPrint) {
                     return
                 }
+                valueEl.hasPrint = true;
+
+                // array-like
+                for (var i = 0; i < obj.length; i++) {
+                    if (i in obj) {
+                        print(obj[i], i, childrenEl);
+                    }
+                }
+
+                // node x
+                if (isNode) {
+                    return;
+                }
+
+                // each obj
                 for (var key in obj) {
                     var item = obj[key];
                     print(item, key, childrenEl);
                 }
-                valueEl.hasPrint = true;
             }
         }
         return {
@@ -102,20 +134,29 @@
                 log(arguments[i]);
             }
         },
-        dir: log,
-        info: function (argument) {
-            var views = log(argument);
-            views.valueEl.style.color = 'blue'
+        info: function() {
+            for (var i = 0; i < arguments.length; i++) {
+                var views = log(arguments[i]);
+                views.objEl.style.background = '#E0F2FF';
+                views.valueEl.style.color = 'blue';
+            }
         },
-        warn: function (argument) {
-            var views = log(argument);
-            views.valueEl.style.color = '#f80'
+        warn: function() {
+            for (var i = 0; i < arguments.length; i++) {
+                var views = log(arguments[i]);
+                views.objEl.style.background = '#FFFDE7';
+                views.valueEl.style.color = '#FF6F00';
+            }
         },
-        error: function (argument) {
-            var views = log(argument);
-            views.valueEl.style.color = 'red'
-        },
+        error: function() {
+            for (var i = 0; i < arguments.length; i++) {
+                var views = log(arguments[i]);
+                views.objEl.style.background = '#FFEDED';
+                views.valueEl.style.color = 'red';
+            }
+        }
     };
+    console.dir = console.log;
     for (var i in console) {
         (function() {
             var key = i;
