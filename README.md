@@ -1,6 +1,7 @@
 # console.js
 console for mobile browser or old ie  
-让手机浏览器拥有控制台
+让手机浏览器拥有控制台  
+![console](mb.png)  
 
 ## 显示代码报错
 ```javascript
@@ -50,4 +51,5 @@ http://domain/path/page?console
 <a href="https://github.com/wusfen/console.js">https://github.com/wusfen/console.js</a>
 
 ## 示例
-<a href="https://rawgit.com/wusfen/console.js/master/example.html?console">example.html?console</a>
+<a href="https://rawgit.com/wusfen/console.js/master/example.html?console">example.html?console</a>  
+![qrcode](qrcode.png)  
