@@ -7,7 +7,7 @@
     if (!location.href.match(/[?&]console/)) return;
 
     // view
-    var tpl = '    <style type="text/css"> .console {font-size: 12px; line-height: 1.1; position: fixed; -position: absolute; z-index: 9999999999; bottom: 0; right: 0; width: 800px; width: 100%; max-width: 100%; /*text-shadow: 1px 1px 2px rgb(0, 140, 160);*/ color: #000; } .listw {height: 120px; overflow: auto; overflow-x: hidden; padding-right: 16px; width: 100%; margin-right: -16px; } .list {margin-top: 120px; max-height: 100px; -height: 250px; overflow: auto; padding-right: 32px; margin-right: -32px; width: 100%; background: rgba(255, 255, 255, .98); box-shadow: 0 -5px 15px rgba(1, 1, 1, 0.1); padding-bottom: 1em; } .cmd {margin: 0; border-top: solid 1px #eee; padding: 6px; white-space: pre-wrap; word-wrap: break-word; color: red; padding-left: 1.5em; text-indent: -1em; } .obj {padding: 0 6px; line-height: 1.5; word-wrap: break-word; } .key {color: #a71d5d; } .value {color: #000; } .children {padding-left: 1em; } .input {display: block; width: 100%; border: none; border-top: solid 1px #eee; outline: none; height: 30px; box-shadow: 0 -8px 10px rgba(255, 255, 255, 0.8); } </style> <div class="console"> <div class="listw"> <div class="list"> <div class="cmd">...</div> <div class="obj"> <span class="key">*: </span> <span class="value">[object Object]</span> <div class="children"></div> </div> </div> </div> <textarea class="input" placeholder="run js" autofocus></textarea> </div>';
+    var tpl = '    <style type="text/css"> .console {font-size: 12px; line-height: 1.1; position: fixed; -position: absolute; z-index: 9999999999; bottom: 0; right: 0; width: 800px; width: 100%; max-width: 100%; /*text-shadow: 1px 1px 2px rgb(0, 140, 160);*/ color: #000; } .listw {height: 120px; overflow: auto; overflow-x: hidden; padding-right: 16px; width: 100%; margin-right: -16px; } .list {margin-top: 120px; max-height: 100px; -height: 250px; overflow: auto; padding-right: 32px; margin-right: -32px; width: 100%; background: rgba(255, 255, 255, .98); box-shadow: 0 -5px 15px rgba(1, 1, 1, 0.1); padding-bottom: 1em; } .cmd {margin: 0; border-top: solid 1px #eee; padding: 6px; white-space: pre-wrap; word-wrap: break-word; color: red; padding-left: 1.5em; text-indent: -1em; } .obj {padding-left: 6px; line-height: 1.5; word-wrap: break-word; } .key {color: #a71d5d; } .value {color: #000; } .children {padding-left: 1em; } .input {display: block; width: 100%; border: none; border-top: solid 1px #eee; outline: none; height: 30px; box-shadow: 0 -8px 10px rgba(255, 255, 255, 0.8); } </style> <div class="console"> <div class="listw"> <div class="list"> <div class="cmd">...</div> <div class="obj"> <span class="key">*: </span> <span class="value">[object Object]</span> <div class="children"></div> </div> </div> </div> <textarea class="input" placeholder="run js" autofocus></textarea> </div>';
     var elMap = parseTpl(tpl);
     elMap.list.innerHTML = '';
 
@@ -43,10 +43,11 @@
     }
 
     // log
-    function log(obj) {
-        print(obj);
+    function log(obj, type) {
+        var views = print(obj);
         elMap.listw.scrollTop = 999999;
         elMap.list.scrollTop = 999999;
+        return views;
     }
 
     function print(obj, key, parentChildrenEl) {
@@ -62,7 +63,7 @@
 
         key = key === undefined ? '< ' : key + ': ';
         keyEl.innerHTML = key;
-        valueEl.innerHTML = (obj+'').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        valueEl.innerHTML = (obj + '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
         if (typeof obj == 'object') {
             valueEl.onclick = function() {
@@ -77,6 +78,12 @@
                 valueEl.hasPrint = true;
             }
         }
+        return {
+            objEl: objEl,
+            keyEl: keyEl,
+            valueEl: valueEl,
+            childrenEl: childrenEl
+        };
     }
 
     // console
@@ -96,7 +103,18 @@
             }
         },
         dir: log,
-        error: log
+        info: function (argument) {
+            var views = log(argument);
+            views.valueEl.style.color = 'blue'
+        },
+        warn: function (argument) {
+            var views = log(argument);
+            views.valueEl.style.color = '#f80'
+        },
+        error: function (argument) {
+            var views = log(argument);
+            views.valueEl.style.color = 'red'
+        },
     };
     for (var i in console) {
         (function() {
@@ -146,7 +164,7 @@
         for (var i = 0; i < arguments.length; i++) {
             s += arguments[i] + '|';
         }
-        log(s);
+        console.error(s);
         // return true; // 表示已处理
     }
 
