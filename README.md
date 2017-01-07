@@ -48,7 +48,7 @@ http://domain/path/page?console
 
 
 ## 下载
-<a href="https://github.com/wusfen/console.js">https://github.com/wusfen/console.js</a>
+<a href="https://rawgit.com/wusfen/console.js/master/console.min.js">console.min.js</a>
 
 ## 示例
 <a href="https://rawgit.com/wusfen/console.js/master/example.html?console">example.html?console</a>  
