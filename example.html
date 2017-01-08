@@ -40,13 +40,13 @@
         <h2>让手机浏览器拥有控制台</h2>
         <script>
         // 代码出错会被打印出来
-        window.xxfun();
+        xxfun();
         </script>
         <script>
         setTimeout(function() {
             console.info('log 会被显示');
             console.warn('warn');
-            console.dir('点击对象展开:', navigator);
+            console.dir('点击对象展开:', window);
             console.log(document.body);
         }, 2000)
         </script>
