@@ -7,8 +7,9 @@
     if (!location.href.match(/[?&]console/)) return;
 
     // view
-    var tpl = '    <style type="text/css"> .console {font-size: 12px; line-height: 1.1; position: fixed; -position: absolute; z-index: 9999999999; bottom: 0; right: 0; width: 800px; width: 100%; max-width: 100%; /*text-shadow: 1px 1px 2px rgb(0, 140, 160);*/ color: #000; } .listw {height: 120px; overflow: auto; overflow-x: hidden; padding-right: 16px; width: 100%; margin-right: -16px; } .list {margin-top: 120px; max-height: 100px; -height: 250px; overflow: auto; padding-right: 32px; margin-right: -32px; width: 100%; background: rgba(255, 255, 255, .98); box-shadow: 0 -5px 15px rgba(1, 1, 1, 0.1); padding-bottom: 1em; } .cmd {margin: 0; border-top: solid 1px #eee; padding: 6px; white-space: pre-wrap; word-wrap: break-word; color: red; padding-left: 1.5em; text-indent: -1em; } .obj {padding-left: 6px; line-height: 1.5; word-wrap: break-word; } .key {color: #a71d5d; } .value {color: #000; } .children {padding-left: 1em; } .input {display: block; width: 100%; border: none; border-top: solid 1px #eee; outline: none; height: 30px; box-shadow: 0 -8px 10px rgba(255, 255, 255, 0.8); } </style> <div class="console"> <div class="listw"> <div class="list"> <div class="cmd">...</div> <div class="obj"> <span class="key">*: </span> <span class="value">[object Object]</span> <div class="children"></div> </div> </div> </div> <textarea class="input" placeholder="run js" autofocus></textarea> </div>';
-    var elMap = parseTpl(tpl);
+    var tpl = '    <style type="text/css"> .console {font-size: 12px; line-height: 1.1; position: fixed; -position: absolute; z-index: 9999999999; bottom: 0; right: 0; width: 800px; width: 100%; max-width: 100%; /*text-shadow: 1px 1px 2px rgb(0, 140, 160);*/ color: #000; } .listw {height: 200px; overflow: scroll; overflow-x: auto; padding-right: 16px; width: 100%; margin-right: -16px; } .list {min-height: 36px; background: rgba(255, 255, 255, .98); box-shadow: 0 -5px 15px rgba(1, 1, 1, 0.1); padding-bottom: 1em; } .cmd {margin: 0; border-top: solid 1px #eee; padding: 6px; white-space: pre-wrap; word-wrap: break-word; color: red; padding-left: 1.5em; text-indent: -1em; } .obj {padding-left: 6px; line-height: 1.5; word-wrap: break-word; } .key {color: #a71d5d; } .value {color: #000; } .children {padding-left: 1em; } .input {display: block; width: 100%; border: none; border-top: solid 1px #eee; outline: none; height: 30px; box-shadow: 0 -8px 10px rgba(255, 255, 255, 0.8); } </style> <div class="console"> <div class="listw"> <div class="list"> <div class="cmd">...</div> <div class="obj"> <span class="key">*: </span> <span class="value">[object Object]</span> <div class="children"></div> </div> </div> </div> <textarea class="input" placeholder="run js" autofocus></textarea> </div>';
+    /*var*/
+    elMap = parseTpl(tpl);
     elMap.list.innerHTML = '';
 
     setTimeout(function() {
@@ -42,11 +43,45 @@
         return elMap;
     }
 
+    // ellipisis panel
+    var isScrolling = false;
+    var timer;
+    elMap.listw.ontouchmove = elMap.listw.onmousemove = elMap.listw.onmousewheel = function() {
+        if (isScrolling) {
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                isScrolling = false;
+                scrollEnd();
+            }, 500);
+            return;
+        }
+        isScrolling = true;
+
+        var height = parseInt(elMap.listw.style.height) || 0;
+        elMap.listw.style.height = height + 1000 + 'px';
+        elMap.list.style.marginTop = 2000 + 'px';
+        // elMap.list.style.marginBottom = 1000 + 'px';
+        var scrollTop = elMap.listw.scrollTop || 0;
+        elMap.listw.scrollTop = scrollTop + 1000;
+    }
+    var scrollEnd = function() {
+        var scrollTop = elMap.listw.scrollTop;
+        var diff = scrollTop - 1000;
+
+        var height = parseInt(elMap.listw.style.height) || 0;
+        height = height - (1000 - diff);
+        if (height < 36) { height = 36 }
+        elMap.listw.style.height = height + 'px';
+
+        elMap.list.style.marginTop = 0;
+        elMap.listw.scrollTop = 0;
+    }
+
     // log
     function log(obj, type) {
         var views = print(obj);
         elMap.listw.scrollTop = 999999;
-        elMap.list.scrollTop = 999999;
+        // elMap.list.scrollTop = 999999;
         return views;
     }
 
@@ -189,6 +224,7 @@
     elMap.input.onkeydown = function() {
         if (event.keyCode == 13 && this.value === '') {
             elMap.list.innerHTML = '';
+            scrollEnd();
             return false;
         }
         if (event.keyCode == 13 && !this.value.match(/;\s{0,2}$/)) {
@@ -200,10 +236,10 @@
 
 
     // catch error
-    onerror = function() {
+    window.onerror = function() {
         var s = '';
         for (var i = 0; i < arguments.length; i++) {
-            s += arguments[i] + '|';
+            s += arguments[i] + ' | ';
         }
         console.error(s);
         // return true; // 表示已处理

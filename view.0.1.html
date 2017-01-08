@@ -26,16 +26,22 @@
     }
     
     .listw {
-        height: 200px;
-        overflow: scroll;
-        overflow-x: auto;
+        height: 120px;
+        overflow: auto;
+        overflow-x: hidden;
         padding-right: 16px;
         width: 100%;
         margin-right: -16px;
     }
     
     .list {
-        min-height: 100px;
+        margin-top: 120px;
+        max-height: 100px;
+        -height: 250px;
+        overflow: auto;
+        padding-right: 32px;
+        margin-right: -32px;
+        width: 100%;
         background: rgba(255, 255, 255, .98);
         box-shadow: 0 -5px 15px rgba(1, 1, 1, 0.1);
         padding-bottom: 1em;
