@@ -12,7 +12,7 @@
     <style type="text/css">
     .console {
         font-size: 12px;
-        line-height: 1.1;
+        line-height: 1.5;
         position: fixed;
         -position: absolute;
         z-index: 9999999999;
@@ -32,13 +32,12 @@
         padding-right: 16px;
         width: 100%;
         margin-right: -16px;
+        background: rgba(255, 255, 255, .98);
+        box-shadow: 0 -5px 15px rgba(1, 1, 1, 0.1);
     }
     
     .list {
-        min-height: 100px;
-        background: rgba(255, 255, 255, .98);
-        box-shadow: 0 -5px 15px rgba(1, 1, 1, 0.1);
-        padding-bottom: 1em;
+        padding-bottom: 1.5em;
     }
     
     .cmd {
@@ -92,7 +91,7 @@
                 </div>
             </div>
         </div>
-        <textarea class="input" placeholder="run js" autofocus></textarea>
+        <textarea class="input" placeholder="run js 回车清空；输入代码回车执行；分号回车换行" autofocus></textarea>
     </div>
 </body>
 
