@@ -7,7 +7,7 @@
     if (!location.href.match(/[?&]console/)) return;
 
     // view
-    var tpl = '    <style type="text/css"> .console {font-size: 12px; line-height: 1.5; position: fixed; -position: absolute; z-index: 9999999999; bottom: 0; right: 0; width: 800px; width: 100%; max-width: 100%; /*text-shadow: 1px 1px 2px rgb(0, 140, 160);*/ color: #000; } .listw {height: 200px; overflow: scroll; overflow-x: auto; padding-right: 16px; width: 100%; margin-right: -16px; background: rgba(255, 255, 255, .98); box-shadow: 0 -5px 15px rgba(1, 1, 1, 0.1); } .list {padding-bottom: 1.5em; } .cmd {margin: 0; border-top: solid 1px #eee; padding: 6px; white-space: pre-wrap; word-wrap: break-word; color: red; padding-left: 1.5em; text-indent: -1em; } .obj {padding-left: 6px; line-height: 1.5; word-wrap: break-word; } .key {color: #a71d5d; } .value {color: #000; } .children {padding-left: 1em; } .input {display: block; width: 100%; border: none; border-top: solid 1px #eee; outline: none; height: 30px; box-shadow: 0 -8px 10px rgba(255, 255, 255, 0.8); } </style> <div class="console"> <div class="listw"> <div class="list"> <div class="cmd">...</div> <div class="obj"> <span class="key">*: </span> <span class="value">[object Object]</span> <div class="children"></div> </div> </div> </div> <textarea class="input" placeholder="run js 回车清空；输入代码回车执行；分号回车换行" autofocus></textarea> </div>';
+    var tpl = '    <style type="text/css"> .console {font-size: 12px; line-height: 1.5; position: fixed; -position: absolute; z-index: 9999999999; bottom: 0; right: 0; width: 800px; width: 100%; max-width: 100%; color: #000; } .listw {max-height: 200px; -height: 200px; overflow: scroll; overflow-x: auto; padding-right: 16px; width: 100%; margin-right: -16px; background: rgba(255, 255, 255, .98); box-shadow: rgba(216, 216, 216, 0.82) 0px -5px 15px -5px; } .list {padding-bottom: 1.5em; } .cmd {margin: 0; border-top: solid 1px #eee; padding: 6px; white-space: pre-wrap; word-wrap: break-word; color: red; padding-left: 1.5em; text-indent: -1em; } .obj {padding-left: 6px; line-height: 1.5; word-wrap: break-word; } .key {color: #a71d5d; } .value {color: #000; } .children {padding-left: 1em; } .input {display: block; width: 100%; border: none; border-top: solid 1px #eee; outline: none; height: 30px; } </style> <div class="console"> <div class="listw"> <div class="list"> <div class="cmd">...</div> <div class="obj"> <span class="key">*: </span> <span class="value">[object Object]</span> <div class="children"></div> </div> </div> </div> <textarea class="input" placeholder="run js 回车清空；输入代码回车执行；分号回车换行" autofocus></textarea> </div>';
     /*var*/
     elMap = parseTpl(tpl);
     elMap.list.innerHTML = '';
@@ -190,13 +190,11 @@
     elMap.input.onkeydown = function() {
         // 清空
         if (event.keyCode == 13 && this.value === '') {
-            elMap.listw.style.height = 0;
             elMap.list.innerHTML = '';
             return false;
         }
         // 执行
         if (event.keyCode == 13 && !this.value.match(/;\s{0,2}$/)) {
-            elMap.listw.style.height = '200px';
             var code = this.value;
             var that = this;
             setTimeout(function() {
