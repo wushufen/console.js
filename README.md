@@ -51,5 +51,6 @@ http://domain/path/page?console
 <a href="https://rawgit.com/wusfen/console.js/master/console.min.js">console.min.js</a>
 
 ## 示例
-<a href="https://rawgit.com/wusfen/console.js/master/example.html?console">example.html?console</a>  
+<a href="https://rawgit.com/wusfen/console.js/master/example.html?console">example.html?console</a> |
+<a href="https://cdn.rawgit.com/wusfen/console.js/94c229ab/example.html?console">[cdn]example.html?console</a>  
 ![qrcode](qrcode.png)  
