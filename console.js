@@ -84,7 +84,7 @@
 
         // save var
         valueEl.ondblclick = function() {
-            window[prompt('保存变量为：') || 'a'] = obj;
+            window[prompt('保存变量为：') || 'v'] = obj;
         }
 
 
