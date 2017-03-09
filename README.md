@@ -21,6 +21,7 @@ setTimeout(function() {
     console.log(navigator.userAgent);
 }, 6000)
 ```
+双击保存变量
 
 ## 执行 js
 可在控制台下方 run js
