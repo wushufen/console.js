@@ -10,4 +10,4 @@
 http://domain.com/path/to/page.html?#f12
 ```
 
-![console](example.png)  
+![console](example.480.png)  
