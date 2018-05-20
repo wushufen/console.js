@@ -191,7 +191,7 @@
         }
     }
 
-    // console 注入
+    // console 拦截
     var con = {
         log: noop,
         info: noop,
@@ -202,13 +202,13 @@
     window.console = window.console || con
     var _console = extend({}, window.console)
 
-    function inject() {
-        if (inject.bool) {
+    function intercept() {
+        if (intercept.bool) {
             return
         }
-        inject.bool = true
+        intercept.bool = true
 
-        // console 注入
+        // console 拦截
         for (var type in con) {
             ! function(type) {
                 console[type] = function() {
@@ -229,20 +229,20 @@
         }, 1)
     }
 
-    // 手机预先注入，以接管 console
+    // 手机预先拦截，以接管 console
     if (navigator.userAgent.match(/mobile/i)) {
-        inject()
+        intercept()
     }
-    // pc端为了不影响 console 的代码定位，#f12 才注入
-    // #f12 显示， pc端注入
+    // pc端为了不影响 console 的代码定位，#f12 才拦截
+    // #f12 显示， pc端拦截
     if (location.hash == '#f12') {
         addClass(consoleEl, 'show')
-        inject()
+        intercept()
     }
     // #f12 切换
     addEventListener('hashchange', function(e) {
         if (location.hash == '#f12') {
-            inject()
+            intercept()
             addClass(consoleEl, 'show')
         } else {
             removeClass(consoleEl, 'show')
