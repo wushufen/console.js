@@ -1,227 +1,234 @@
 /*!
  * https://github.com/wusfen/console.js
  */
-;
-(function() {
-    // toggle
-    if (!location.href.match(/[?&]console/)) return;
+!(function() {
+
+    var noop = function() {}
+
+    var extend = function(obj, _obj) {
+        for (var k in _obj) {
+            obj[k] = _obj[k]
+        }
+        return obj
+    }
+
+    function toArray(arrayLike) {
+        var arr = [];
+        var length = arrayLike.length;
+        while (length--) {
+            arr[length] = arrayLike[length];
+        }
+        return arr;
+    }
+
+    var parse = function(html) {
+        var el = parse.el = parse.el || document.createElement('div')
+        el.innerHTML = html
+        return el.children[0]
+    }
+    var find = function(el, selector) {
+        for (var i = 0; i < el.children.length; i++) {
+            var child = el.children[i]
+            if (selector == child.className || selector == child.tagName.toLowerCase()) {
+                return child
+            } else {
+                var r = find(child, selector)
+                if (r) {
+                    return r
+                }
+            }
+        }
+    }
+    var addClass = function(el, className) {
+        el.className += ' ' + className
+    }
+    var removeClass = function(el, className) {
+        el.className = el.className.replace(RegExp(' *' + className, 'ig'), '')
+    }
+    var hasClass = function(el, className) {
+        return el.className.match(className)
+    }
+    var toggleClass = function(el, className) {
+        if (hasClass(el, className)) {
+            removeClass(el, className)
+        } else {
+            addClass(el, className)
+        }
+    }
 
     // view
-    var tpl = '<style type="text/css"> .console {font-size: 12px; line-height: 1.5; position: fixed; -position: absolute; z-index: 999999999; bottom: 0; right: 0; width: 100%; color: #000; background: rgba(255, 255, 255, .98); box-shadow: rgba(150, 150, 150, 0.8) 0px 6px 15px 5px; } .listw {max-height: 250px; -height: 250px; overflow: scroll; overflow-x: auto; padding-right: 16px; width: 100%; margin-right: -16px; box-sizing: content-box; } .list {padding-bottom: 1.5em; } .cmd {margin: 0; border-top: solid 1px #f5f5f5; padding: 6px; white-space: pre-wrap; word-wrap: break-word; color: #0af; padding-left: 1.5em; text-indent: -1em; } .obj {padding: .5em 1em; line-height: 1.125; word-wrap: break-word; word-break: break-all; } .key {color: #a71d5d; } .value {color: #000; } .children {padding-left: .5em; } .input {line-height: 1.5; display: block; width: 100%; border: none; outline: none; height: 3em; padding: 0 .5em; background: rgba(0, 0, 0, 0); } </style> <div class="console"> <div class="listw"> <div class="list"> <div class="cmd">...</div> <div class="obj"> <span class="key">*: </span> <span class="value">[object Object]</span> <div class="children"></div> </div> </div> </div> <textarea class="input" placeholder="run js 回车清空；输入代码回车执行；分号回车换行" autofocus></textarea> </div>';
-    var elMap = parseTpl(tpl);
-    elMap.list.innerHTML = '';
+    var view = parse('<div><style type="text/css"> .console {position: fixed; left: 0; right: 0; bottom: -1px; font-size: 12px; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; line-height: 1.5; background: rgba(255, 255, 255, .98); box-shadow: rgba(0, 0, 0, 0.2) 0px 0 15px 0; transition: .5s; max-height: 0; max-height: 500px; display: none; } .console * {font: inherit; box-sizing: border-box; } .console.show {display: block; } .console.closed {max-height: 0; } .console.closed .f12 {opacity: .8; } .console .f12 {position: absolute; bottom: 100%; right: 0; background: rgba(255, 255, 255, .98); border: solid 1px #eee; border-bottom: 0; border-radius: 5px 5px 0 0; padding: 5px; box-shadow: rgba(0, 0, 0, 0.1) 4px -4px 10px -4px; /*box-shadow: rgba(0, 0, 0, 0.2) 0px -5px 15px -5px;*/ color: #555; letter-spacing: -1px; cursor: pointer; } .console ul {list-style: none; margin: 0; padding: 0; padding-bottom: 3em; margin-bottom: -3em; max-height: 350px; overflow: auto; -webkit-overflow-scrolling: touch; } .console ul li {padding: .5em 1em; border-bottom: solid 1px #f7f7f7; overflow: auto; } .console ul li>.obj {float: left; max-width: 100%; } .console .log {color: #555; } .console .info {background: #f3faff; color: #0095ff; } .console .warn {background: #fffaf3; color: #FF6F00; } .console .error {background: #fff7f7; color: red; } .console .cmd {position: relative; background: #fff; color: #0af; } .console .cmd .key:before {content: "$ "; position: absolute; left: 0; color: #ddd; } .console .obj {cursor: default; } .console .key {color: #a71d5d; white-space: nowrap;} .console .value {white-space: pre; } .console .children {padding-left: 2em; border-left: dotted 1px #ddd; } .console .input {line-height: 1.25; display: block; width: 100%; border: none; outline: none; height: 3em; padding: .25em 1em; resize: none; position: relative; background: rgba(255, 255, 255, .8); } </style> <div class="console"> <span class="f12">F12</span> <ul> <li> <div class="obj"> <span class="key"></span> <span class="value"></span> <div class="children"></div> </div> </li> </ul> <textarea class="input" placeholder="$" autofocus></textarea> </div></div>')
+    var consoleEl = find(view, 'console')
+    var f12El = find(consoleEl, 'f12')
+    var ulEl = find(consoleEl, 'ul')
+    var liEl = find(consoleEl, 'li')
+    var objEl = find(consoleEl, 'obj')
+    var childrenEl = find(consoleEl, 'children')
+    var inputEl = find(consoleEl, 'input')
 
-    setTimeout(function() {
-        document.body.appendChild(elMap.console);
-        elMap.listw.scrollTop = 999999;
-    }, 100);
+    setTimeout(function () {
+        document.body.appendChild(view)
+    }, 1)
 
-    function parseTpl(tpl) {
-        var elMap = {};
-        var styleRe = /<style .*?>([\w\W]*?)<\/style>/i; //ie 中为大写
-        var styleStr = (tpl.match(styleRe) || [])[1];
+    ulEl.innerHTML = ''
 
-        var parseWrapEl = document.createElement('div');
-        parseWrapEl.innerHTML = tpl.replace(styleRe, '');
-
-        (function loop(node) {
-            var className = node.className;
-            if (className) {
-                elMap[className] = node;
-                var classRe = RegExp('\\.' + className + '\\s*?\\{([\\w\\W]*?)\\}');
-                node.setAttribute('style', (styleStr.match(classRe) || [])[1]);
-                // node.removeAttribute('class');
-            }
-            var children = node.children;
-            for (var i = 0; i < children.length; i++) {
-                var child = children[i];
-                loop(child);
-            }
-        })(parseWrapEl);
-
-        return elMap;
+    f12El.onclick = function() {
+        toggleClass(consoleEl, 'closed')
     }
 
-    // log
-    function log(obj, type) {
-        var views = print(obj);
-        // elMap.listw.scrollTop = 999999;
-        // elMap.list.scrollTop = 999999;
-        return views;
+    // print
+    var printLi = function(type, objs) {
+
+        // 判断滚动条是不是在最下方，是则打印后继续滚到最后
+        if (ulEl.scrollTop + ulEl.clientHeight > ulEl.scrollHeight - 20) {
+            setTimeout(function() {
+                ulEl.scrollTop += 999
+            }, 41)
+        }
+
+        // 复制一个 li 
+        var _liEl = liEl.cloneNode(true)
+        addClass(_liEl, type)
+        _liEl.innerHTML = ''
+        ulEl.appendChild(_liEl)
+
+        // 打印 log(a,b,c) 多个参数
+        for (var i = 0; i < objs.length; i++) {
+            printObj('', objs[i], _liEl)
+        }
+
+        // 限制打印列表长度
+        if (ulEl.children.length > 200) {
+            ulEl.removeChild(ulEl.children[0])
+        }
     }
+    var printObj = function(key, value, target) {
+        // 复制一个 obj view
+        var _objEl = objEl.cloneNode(true)
+        var _keyEl = find(_objEl, 'key')
+        var _valueEl = find(_objEl, 'value')
+        var _childrenEl = find(_objEl, 'children')
+        target.appendChild(_objEl)
 
-    function print(obj, key, parentChildrenEl) {
-        var parentEl = parentChildrenEl || elMap.list;
-        var objEl = elMap.obj.cloneNode();
-        var keyEl = elMap.key.cloneNode(true);
-        var valueEl = elMap.value.cloneNode(true);
-        var childrenEl = elMap.children.cloneNode();
-        parentEl.appendChild(objEl);
-        objEl.appendChild(keyEl);
-        objEl.appendChild(valueEl);
-        objEl.appendChild(childrenEl);
+        // 如果 value 是 html 节点
+        if (value && value.nodeType) {
 
-        // key
-        key = key === undefined ? ' ' : key + ': ';
-        keyEl.innerHTML = key;
-
-        // value
-        var value = obj + '';
-        value = value.replace(/</g, '&lt;').replace(/>/g, '&gt;'); // escape <>
-        if (obj && obj.nodeType) { // node
-            var isNode = true;
-            value = obj.nodeName;
-            if (obj.id) { value += '#' + obj.id }
-            if (obj.className) { value += '.' + obj.className }
-            if (obj.nodeType == 1) {
-                value = '<span style="color:red">' + value + '</span>';
+            if (value.nodeType == 1) {
+                // 标签节点
+                var tag = value.cloneNode().outerHTML
+                var tag_lr = tag.split('></')
+                var tagl = tag_lr[0] + '>'
+                var tagr = '</' + tag_lr[1]
+                _keyEl.innerText = tagl
+                _valueEl.innerText = ''
+            } else if (value.nodeType == 3) {
+                // 有文字的文本节点才显示
+                if (value.nodeValue.match(/\w/)) {
+                    _valueEl.innerText = value.nodeValue.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                }
+            } else if (value.nodeType == 9) {
+                // #document节点
+                _keyEl.innerText = value.nodeName
             }
-            if (obj.nodeValue) { value += ':' + obj.nodeValue }
-            obj = obj.childNodes; // each children
+
+            // value 改为 子节点，后面点开则遍历子节点，而不是遍历一个对象
+            var childNodes = value.childNodes
+            value = toArray(value.childNodes)
+        } else {
+
+            // 普通对象（非html节点)
+            _keyEl.innerText = key
+            _valueEl.innerText = value + ' ' // innerText=null 为清空
         }
-        valueEl.innerHTML = value;
 
-
-        // save var
-        valueEl.ondblclick = function() {
-            window[prompt('保存变量为：') || 'v'] = obj;
-        }
-
-
-        if (typeof obj == 'object' && obj != null) {
-            valueEl.onclick = function() {
+        // 点击时遍历对象
+        if (value && typeof value == 'object') {
+            // 是对象则注册点击
+            _keyEl.onclick = _valueEl.onclick = function() {
 
                 // toggle
-                setTimeout(function() {
-                    childrenEl.style.display = childrenEl.style.display != 'block' ? 'block' : 'none';
-                }, 300); // timeout for dblclick
-                if (valueEl.hasPrint) {
+                _childrenEl.style.display = _childrenEl.style.display != 'block' ? 'block' : 'none';
+
+                // 是否已经打印过了
+                if (_valueEl._printed) {
                     return
                 }
-                valueEl.hasPrint = true;
+                _valueEl._printed = true;
 
-                // array-like
-                for (var i = 0; i < obj.length; i++) {
-                    if (i in obj) {
-                        print(obj[i], i, childrenEl);
-                    }
-                }
-
-                // -- node 
-                if (obj.length) {
-                    return;
-                }
-
-                // each obj
-                for (var key in obj) {
-                    var item = obj[key];
-                    print(item, key, childrenEl);
-                }
+                // 打印
+                printChildren(value, _childrenEl)
             }
         }
-        return {
-            objEl: objEl,
-            keyEl: keyEl,
-            valueEl: valueEl,
-            childrenEl: childrenEl
-        };
+    }
+    var printChildren = function(obj, childrenEl) {
+        for (var i in obj) {
+            printObj(i, obj[i], childrenEl)
+        }
     }
 
-    // console
-    function noop() {}
-    var winConsole = window.console || (window.console = {
+    // 执行 js
+    inputEl.onkeydown = function(event) {
+        // 清空
+        if (event.keyCode == 13 && inputEl.value === '') {
+            ulEl.innerHTML = '';
+            return false;
+        }
+        // 打印与执行
+        if (event.keyCode == 13) {
+            // 打印输入
+            var code = inputEl.value
+            printLi('cmd', [code])
+
+            // 选择完清空输入框，滚动
+            setTimeout(function() {
+                inputEl.value = ''
+                ulEl.scrollTop += 9999
+            }, 41)
+
+            // 执行
+            code = code.match(/^\s*{/) ? '(' + code + ')' : code; // ({})
+            var rs = window.eval(code)
+            // 打印结果
+            console.log(rs)
+            return false
+        }
+    }
+
+    // 捕获 js 异常
+    addEventListener('error', function(e) {
+        printLi('error', [e.message, e.filename, e.lineno + ':' + e.colno])
+    })
+
+    // console 注入
+    var con = {
         log: noop,
-        dir: noop,
         info: noop,
         warn: noop,
-        error: noop
-    });
-    var console = {
-        run: run,
-        log: function() {
-            for (var i = 0; i < arguments.length; i++) {
-                log(arguments[i]);
+        error: noop,
+        dir: noop
+    }
+    window.console = window.console || con
+    var _console = extend({}, window.console)
+
+    for (var type in con) {
+        ! function(type) {
+            console[type] = function() {
+                _console[type].apply(console, arguments)
+                printLi(type, arguments)
             }
-        },
-        info: function() {
-            for (var i = 0; i < arguments.length; i++) {
-                var views = log(arguments[i]);
-                views.objEl.style.background = '#E0F2FF';
-                views.valueEl.style.color = 'blue';
-            }
-        },
-        warn: function() {
-            for (var i = 0; i < arguments.length; i++) {
-                var views = log(arguments[i]);
-                views.objEl.style.background = '#FFFDE7';
-                views.valueEl.style.color = '#FF6F00';
-            }
-        },
-        error: function() {
-            for (var i = 0; i < arguments.length; i++) {
-                var views = log(arguments[i]);
-                views.objEl.style.background = '#FFEDED';
-                views.valueEl.style.color = 'red';
-            }
-        }
-    };
-    console.dir = console.log;
-    for (var i in console) {
-        (function() {
-            var key = i;
-            var fn = winConsole[key];
-            winConsole[key] = function() {
-                fn && fn.apply(winConsole, arguments);
-                console[key].apply(console, arguments);
-            }
-        })();
+        }(type)
     }
 
-
-    // run
-    function run(code) {
-        // label
-        var cmdEl = elMap.cmd.cloneNode(true);
-        cmdEl.innerHTML = '$ ' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
-        elMap.list.appendChild(cmdEl);
-        // value
-        code = code.match(/^\s*{/) ? '(' + code + ')' : code; // ({})
-        try {
-            console.log(window.eval(code));
-        } catch (e) {
-            // console.log(e);
-            throw e;
-        }
+    // #f12
+    if (location.hash == '#f12') {
+        addClass(consoleEl, 'show')
     }
-
-    // input code
-    elMap.input.onkeydown = function() {
-        // 清空
-        if (event.keyCode == 13 && this.value === '') {
-            elMap.list.innerHTML = '';
-            return false;
+    addEventListener('hashchange', function(e) {
+        if (location.hash == '#f12') {
+            addClass(consoleEl, 'show')
+        } else {
+            removeClass(consoleEl, 'show')
         }
-        // 执行
-        if (event.keyCode == 13 && !this.value.match(/;\s{0,2}$/)) {
-            var code = this.value;
-            var that = this;
-            setTimeout(function() {
-                that.value = '';
-            }, 10);
-            run(code);
-            return false;
-        }
-    }
+    })
 
-
-    // catch error
-    window.onerror = function() {
-        var s = '';
-        for (var i = 0; i < arguments.length; i++) {
-            s += arguments[i] + ' ';
-        }
-        console.error(s);
-        // return true; // 表示已处理
-    }
-
-}());
+})()
