@@ -119,7 +119,7 @@
                 _valueEl.innerText = ''
             } else if (value.nodeType == 3) {
                 // 有文字的文本节点才显示
-                if (value.nodeValue.match(/\w/)) {
+                if (value.nodeValue.match(/\S/)) {
                     _valueEl.innerText = value.nodeValue.replace(/</g, '&lt;').replace(/>/g, '&gt;')
                 }
             } else if (value.nodeType == 9) {
