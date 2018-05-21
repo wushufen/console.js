@@ -1,4 +1,5 @@
 /*!
+ * http://domain.com/path/to/page.html?#f12 打开 console
  * @preserve https://github.com/wusfen/console.js
  */
 !(function() {
@@ -61,7 +62,7 @@
     }
 
     // view
-    var view = parse('<div console> <style type="text/css"> .console {position: fixed; left: 0; right: 0; bottom: -1px; font-size: 12px; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; line-height: 1.5; background: rgba(255, 255, 255, .98); box-shadow: rgba(0, 0, 0, 0.2) 0px 0 15px 0; transition: .5s; max-height: 0; max-height: 500px; display: none; } .console * {font: inherit; box-sizing: border-box; } .console.show {display: block; } .console.closed {max-height: 0; } .console.closed .f12 {opacity: .8; } .console .f12 {position: absolute; bottom: 100%; right: 0; background: rgba(255, 255, 255, .98); border: solid 1px #eee; border-bottom: 0; border-radius: 5px 5px 0 0; padding: 5px; box-shadow: rgba(0, 0, 0, 0.1) 4px -4px 10px -4px; /*box-shadow: rgba(0, 0, 0, 0.2) 0px -5px 15px -5px;*/ color: #555; letter-spacing: -1px; cursor: pointer; } .console ul {list-style: none; margin: 0; padding: 0; padding-bottom: 3em; margin-bottom: -3em; max-height: 350px; overflow: auto; -webkit-overflow-scrolling: touch; } .console ul li {padding: .5em 1em; border-bottom: solid 1px #f7f7f7; overflow: auto; } .console ul li>.obj {float: left; max-width: 100%; } .console .log {color: #555; } .console .info {background: #f3faff; color: #0095ff; } .console .warn {background: #fffaf3; color: #FF6F00; } .console .error {background: #fff7f7; color: red; } .console .cmd {position: relative; background: #fff; color: #0af; } .console .cmd .key:before {content: "$ "; position: absolute; left: 0; color: #ddd; } .console .obj {cursor: default; } .console .key {color: #a71d5d; white-space: nowrap; } .console .value {white-space: pre; } .console .children {padding-left: 2em; border-left: dotted 1px #ddd; display: none; } .console .children.open {display: block; } .console .input {line-height: 1.25; display: block; width: 100%; border: none; outline: none; height: 3em; padding: .25em 1em; resize: none; position: relative; background: rgba(255, 255, 255, .8); } </style> <div class="console"> <span class="f12">F12</span> <ul> <li> <div class="obj"> <span class="key"></span> <span class="value"></span> <div class="children"></div> </div> </li> </ul> <textarea class="input" placeholder="$" autofocus></textarea> </div> </div>')
+    var view = parse('<div console> <style type="text/css"> .console {position: fixed; z-index: 999999999; left: 0; right: 0; bottom: -1px; font-size: 12px; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; line-height: 1.5; background: rgba(255, 255, 255, .98); box-shadow: rgba(0, 0, 0, 0.2) 0px 0 15px 0; transition: .5s; max-height: 0; max-height: 500px; display: none; } .console * {font: inherit; box-sizing: border-box; } .console.show {display: block; } .console.closed {max-height: 0; } .console.closed .f12 {opacity: .8; } .console .f12 {position: absolute; bottom: 100%; right: 0; background: rgba(255, 255, 255, .98); border: solid 1px #eee; border-bottom: 0; border-radius: 5px 5px 0 0; padding: 5px; box-shadow: rgba(0, 0, 0, 0.1) 4px -4px 10px -4px; /*box-shadow: rgba(0, 0, 0, 0.2) 0px -5px 15px -5px;*/ color: #555; letter-spacing: -1px; cursor: pointer; } .console ul {list-style: none; margin: 0; padding: 0; padding-bottom: 3em; margin-bottom: -3em; max-height: 350px; overflow: auto; -webkit-overflow-scrolling: touch; } .console ul li {padding: .5em 1em; border-bottom: solid 1px #f7f7f7; overflow: auto; } .console ul li>.obj {float: left; max-width: 100%; } .console .log {color: #555; } .console .info {background: #f3faff; color: #0095ff; } .console .warn {background: #fffaf3; color: #FF6F00; } .console .error {background: #fff7f7; color: red; } .console .cmd {position: relative; background: #fff; color: #0af; } .console .cmd .key:before {content: "$ "; position: absolute; left: 0; color: #ddd; } .console .obj {cursor: default; } .console .key {color: #a71d5d; white-space: nowrap; } .console .value {white-space: pre; } .console .children {padding-left: 2em; border-left: dotted 1px #ddd; display: none; } .console .children.open {display: block; } .console .input {line-height: 1.25; display: block; width: 100%; border: none; outline: none; height: 3em; padding: .25em 1em; resize: none; position: relative; background: rgba(255, 255, 255, .8); } </style> <div class="console"> <span class="f12">F12</span> <ul> <li> <div class="obj"> <span class="key"></span> <span class="value"></span> <div class="children"></div> </div> </li> </ul> <textarea class="input" placeholder="$" autofocus></textarea> </div> </div>')
     var consoleEl = find(view, 'console')
     var f12El = find(consoleEl, 'f12')
     var ulEl = find(consoleEl, 'ul')
@@ -168,7 +169,6 @@
     }
     var printChildren = function(obj, childrenEl, isDir) {
         var isArray = typeOf(obj) == 'array'
-        console.info(obj, isArray)
 
         for (var i in obj) {
             printObj(i, obj[i], childrenEl, isDir)
@@ -252,7 +252,7 @@
     }
     // pc端为了不影响 console 的代码定位，#f12 才拦截
     // #f12 显示， pc端拦截
-    if (location.hash.match('#f12')) {
+    if (location.href.match(/[?&#]f12/)) {
         addClass(consoleEl, 'show')
         intercept()
     }
