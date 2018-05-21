@@ -1,5 +1,5 @@
 /*!
- * https://github.com/wusfen/console.js
+ * @preserve https://github.com/wusfen/console.js
  */
 !(function() {
 
@@ -12,13 +12,17 @@
         return obj
     }
 
-    function toArray(arrayLike) {
+    var toArray = function(arrayLike) {
         var arr = [];
         var length = arrayLike.length;
         while (length--) {
             arr[length] = arrayLike[length];
         }
         return arr;
+    }
+
+    var typeOf = function (obj) {
+        return Object.prototype.toString.call(obj).slice(8,-1).toLowerCase()
     }
 
     var parse = function(html) {
@@ -136,6 +140,11 @@
             // 普通对象（非html节点)
             _keyEl.innerText = key
             _valueEl.innerText = value + ' ' // innerText=null 为清空
+
+            // 数组
+            if (typeOf(value) == 'array') {
+                _valueEl.innerText= '[' + value + '] ' + value.length
+            }
         }
 
         // 点击时遍历对象
@@ -158,8 +167,15 @@
         }
     }
     var printChildren = function(obj, childrenEl, isDir) {
+        var isArray = typeOf(obj) == 'array'
+        console.info(obj, isArray)
+
         for (var i in obj) {
             printObj(i, obj[i], childrenEl, isDir)
+            if (isArray && i > 500) {
+                printObj('...', '', childrenEl, isDir)
+                return
+            }
         }
     }
 
@@ -192,21 +208,22 @@
     }
 
     // console 拦截
-    var con = {
-        log: noop,
-        info: noop,
-        warn: noop,
-        error: noop,
-        dir: noop
-    }
-    window.console = window.console || con
-    var _console = extend({}, window.console)
-
     function intercept() {
         if (intercept.bool) {
             return
         }
         intercept.bool = true
+
+        // _console 副本
+        var con = {
+            log: noop,
+            info: noop,
+            warn: noop,
+            error: noop,
+            dir: noop
+        }
+        window.console = window.console || con
+        var _console = extend({}, window.console)
 
         // console 拦截
         for (var type in con) {
@@ -235,13 +252,13 @@
     }
     // pc端为了不影响 console 的代码定位，#f12 才拦截
     // #f12 显示， pc端拦截
-    if (location.hash == '#f12') {
+    if (location.hash.match('#f12')) {
         addClass(consoleEl, 'show')
         intercept()
     }
     // #f12 切换
     addEventListener('hashchange', function(e) {
-        if (location.hash == '#f12') {
+        if (location.hash.match('#f12')) {
             intercept()
             addClass(consoleEl, 'show')
         } else {

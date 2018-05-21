@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var gutil = require('gulp-util');
 
 gulp.task('default');
 setTimeout(function() {
@@ -12,8 +13,13 @@ gulp.task('js', function() {
 
     gulp.src('console.js')
         .pipe(uglify({
-            preserveComments: 'license'
+            output: {
+            	comments: 'some'
+            }
         }))
+        .on('error', function(err) {
+            gutil.log(gutil.colors.red('[Error]'), err.toString());
+        })
         .pipe(rename({ extname: '.min.js' }))
         .pipe(gulp.dest('.'));
 
