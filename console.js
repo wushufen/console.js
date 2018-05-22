@@ -1,6 +1,13 @@
 /*!
- * http://domain.com/path/to/page.html?#f12 打开 console
  * @preserve https://github.com/wusfen/console.js
+ *
+ * 使用方法
+ * http://domain.com/page.html#f12
+ * hash路由使用以下方式
+ * http://domain.com/page.html##f12
+ * http://domain.com/page.html#/#f12
+ * http://domain.com/page.html?f12
+ * http://domain.com/page.html?key=value&f12
  */
 !(function() {
 
