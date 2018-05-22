@@ -248,17 +248,24 @@
 
         // 捕获 js 异常
         addEventListener('error', function(e) {
-            var src = e.target.src || e.target.href
-            if (src) {
-                e.toString = function() { return src }
-                printLi('error', [e])
-            } else {
-                e.toString = function() { return e.message }
-                printLi('error', [e, e.filename, e.lineno + ':' + e.colno])
-            }
-
+            printLi('error', converErrors([e]))
             // true 捕获阶段，能捕获 js css img 加载异常
         }, true)
+
+        // xxx.file m:n
+        function converErrors(arr) {
+            if (arr.length == 1) {
+                var e = arr[0]
+                var src = e.target.src || e.target.href
+                if (src) {
+                    e.toString = function() { return src }
+                } else {
+                    e.toString = function() { return e.message }
+                    return [e, e.filename, e.lineno + ':' + e.colno]
+                }
+            }
+            return arr
+        }
 
         // 插入视图
         setTimeout(function() {
@@ -269,7 +276,7 @@
         var _logs = console._logs || []
         for (var i = 0; i < _logs.length; i++) {
             var _log = _logs[i]
-            printLi(_log.type, _log.arguments)
+            printLi(_log.type, _log.type == 'error' ? converErrors(_log.arr): _log.arr)
         }
         delete console._logs
     }

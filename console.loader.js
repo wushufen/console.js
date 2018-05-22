@@ -1,5 +1,5 @@
 /*! @preserve https://github.com/wusfen/console.js */
-(function() {
+(function(window, document) {
     var noop = function() {}
     var extend = function(obj, _obj) {
         for (var k in _obj) {
@@ -7,10 +7,12 @@
         }
         return obj
     }
+    var addEventListener = window.addEventListener
+    var removeEventListener = window.removeEventListener
 
     // logs 存储
     var logs = []
-    logs.max = 200
+    logs.max = 100
     var errorHandler
     var hashchangeHandler
     var con = {
@@ -38,7 +40,7 @@
                     _console[type].apply(console, arguments)
                     logs.push({
                         type: type,
-                        arguments: arguments
+                        arr: arguments
                     })
                     if (logs.length > logs.max) {
                         logs.shift()
@@ -49,18 +51,9 @@
 
         // 捕获 js 异常
         addEventListener('error', errorHandler = function(e) {
-            var src = e.target.src || e.target.href
-            var arguments
-            if (src) {
-                e.toString = function() { return src }
-                arguments = [e]
-            } else {
-                e.toString = function() { return e.message }
-                arguments = [e, e.filename, e.lineno + ':' + e.colno]
-            }
             logs.push({
                 type: 'error',
-                arguments: [e]
+                arr: [e]
             })
         }, true)
     }
@@ -104,11 +97,11 @@
                 console[k] = _console[k]
             }
             // 在还原后加载
-            document.getElementsByTagName('head')[0].appendChild(script)
+            document.body.appendChild(script)
         }, 41)
     }
 
     // 数据传递
     console._logs = logs
 
-})()
+})(window, document)
