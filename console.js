@@ -1,7 +1,7 @@
 /*!
  * @preserve https://github.com/wusfen/console.js
  *
- * url上通过以下方式带上f12开启 Console控制台
+ * 通过以下方式开启 Console控制台
  * url#12  url##12  url#/#12  url?f12  url?k=v&f12
  * hash路由勿用第一种
  */
@@ -259,6 +259,14 @@
         setTimeout(function() {
             document.body.appendChild(view)
         }, 1)
+
+        // 打印 loader 的 logs ======================
+        var _logs = console._logs || []
+        for (var i = 0; i < _logs.length; i++) {
+            var _log = _logs[i]
+            printLi(_log.type, _log.arguments)
+        }
+        delete console._logs
     }
 
     // 手机预先拦截，以接管 console

@@ -14,7 +14,19 @@ gulp.task('js', function() {
     gulp.src('console.js')
         .pipe(uglify({
             output: {
-            	comments: 'some'
+                comments: 'some'
+            }
+        }))
+        .on('error', function(err) {
+            gutil.log(gutil.colors.red('[Error]'), err.toString());
+        })
+        .pipe(rename({ extname: '.min.js' }))
+        .pipe(gulp.dest('.'));
+        
+    gulp.src('console.loader.js')
+        .pipe(uglify({
+            output: {
+                comments: 'some'
             }
         }))
         .on('error', function(err) {
