@@ -1,13 +1,9 @@
 /*!
  * @preserve https://github.com/wusfen/console.js
  *
- * 使用方法
- * http://domain.com/page.html#f12
- * hash路由使用以下方式
- * http://domain.com/page.html##f12
- * http://domain.com/page.html#/#f12
- * http://domain.com/page.html?f12
- * http://domain.com/page.html?key=value&f12
+ * url上通过以下方式带上f12开启 Console控制台
+ * url#12  url##12  url#/#12  url?f12  url?k=v&f12
+ * hash路由勿用第一种
  */
 !(function() {
 
@@ -247,8 +243,17 @@
 
         // 捕获 js 异常
         addEventListener('error', function(e) {
-            printLi('error', [e.message, e.filename, e.lineno + ':' + e.colno])
-        })
+            var src = e.target.src || e.target.href
+            if (src) {
+                e.toString = function() { return src }
+                printLi('error', [e])
+            } else {
+                e.toString = function() { return e.message }
+                printLi('error', [e, e.filename, e.lineno + ':' + e.colno])
+            }
+
+            // true 捕获阶段，能捕获 js css img 加载异常
+        }, true)
 
         // 插入视图
         setTimeout(function() {

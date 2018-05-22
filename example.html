@@ -17,6 +17,16 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <title>console.js</title>
+    <script src="./console.js"></script>
+    <script>
+    location.hash = 'f12'
+    console.log('console.js')
+    </script>
+    <style>
+        body{
+            background: url(bg.png);
+        }
+    </style>
 </head>
 
 <body>
@@ -29,10 +39,12 @@
     <div>
         http://domain.com/path/to/page.html?#f12
     </div>
-    <script src="./console.js"></script>
+    <div>
+        <script src="xx.js"></script>
+        <link rel="stylesheet" href="xx.css">
+        <img src="xx.png" width="0" height="0">
+    </div>
     <script>
-    location.hash = 'f12'
-    console.log('console.js')
     setTimeout(function() {
         console.log('log 演示')
     }, 100 * 2.5)
