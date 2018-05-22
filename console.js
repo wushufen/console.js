@@ -187,15 +187,20 @@
 
     // 执行 js
     inputEl.onkeydown = function(event) {
+        var code = inputEl.value
+
+        // 换行
+        if (event.keyCode == 13 && code.match(/[{(,;]$/)) {
+            return
+        }
         // 清空
-        if (event.keyCode == 13 && inputEl.value === '') {
+        if (event.keyCode == 13 && code === '') {
             ulEl.innerHTML = '';
             return false;
         }
         // 打印与执行
         if (event.keyCode == 13) {
             // 打印输入
-            var code = inputEl.value
             printLi('cmd', [code])
 
             // 选择完清空输入框，滚动
