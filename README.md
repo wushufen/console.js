@@ -6,13 +6,13 @@
 ```
 
 #### #f12 开启 ####
-```
+```css
 http://domain.com/usage.html#f12
 ```
 
 #### 注意 ####
 hash路由可用以下代替
-```
+```javascript
 url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
  ```
 
