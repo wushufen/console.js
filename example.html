@@ -17,12 +17,30 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <title>console.js</title>
-    <script src="./console.js"></script>
-    <script>
-    location.hash = 'f12'
-    console.log('console.js')
-    </script>
     <style>
+    b,b:before,b:after{
+        content: "";
+        /*border: solid 1px #888;*/
+        background: #000;
+        width: 1px;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 99999999999999;
+    }
+    b{
+        top: auto;
+        width: auto;
+        height: 1px;
+    }
+    b:before{
+        right: auto;
+    }
+    b:after{
+        left: auto;
+    }
     body {
         font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
         font-size: 14px;
@@ -63,9 +81,15 @@
         overflow: auto;
     }
     </style>
+    <script src="./console.js"></script>
+    <script>
+    location.hash = 'f12'
+    console.log('console.js')
+    </script>
 </head>
 
 <body>
+    <b></b>
     <img src="qrcode.png" width="100" height="100" style="float: right;">
     <h1>console.js</h1>
     <h2>usage.html</h2>
@@ -79,9 +103,9 @@
     </div>
     <script>
     function show(fn) {
-        var i = show.i || 0
-        show.i = (show.i || 0) + 1
-        setTimeout(fn, i * 250)
+        var i = show.i || 1
+        show.i = i + 1
+        setTimeout(fn, i * 800)
     }
 
     show(function() {
@@ -97,7 +121,7 @@
         console.log('log 演示', { key: 'value' })
     })
     show(function() {
-        // console.log(window)
+        console.log(document)
     })
     </script>
 </body>
