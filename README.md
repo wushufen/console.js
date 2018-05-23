@@ -2,7 +2,7 @@
 
 **page.html**
 ```html
-<script src="../path/to/console.js"></script>
+<script src="path/to/console.js"></script>
 ```
 
 **#f12 开启**

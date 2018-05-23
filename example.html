@@ -17,56 +17,88 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <title>console.js</title>
-    <script src="./console.loader.js"></script>
+    <script src="./console.js"></script>
     <script>
     location.hash = 'f12'
     console.log('console.js')
     </script>
     <style>
-        body{
-            background: url(bg.png);
-        }
+    body {
+        font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+        font-size: 14px;
+        margin: 0;
+        padding: 1em;
+    }
+
+    h1,
+    h2,
+    h3 {
+        font-weight: normal;
+        margin: 1em 0;
+    }
+
+    h1 {
+        color: #0af;
+        font-size: 1.75em;
+    }
+
+    h2 {
+        color: #555;
+        font-size: 1.25em;
+    }
+
+    code {
+        font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+        background: #272822;
+        color: #fff;
+        padding: .125em .5em;
+        border-radius: .25em;
+        margin: 1px;
+    }
+
+    pre code {
+        display: block;
+        padding-top: .5em;
+        padding-bottom: .5em;
+        overflow: auto;
+    }
     </style>
 </head>
 
 <body>
+    <img src="qrcode.png" width="100" height="100" style="float: right;">
     <h1>console.js</h1>
-    <h2>page.html</h2>
-    <div>
-        &lt;script src="../path/to/console.js"&gt;&lt;/script&gt;
-    </div>
+    <h2>usage.html</h2>
+    <pre><code>&lt;script src="path/to/console.js"&gt;&lt;/script&gt;</code></pre>
     <h2>#f12 开启</h2>
+    <pre><code>http://domain.com/usage.html#f12</code></pre>
     <div>
-        http://domain.com/path/to/page.html?#f12
-    </div>
-    <div>
-        <script src="xx.js"></script>
-        <link rel="stylesheet" href="xx.css">
-        <img src="xx.png" width="0" height="0">
+        <script src="404演示.js"></script>
+        <!-- <link href="加载异常演示.css" rel="stylesheet"> -->
+        <!-- <img src="加载异常演示.png" width="0" height="0"> -->
     </div>
     <script>
-    setTimeout(function() {
-        console.log('log 演示')
-    }, 100 * 2.5)
-    setTimeout(function() {
-        console.info('info 演示')
-    }, 200 * 2.5)
-    setTimeout(function() {
+    function show(fn) {
+        var i = show.i || 0
+        show.i = (show.i || 0) + 1
+        setTimeout(fn, i * 250)
+    }
+
+    show(function() {
         console.warn('warn 演示')
-    }, 300 * 2.5)
-    setTimeout(function() {
-        // console.error('error 演示')
-    }, 400 * 2.5)
-    setTimeout(function() {
-        // console.error('代码报错演示')
-        error演示
-    }, 500 * 2.5)
-    setTimeout(function() {
-        console.log(document)
-    }, 600 * 2.5)
-    setTimeout(function() {
-        console.log(window)
-    }, 700 * 2.5)
+    })
+    show(function() {
+        运行异常演示
+    })
+    show(function() {
+        console.info('info 演示')
+    })
+    show(function() {
+        console.log('log 演示', { key: 'value' })
+    })
+    show(function() {
+        // console.log(window)
+    })
     </script>
 </body>
 
