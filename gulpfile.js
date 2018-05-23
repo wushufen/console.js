@@ -21,6 +21,6 @@ gulp.task('js', function() {
             gutil.log(gutil.colors.red('[Error]'), err.toString())
         })
         // .pipe(rename({ extname: '.min.js' }))
-        .pipe(gulp.dest('.'))
+        .pipe(gulp.dest('./dist'))
 
 })

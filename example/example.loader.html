@@ -17,9 +17,11 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <title>console.js</title>
-    <script src="./console.loader.js"></script>
+    <script src="../dist/console.loader.js"></script>
     <script>
-    location.hash = 'f12'
+    setTimeout(function() {
+        location.hash = 'f12'
+    }, 1000)
     console.log('console.js')
     </script>
     <style>
@@ -35,11 +37,12 @@
         font-weight: normal;
     }
 
-    h1{
+    h1 {
         color: #0af;
         font-size: 1.75em;
     }
-    h2{
+
+    h2 {
         color: #555;
         font-size: 1.25em;
     }
@@ -52,7 +55,8 @@
         border-radius: .25em;
         margin: 1px;
     }
-    pre code{
+
+    pre code {
         display: block;
         padding-top: .5em;
         padding-bottom: .5em;
