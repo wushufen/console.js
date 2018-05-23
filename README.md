@@ -1,19 +1,31 @@
 # console.js
 
-**page.html**
+#### usage.html ####
 ```html
 <script src="path/to/console.js"></script>
 ```
 
-**#f12 开启**
+#### #f12 开启 ####
 ```
- * 使用方法
- * http://domain.com/page.html#f12
- * hash路由使用以下方式
- * http://domain.com/page.html##f12
- * http://domain.com/page.html#/#f12
- * http://domain.com/page.html?f12
- * http://domain.com/page.html?key=value&f12
+http://domain.com/usage.html#f12
 ```
 
-![console](example.480.png)  
+#### 注意 ####
+hash路由可用以下代替
+```
+url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
+ ```
+
+#### console.loader.js ####
+```console.loader.js``` 是个积体很小的文件 ，```#f12``` 时才会自动去加载 ```console.js```  
+
+```html
+<!-- 把两个文件放在同一目录 -->
+<script src="path/to/console.loader.js"></script>
+
+<!-- 或者 console属性 指定 console.js 的路径 -->
+<script src="path/to/console.loader.js" console="path/to/console.js"></script>
+```
+
+#### 效果图 ####
+![console](example.360.png)  

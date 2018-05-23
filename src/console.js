@@ -1,9 +1,10 @@
 /*!
  * @preserve https://github.com/wusfen/console.js
  *
- * 通过以下方式开启 Console控制台
- * url#12  url##12  url#/#12  url?f12  url?k=v&f12
- * hash路由勿用第一种
+ * #f12 开启 Console控制台
+ *
+ * hash路由可用以下代替
+ * url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
  */
 !(function() {
 
