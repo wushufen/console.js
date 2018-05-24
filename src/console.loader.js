@@ -79,7 +79,6 @@
         for (var i = scripts.length - 1; i >= 0; i--) {
             var script = scripts[i]
             var src = script.src || ''
-            console.log(src, script)
             // console="path/to/console.js"
             consoleAttr = script.getAttribute('console')
             if (consoleAttr !== null || src.match(/(^|\/)console[\w.]*$/)) {

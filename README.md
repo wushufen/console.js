@@ -16,7 +16,7 @@ hash路由可用以下代替
 url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
  ```
 
-#### console.loader.js ####
+#### 加载器 ####
 ```console.loader.js``` 是个积体很小的文件 ，```#f12``` 时才会自动去加载 ```console.js```  
 
 ```html
