@@ -28,4 +28,4 @@ url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
 ```
 
 #### 效果图 ####
-![console](example/e.375.png)  
+![console](img/e.375.png)  
