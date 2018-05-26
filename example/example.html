@@ -84,10 +84,10 @@
 </head>
 
 <body>
-    <script src="lib/ajax.js"></script>
     <script src="../src/console.loader.js"></script>
+    <script src="lib/ajax.js"></script>
     <script>
-    location.hash = 'f12'
+    // location.hash = 'f12'
     console.log('console.js')
     </script>
     <!-- <b></b> -->
@@ -98,9 +98,9 @@
     <h2>#f12 开启</h2>
     <pre><code>http://domain.com/usage.html#f12</code></pre>
     <div>
-        <script src="404演示.js"></script>
-        <!-- <link href="加载异常演示.css" rel="stylesheet"> -->
-        <!-- <img src="加载异常演示.png" width="0" height="0"> -->
+        <!-- <script src="404演示.js"></script> -->
+        <link href="404演示.css" rel="stylesheet">
+        <!-- <img src="404演示.png" width="0" height="0"> -->
     </div>
     <script>
     function show(fn) {
@@ -119,9 +119,23 @@
         console.info('info 演示')
     })
     show(function() {
-        ajax({
-            url: 'https://wechatapi.sunlands.com/wechat-api/realPaper/getPaper',
-            // url: '.'
+        $.ajax({
+            url: 'ajax/演示',
+            // url: 'http://facebook.com',
+            // url: '.',
+            type: 'post',
+            data: {
+                a: 1,
+                b: 2,
+                o: {
+                    o1: 1,
+                    o2: 2,
+                    oo: {
+                        oo1: 1,
+                        oo2: 2
+                    }
+                }
+            }
         })
     })
     show(function() {
@@ -131,6 +145,7 @@
         console.log(document)
     })
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </body>
 
 </html>
