@@ -18,7 +18,9 @@
     <meta name="msapplication-tap-highlight" content="no">
     <title>console.js</title>
     <style>
-    b,b:before,b:after{
+    b,
+    b:before,
+    b:after {
         content: "";
         /*border: solid 1px #888;*/
         background: #000;
@@ -30,17 +32,21 @@
         bottom: 0;
         z-index: 99999999999999;
     }
-    b{
+
+    b {
         top: auto;
         width: auto;
         height: 1px;
     }
-    b:before{
+
+    b:before {
         right: auto;
     }
-    b:after{
+
+    b:after {
         left: auto;
     }
+
     body {
         font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
         font-size: 14px;
@@ -106,8 +112,12 @@
     function show(fn) {
         var i = show.i || 1
         show.i = i + 1
-        setTimeout(fn, i * 80)
+        setTimeout(fn, i * 800 + 100)
     }
+
+    show(function() {
+        location.hash = 'f12'
+    })
 
     show(function() {
         console.warn('warn 演示')
@@ -119,9 +129,10 @@
         console.info('info 演示')
     })
     show(function() {
-        $.ajax({
-            url: 'ajax/演示',
+        ajax({
+            url: './ajax.json?演示',
             // url: 'http://facebook.com',
+            // url: 'http://qq.com',
             // url: '.',
             type: 'post',
             data: {
@@ -135,6 +146,16 @@
                         oo2: 2
                     }
                 }
+            },
+            data: {
+                id: 1,
+                name: 'wushufen'
+            },
+            error: function(res) {
+                console.trace('error')
+            },
+            success: function(res) {
+                console.trace('success')
             }
         })
     })

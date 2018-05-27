@@ -70,137 +70,165 @@
     }
 
     // view
-    var view = parse('<div console> <style type="text/css"> .console {z-index: 999999999; position: fixed; left: 0; right: 0; bottom: -1px; font-size: 12px; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; line-height: 1.5; background: rgba(255, 255, 255, .98); box-shadow: rgba(0, 0, 0, 0.2) 0px 0 15px 0; transition: .5s; max-height: 0; max-height: 500px; display: none; } .console * {font: inherit; box-sizing: border-box; } .console.show {display: block; } .console.closed {max-height: 0; } .console.closed .f12 {opacity: .8; } .console .f12 {position: absolute; bottom: 100%; right: 0; background: rgba(255, 255, 255, .98); border: solid 1px #eee; border-bottom: 0; border-radius: 5px 5px 0 0; padding: 5px; box-shadow: rgba(0, 0, 0, 0.1) 4px -4px 10px -4px; color: #555; letter-spacing: -1px; cursor: pointer; } .console ul {list-style: none; margin: 0; padding: 0; padding-bottom: 3em; margin-bottom: -3em; max-height: 350px; overflow: auto; -webkit-overflow-scrolling: touch; } .console ul li {padding: .5em; border-bottom: solid 1px #f7f7f7; overflow: auto; } .console ul li>.obj {float: left; max-width: 100%; padding: 0 .5em; } .console .log {color: #555; } .console .info {background: #f3faff; color: #0095ff; } .console .warn {background: #fffaf3; color: #FF6F00; } .console .error {background: #fff7f7; color: red; } .console .cmd {position: relative; background: #fff; color: #0af; } .console .cmd .key:before {content: "$ "; position: absolute; left: 0; color: #ddd; } .console .obj {cursor: default; white-space: nowrap; } .console .obj:after {content: ""; display: table; clear: both; } .console .key {/*float: left;*/ /*margin-right: 1ex;*/ color: #a71d5d; } .console .value {/*float: left;*/ max-width: 10em; overflow: hidden; text-overflow: ellipsis; } .console .children {clear: both; padding-left: 2em; border-left: dotted 1px #ddd; display: none; } .console .open>.value {white-space: pre; overflow: visible; max-width: none; } .console .open>.children {display: block; } .console .input {line-height: 1.25; display: block; width: 100%; border: none; outline: none; height: 3em; padding: .25em 1em; resize: none; position: relative; background: rgba(255, 255, 255, .8); } </style> <div class="console"> <span class="f12">F12</span> <ul> <li> <div class="obj"> <span class="key"></span> <span class="value"></span> <div class="children"></div> </div> </li> </ul> <textarea class="input" placeholder="$" autofocus></textarea> </div> </div>')
-    var consoleEl = find(view, 'console')
-    var f12El = find(consoleEl, 'f12')
-    var ulEl = find(consoleEl, 'ul')
-    var liEl = find(consoleEl, 'li')
-    var objEl = find(consoleEl, 'obj')
-    var childrenEl = find(consoleEl, 'children')
-    var inputEl = find(consoleEl, 'input')
+    var view = parse('<div console> <style type="text/css"> .console {z-index: 999999999; position: fixed; left: 0; right: 0; bottom: -1px; font-size: 12px; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; line-height: 1.5; background: rgba(255, 255, 255, .98); box-shadow: rgba(0, 0, 0, 0.2) 0px 0 15px 0; transition: .5s; max-height: 0; max-height: 500px; display: none; } .console * {font: inherit; box-sizing: border-box; } .console.show {display: block; } .console.closed {max-height: 0; } .console.closed .f12 {opacity: .8; } .console .f12 {position: absolute; bottom: 100%; right: 0; background: rgba(255, 255, 255, .98); border: solid 1px #eee; border-bottom: 0; border-radius: 5px 5px 0 0; padding: 5px; box-shadow: rgba(0, 0, 0, 0.1) 4px -4px 10px -4px; color: #555; letter-spacing: -1px; cursor: pointer; } .console ul {list-style: none; margin: 0; padding: 0; padding-bottom: 3em; margin-bottom: -3em; max-height: 350px; overflow: auto; -webkit-overflow-scrolling: touch; } .console ul li {padding: .5em; border-bottom: solid 1px #f7f7f7; overflow: auto; } .console ul li>.obj {float: left; max-width: 100%; padding: 0 .5em; } .console .log {color: #555; } .console .info {background: #f3faff; color: #0095ff; } .console .warn {background: #fffaf3; color: #FF6F00; } .console .error {background: #fff7f7; color: red; } .console .cmd {position: relative; background: #fff; color: #0af; } .console .cmd .key:before {content: "$ "; position: absolute; left: 0; color: #ddd; } .console .obj {cursor: default; white-space: nowrap; } .console .obj:after {content: ""; display: table; clear: both; } .console .key {/*float: left;*/ /*margin-right: 1ex;*/ color: #a71d5d; } .console .value {/*float: left;*/ /*display: inline-block;*/ vertical-align: top; max-width: 30em; overflow: hidden; text-overflow: ellipsis; } .console .value.tag {color: #a71d5d; } .console .children {clear: both; padding-left: 2em; border-left: dotted 1px #ddd; display: none; } .console .open>.value {white-space: pre; overflow: visible; max-width: none; } .console .open>.children {display: block; } .console .input {line-height: 1.25; display: block; width: 100%; border: none; outline: none; height: 3em; padding: .25em 1em; resize: none; position: relative; background: rgba(255, 255, 255, .8); } </style> <div class="console"> <span class="f12">F12</span> <ul> <li> <div class="obj"> <span class="key"></span> <span class="value"></span> <div class="children"></div> </div> </li> </ul> <textarea class="input" placeholder="$"></textarea> </div> </div>')
 
-    ulEl.innerHTML = ''
+    var ConsoleEl = find(view, 'console')
+    var F12El = find(ConsoleEl, 'f12')
+    var UlEl = find(ConsoleEl, 'ul')
+    var LiEl = find(ConsoleEl, 'li')
+    var ObjEl = find(ConsoleEl, 'obj')
+    var ChildrenEl = find(ConsoleEl, 'children')
+    var InputEl = find(ConsoleEl, 'input')
+
+    UlEl.innerHTML = ''
 
     // console 折叠
-    f12El.onclick = function() {
-        toggleClass(consoleEl, 'closed')
+    F12El.onclick = function() {
+        toggleClass(ConsoleEl, 'closed')
     }
 
     // print
     var printLi = function(type, objs, isDir) {
         // 判断滚动条是不是在最下方，是则打印后继续滚到最后
-        if (ulEl.scrollTop + ulEl.clientHeight > ulEl.scrollHeight - 20) {
+        if (UlEl.scrollTop + UlEl.clientHeight > UlEl.scrollHeight - 20) {
             setTimeout(function() {
-                ulEl.scrollTop += 999
+                UlEl.scrollTop += 999
             }, 41)
         }
 
         // 复制一个 li 
-        var _liEl = liEl.cloneNode(true)
-        addClass(_liEl, type)
-        _liEl.innerHTML = ''
-        ulEl.appendChild(_liEl)
+        var liEl = LiEl.cloneNode(true)
+        addClass(liEl, type)
+        liEl.innerHTML = ''
+        UlEl.appendChild(liEl)
 
         // 打印 log(a,b,c) 多个参数
         for (var i = 0; i < objs.length; i++) {
-            printObj('', objs[i], _liEl, isDir)
+            printObj('', objs[i], liEl, isDir)
         }
 
         // 限制打印列表长度
-        if (ulEl.children.length > 200) {
-            ulEl.removeChild(ulEl.children[0])
+        if (UlEl.children.length > 100) {
+            UlEl.removeChild(UlEl.children[0])
         }
+
+        return liEl
     }
     var printObj = function(key, value, target, isDir) {
         // 复制一个 obj view
-        var _objEl = objEl.cloneNode(true)
-        var _keyEl = find(_objEl, 'key')
-        var _valueEl = find(_objEl, 'value')
-        var _childrenEl = find(_objEl, 'children')
-        target.appendChild(_objEl)
+        var objEl = ObjEl.cloneNode(true)
+        var keyEl = find(objEl, 'key')
+        var valueEl = find(objEl, 'value')
+        var childrenEl = find(objEl, 'children')
+        target.appendChild(objEl)
 
-        // 如果 value 是 html 节点
-        if (!isDir && value && value.nodeType) {
-
-            if (value.nodeType == 1) {
-                // 标签节点
-                var tag = value.cloneNode().outerHTML
-                var tag_lr = tag.split('></')
-                var tagl = tag_lr[0] + (tag_lr[1] ? '>' : '') // ?有无闭合标签
-                var tagr = '</' + tag_lr[1]
-                _keyEl.innerText = tagl
-                _valueEl.innerText = ''
-            } else if (value.nodeType == 3) {
-                // 有文字的文本节点才显示
-                if (value.nodeValue.match(/\S/)) {
-                    _valueEl.innerText = escapeTag(value.nodeValue)
-                }
-            } else if (value.nodeType == 9) {
-                // #document节点
-                _keyEl.innerText = key
-                _valueEl.innerText = value.nodeName
-            }
-
-            // value 改为 子节点，后面点开则遍历子节点，而不是遍历一个对象
-            var childNodes = value.childNodes
-            value = toArray(value.childNodes)
-        } else {
-
-            // 普通对象（非html节点)
-            _keyEl.innerText = key
-            // 没有toString和valueOf 转字符串会报错
-            if (!(value && !(value.toString || value.valueOf))) {
-                var valueStr = escapeTag(value + '') // innerText=null 为清空
-                if (value && value._toConsole) {
-                    valueStr = value._toConsole()
-                    delete value._toConsole
-                }
-                _valueEl.innerHTML = valueStr
-            }
-
-            // 数组
-            if (typeOf(value) == 'array') {
-                _valueEl.innerText = value.length + '[' + value + ']'
-            }
-        }
+        // value print convert
+        var kvs = printConvert(key, value, isDir)
+        keyEl.innerText = kvs.key
+        valueEl.innerHTML = escapeTag(kvs.string)
+        value = kvs.value
+        addClass(valueEl, kvs.type)
 
         // 点击时遍历对象
-        _keyEl.onclick = _valueEl.onclick = function() {
+        keyEl.onclick = valueEl.onclick = function() {
             window.v = value
 
             // toggle children, value...
-            toggleClass(_objEl, 'open')
+            toggleClass(objEl, 'open')
 
             // 是否已经打印过了
-            if (_valueEl._printed) {
+            if (valueEl._printed) {
                 return
             }
-            _valueEl._printed = true;
+            valueEl._printed = true
 
-            // 打印
-            printChildren(value, _childrenEl, isDir)
+            if (typeof value != 'object') return
+            var isArray = typeOf(value) == 'array'
+
+            // 打印 children
+            for (var i in value) {
+                printObj(i, value[i], childrenEl, isDir)
+                // 过长
+                if (isArray && i > 500) {
+                    printObj('...', '', childrenEl, isDir)
+                    return
+                }
+            }
         }
     }
 
-    var printChildren = function(obj, childrenEl, isDir) {
-        if (typeOf(obj) == 'string') return
+    var printConvert = function(key, value, isDir) {
+        var string = value
+        var type
+        if (value && !value.toString && !value.valueOf) {
+            string = '{...}'
+        }
 
-        var isArray = typeOf(obj) == 'array'
+        if (!isDir) {
 
-        for (var i in obj) {
-            printObj(i, obj[i], childrenEl, isDir)
+            // node
+            if (value && value.nodeType) {
+                var node = value
+                var nodeType = node.nodeType
 
-            // 过长
-            if (isArray && i > 500) {
-                printObj('...', '', childrenEl, isDir)
-                return
+                // doctype
+                if (nodeType == 10) {
+                    string = '<!DOCTYPE html>'
+                }
+                // tag
+                else if (nodeType == 1) {
+                    var tag = node.cloneNode().outerHTML
+                    var tag_lr = tag.split('></')
+                    var tagl = tag_lr[0] + (tag_lr[1] ? '>' : '') // ?有无闭合标签
+                    var tagr = '</' + tag_lr[1]
+                    string = tagl
+                    type = 'tag'
+                }
+                // text
+                else if (nodeType == 3) {
+                    string = node.nodeValue
+                }
+                // #document
+                else if (nodeType == 9) {
+                    string = node.nodeName
+                    type = 'tag'
+                }
+                // commemt
+                else if (nodeType == 8) {
+                    string = '<!--' + node.nodeValue + '-->'
+                }
+
+                // childNodes
+                value = toArray(node.childNodes)
+                if (!isNaN(key)) {
+                    key = ''
+                }
             }
+
+            // array
+            else if (typeOf(value) == 'array') {
+                string = value.length + '[' + value + ']'
+            }
+
+            // _toConsole
+            else if (value && value._toConsole) {
+                string = value._toConsole()
+                delete value._toConsole
+            }
+
+        }
+
+        return {
+            key: key,
+            value: value,
+            string: string + '',
+            type: type
         }
     }
 
     // 执行 js
-    inputEl.onkeydown = function(event) {
-        var code = inputEl.value
+    InputEl.onkeydown = function(event) {
+        var code = InputEl.value
 
         // 换行
         if (event.keyCode == 13 && code.match(/[[{(,;]$/)) {
@@ -208,7 +236,7 @@
         }
         // 清空
         if (event.keyCode == 13 && code === '') {
-            ulEl.innerHTML = '';
+            UlEl.innerHTML = '';
             return false;
         }
         // 打印与执行
@@ -218,8 +246,8 @@
 
             // 选择完清空输入框，滚动
             setTimeout(function() {
-                inputEl.value = ''
-                ulEl.scrollTop += 9999
+                InputEl.value = ''
+                UlEl.scrollTop += 9999
             }, 41)
 
             // 执行
@@ -276,24 +304,42 @@
         var XHRsend = XHR.prototype.send
         XHR.prototype.open = function(type, url) {
             var xhr = this
+            var sendData
+            var liEl
+
+            var onreadystatechange = xhr.onreadystatechange
             xhr.onreadystatechange = function(e) {
+                onreadystatechange.apply(this, arguments)
+
                 if (xhr.readyState != 4) return
 
                 var logType = xhr.status > 400 ? 'error' : 'info'
-                console[logType]({
+                addClass(liEl, logType)
+                liEl.innerHTML = ''
+                printObj('', {
                     _toConsole: function() { return '[' + type + '] ' + xhr.status + ' ' + url },
-                    data: { todo: null },
+                    data: sendData,
+                    decodeData: decodeURIComponent(sendData),
                     headers: xhr.getAllResponseHeaders(),
                     response: (function() { try { return JSON.parse(xhr.responseText) } catch (e) {} return xhr.responseText })(),
                     event: e,
                     xhr: xhr
-                })
-
+                }, liEl)
             }
+
             XHRopen.apply(this, arguments)
 
             xhr.send = function(data) {
                 XHRsend.apply(this, arguments)
+
+                sendData = data
+                liEl = printLi('log', [{
+                    _toConsole: function() { return '[' + type + '] ' + '(pendding)' + ' ' + url },
+                    data: data,
+                    decodeData: decodeURIComponent(data),
+                    response: '...',
+                    xhr: xhr
+                }])
             }
         }
 
@@ -341,16 +387,16 @@
     // pc端为了不影响 console 的代码定位，#f12 才拦截
     // #f12 显示， pc端拦截
     if (location.href.match(/[?&#]f12/)) {
-        addClass(consoleEl, 'show')
+        addClass(ConsoleEl, 'show')
         intercept()
     }
     // #f12 切换
     addEventListener('hashchange', function(e) {
         if (location.hash.match('#f12')) {
             intercept()
-            addClass(consoleEl, 'show')
+            addClass(ConsoleEl, 'show')
         } else {
-            removeClass(consoleEl, 'show')
+            removeClass(ConsoleEl, 'show')
         }
     })
 
