@@ -90,18 +90,16 @@
         var script = document.createElement('script')
         script.src = consoleAttr || src
 
-        // 留时间给后面的log
-        setTimeout(function() {
-            // 还原 console
-            for (var k in con) {
-                console[k] = _console[k]
-            }
-            // 在还原后加载
-            document.body.appendChild(script)
-        }, 41)
+        document.getElementsByTagName('head')[0].appendChild(script)
     }
 
     // 数据传递
     console._logs = logs
+    // 还原 console
+    console._back = function() {
+        for (var k in con) {
+            console[k] = _console[k]
+        }
+    }
 
 })(window, document)
