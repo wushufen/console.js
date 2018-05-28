@@ -274,11 +274,6 @@
           response: (function() { try { return JSON.parse(xhr.responseText) } catch (e) {} return xhr.responseText })(),
           toString: function() { return type + ' ' + url }
         })
-        console.log(this, arguments)
-        console.warn({
-          h: xhr.getAllResponseHeaders()
-        })
-
       }
       XHRopen.apply(this, arguments)
     }
