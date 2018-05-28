@@ -330,7 +330,6 @@
             XHRopen.apply(this, arguments)
 
             xhr.send = function(data) {
-                XHRsend.apply(this, arguments)
 
                 sendData = data
                 liEl = printLi('log', [{
@@ -340,6 +339,8 @@
                     response: '...',
                     xhr: xhr
                 }])
+
+                XHRsend.apply(this, arguments)
             }
         }
 
