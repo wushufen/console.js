@@ -27,5 +27,6 @@ url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
 <script src="path/to/console.loader.js" console="path/to/console.js"></script>
 ```
 
-#### 效果图 ####
-![console](img/e.375.png)  
+#### 演示 ####
+https://wusfen.github.io/console.js/example/example.html
+![console](example/example.png)  
