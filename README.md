@@ -28,5 +28,5 @@ url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
 ```
 
 #### 演示 ####
-https://wusfen.github.io/console.js/example/example.html
+https://wusfen.github.io/console.js/example/example.html  
 ![console](example/example.png)  
