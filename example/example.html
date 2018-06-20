@@ -101,10 +101,11 @@
 <body>
     <script src="../src/console.loader.js"></script>
     <script src="lib/ajax.js"></script>
+
     <script>
-    // location.hash = 'f12'
     console.log('console.js')
     </script>
+
     <!-- <b></b> -->
     <img src="gh.qr.png" width="100" height="100" style="float: right;">
 
@@ -130,13 +131,12 @@
     function show(fn) {
         var i = show.i || 1
         show.i = i + 1
-        setTimeout(fn, i * 80 + 100)
+        setTimeout(fn, i * 1000 + 1000)
     }
 
     show(function() {
         location.hash = 'f12'
     })
-
     show(function() {
         console.warn('warn 演示')
     })
@@ -149,9 +149,6 @@
     show(function() {
         ajax({
             url: './ajax.json?演示',
-            // url: 'http://facebook.com',
-            // url: 'http://qq.com',
-            // url: '.',
             type: 'post',
             data: {
                 a: 1,
@@ -166,8 +163,7 @@
                 }
             },
             data: {
-                id: 1,
-                name: 'wushufen'
+                id: 1
             },
             error: function(res) {
                 console.trace('error')
@@ -184,7 +180,6 @@
         console.log(document)
     })
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </body>
 
 </html>
