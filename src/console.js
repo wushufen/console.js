@@ -6,18 +6,18 @@
  * hash路由可用以下代替
  * url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
  */
-!(function() {
+!(function () {
 
-    var noop = function() {}
+    var noop = function () { }
 
-    var extend = function(obj, _obj) {
+    var extend = function (obj, _obj) {
         for (var k in _obj) {
             obj[k] = _obj[k]
         }
         return obj
     }
 
-    var toArray = function(arrayLike) {
+    var toArray = function (arrayLike) {
         var arr = [];
         var length = arrayLike.length;
         while (length--) {
@@ -26,20 +26,20 @@
         return arr;
     }
 
-    var typeOf = function(obj) {
+    var typeOf = function (obj) {
         return Object.prototype.toString.call(obj).slice(8, -1).toLowerCase()
     }
 
-    var escapeTag = function(html) {
+    var escapeTag = function (html) {
         return html.replace(/</g, '&lt;').replace(/>/g, '&gt;')
     }
 
-    var parse = function(html) {
+    var parse = function (html) {
         var el = parse.el = parse.el || document.createElement('div')
         el.innerHTML = html
         return el.children[0]
     }
-    var find = function(el, selector) {
+    var find = function (el, selector) {
         for (var i = 0; i < el.children.length; i++) {
             var child = el.children[i]
             if (selector == child.className || selector == child.tagName.toLowerCase()) {
@@ -52,16 +52,16 @@
             }
         }
     }
-    var addClass = function(el, className) {
+    var addClass = function (el, className) {
         el.className += ' ' + className
     }
-    var removeClass = function(el, className) {
+    var removeClass = function (el, className) {
         el.className = el.className.replace(RegExp(' *' + className, 'ig'), '')
     }
-    var hasClass = function(el, className) {
+    var hasClass = function (el, className) {
         return el.className.match(className)
     }
-    var toggleClass = function(el, className) {
+    var toggleClass = function (el, className) {
         if (hasClass(el, className)) {
             removeClass(el, className)
         } else {
@@ -70,7 +70,7 @@
     }
 
     // view
-    var view = parse('<div console> <style type="text/css"> .console {z-index: 999999999; position: fixed; left: 0; right: 0; bottom: -1px; font-size: 12px; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; line-height: 1.5; background: rgba(255, 255, 255, .98); box-shadow: rgba(0, 0, 0, 0.2) 0px 0 15px 0; transition: .5s; max-height: 0; max-height: 500px; display: none; } .console * {font: inherit; box-sizing: border-box; } .console.show {display: block; } .console.closed {max-height: 0; } .console.closed .f12 {opacity: .8; } .console .f12 {position: absolute; bottom: 100%; right: 0; background: rgba(255, 255, 255, .98); border: solid 1px #eee; border-bottom: 0; border-radius: 5px 5px 0 0; padding: 5px; box-shadow: rgba(0, 0, 0, 0.1) 4px -4px 10px -4px; color: #555; letter-spacing: -1px; cursor: pointer; } .console ul {list-style: none; margin: 0; padding: 0; padding-bottom: 3em; margin-bottom: -3em; max-height: 350px; overflow: auto; -webkit-overflow-scrolling: touch; } .console ul li {padding: .5em; border-bottom: solid 1px #f7f7f7; overflow: auto; -webkit-overflow-scrolling: touch; } .console ul li>.obj {float: left; max-width: 100%; padding: 0 .5em; } .console .log {color: #555; } .console .info {background: #f3faff; color: #0095ff; } .console .warn {background: #fffaf3; color: #FF6F00; } .console .error {background: #fff7f7; color: red; } .console .cmd {position: relative; background: #fff; color: #0af; } .console .cmd .key:before {content: "$ "; position: absolute; left: 0; color: #ddd; } .console .obj {cursor: default; white-space: nowrap; } .console .obj:after {content: ""; display: table; clear: both; } .console .key {/*float: left;*/ /*margin-right: 1ex;*/ color: #a71d5d; } .console .value {/*float: left;*/ /*display: inline-block;*/ vertical-align: top; max-width: 30em; overflow: hidden; text-overflow: ellipsis; } .console .value.tag {color: #a71d5d; } .console .children {clear: both; padding-left: 2em; border-left: dotted 1px #ddd; display: none; } .console .open>.value {white-space: pre; overflow: visible; max-width: none; } .console .open>.children {display: block; } .console .input {line-height: 1.25; display: block; width: 100%; border: none; outline: none; height: 3em; padding: .25em 1em; resize: none; position: relative; background: rgba(255, 255, 255, .8); } </style> <div class="console"> <span class="f12">F12</span> <ul> <li> <div class="obj"> <span class="key"></span> <span class="value"></span> <div class="children"></div> </div> </li> </ul> <textarea class="input" placeholder="$"></textarea> </div> </div> ')
+    var view = parse('<div console> <style type="text/css"> .console {z-index: 999999999; position: fixed; left: 0; right: 0; bottom: -1px; font-size: 12px; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; line-height: 1.5; background: rgba(255, 255, 255, .98); box-shadow: rgba(0, 0, 0, 0.2) 0px 0 15px 0; transition: .5s; max-height: 0; max-height: 500px; display: none; } .console * {font: inherit; box-sizing: border-box; } .console.show {display: block; } .console.closed {max-height: 0; } .console.closed .f12 {opacity: .8; } .console .f12 {position: absolute; bottom: 100%; right: 0; background: rgba(255, 255, 255, .98); border: solid 1px #eee; border-bottom: 0; border-radius: 5px 5px 0 0; padding: 5px; box-shadow: rgba(0, 0, 0, 0.1) 4px -4px 10px -4px; color: #555; letter-spacing: -1px; cursor: pointer; } .console ul {list-style: none; margin: 0; padding: 0; padding-bottom: 3em; margin-bottom: -3em; max-height: 350px; overflow: auto; } /* ios 滚动异常 */ @media all{.console ul {height: 350px; -webkit-overflow-scrolling: touch; } .console ul:before {content:""; width: 1px; float: left; height: calc(100% + 1px); margin-left: -1px; } } .console ul li {padding: .5em; border-bottom: solid 1px #f7f7f7; overflow: auto; x-webkit-overflow-scrolling: touch; } .console ul li>.obj {float: left; max-width: 100%; padding: 0 .5em; } .console .log {color: #555; } .console .info {background: #f3faff; color: #0095ff; } .console .warn {background: #fffaf3; color: #FF6F00; } .console .error {background: #fff7f7; color: red; } .console .cmd {position: relative; background: #fff; color: #0af; } .console .cmd .key:before {content: "$ "; position: absolute; left: 0; color: #ddd; } .console .obj {cursor: default; white-space: nowrap; } .console .obj:after {content: ""; display: table; clear: both; } .console .key {/*float: left;*/ /*margin-right: 1ex;*/ color: #a71d5d; } .console .value {} .console .value.tag {color: #a71d5d; } .console .children {clear: both; padding-left: 2em; border-left: dotted 1px #ddd; display: none; } .console .open>.value {white-space: pre; overflow: visible; max-width: none; } .console .open>.children {display: block; } .console .input {line-height: 1.25; display: block; width: 100%; border: none; outline: none; height: 3em; padding: .25em 1em; resize: none; position: relative; background: rgba(255, 255, 255, .8); } </style> <div class="console"> <span class="f12">F12</span> <ul> <li> <div class="obj"> <span class="key"></span> <span class="value"></span> <div class="children"></div> </div> </li> </ul> <textarea class="input" placeholder="$"></textarea> </div> </div>')
     var ConsoleEl = find(view, 'console')
     var F12El = find(ConsoleEl, 'f12')
     var UlEl = find(ConsoleEl, 'ul')
@@ -82,15 +82,15 @@
     UlEl.innerHTML = ''
 
     // console 折叠
-    F12El.onclick = function() {
+    F12El.onclick = function () {
         toggleClass(ConsoleEl, 'closed')
     }
 
     // print
-    var printLi = function(type, objs, isDir) {
+    var printLi = function (type, objs, isDir) {
         // 判断滚动条是不是在最下方，是则打印后继续滚到最后
         if (UlEl.scrollTop + UlEl.clientHeight > UlEl.scrollHeight - 20) {
-            setTimeout(function() {
+            setTimeout(function () {
                 UlEl.scrollTop += 999
             }, 41)
         }
@@ -113,7 +113,7 @@
 
         return liEl
     }
-    var printObj = function(key, value, target, isDir) {
+    var printObj = function (key, value, target, isDir) {
         // 复制一个 obj view
         var objEl = ObjEl.cloneNode(true)
         var keyEl = find(objEl, 'key')
@@ -129,7 +129,7 @@
         addClass(valueEl, kvs.type)
 
         // 点击时遍历对象
-        keyEl.onclick = valueEl.onclick = function() {
+        keyEl.onclick = valueEl.onclick = function () {
             window.v = value
 
             // toggle children, value...
@@ -153,10 +153,13 @@
                     return
                 }
             }
+
+            // UlEl.scrollTop += 10
+            // UlEl.scrollTop -= 10
         }
     }
 
-    var printConvert = function(key, value, isDir) {
+    var printConvert = function (key, value, isDir) {
         var string = value
         var type
         if (value && !value.toString && !value.valueOf) {
@@ -226,7 +229,7 @@
     }
 
     // 执行 js
-    InputEl.onkeydown = function(event) {
+    InputEl.onkeydown = function (event) {
         var code = InputEl.value
 
         // 换行
@@ -244,7 +247,7 @@
             printLi('cmd', [code])
 
             // 选择完清空输入框，滚动
-            setTimeout(function() {
+            setTimeout(function () {
                 InputEl.value = ''
                 UlEl.scrollTop += 9999
             }, 41)
@@ -283,8 +286,8 @@
 
         // console 拦截
         for (var type in con) {
-            ! function(type) {
-                console[type] = function() {
+            ! function (type) {
+                console[type] = function () {
                     _console[type].apply(console, arguments)
                     printLi(type, arguments, type == 'dir')
                 }
@@ -292,7 +295,7 @@
         }
 
         // 捕获 js 异常
-        addEventListener('error', function(e) {
+        addEventListener('error', function (e) {
             printLi('error', converErrors([e]))
             // true 捕获阶段，能捕获 js css img 加载异常
         }, true)
@@ -301,13 +304,13 @@
         var XHR = window.XMLHttpRequest || noop
         var XHRopen = XHR.prototype.open
         var XHRsend = XHR.prototype.send
-        XHR.prototype.open = function(type, url) {
+        XHR.prototype.open = function (type, url) {
             var xhr = this
             var sendData
             var liEl
 
             var onreadystatechange = xhr.onreadystatechange
-            xhr.onreadystatechange = function(e) {
+            xhr.onreadystatechange = function (e) {
                 onreadystatechange.apply(this, arguments)
 
                 if (xhr.readyState != 4) return
@@ -316,11 +319,11 @@
                 addClass(liEl, logType)
                 liEl.innerHTML = ''
                 printObj('', {
-                    _toConsole: function() { return '[' + type + '] ' + xhr.status + ' ' + url },
+                    _toConsole: function () { return '[' + type + '] ' + xhr.status + ' ' + url },
                     data: sendData,
                     decodeData: decodeURIComponent(sendData),
                     headers: xhr.getAllResponseHeaders(),
-                    response: (function() { try { return JSON.parse(xhr.responseText) } catch (e) {} return xhr.responseText })(),
+                    response: (function () { try { return JSON.parse(xhr.responseText) } catch (e) { } return xhr.responseText })(),
                     event: e,
                     xhr: xhr
                 }, liEl)
@@ -328,11 +331,11 @@
 
             XHRopen.apply(this, arguments)
 
-            xhr.send = function(data) {
+            xhr.send = function (data) {
 
                 sendData = data
                 liEl = printLi('log', [{
-                    _toConsole: function() { return '[' + type + '] ' + '(pendding)' + ' ' + url },
+                    _toConsole: function () { return '[' + type + '] ' + '(pendding)' + ' ' + url },
                     data: data,
                     decodeData: decodeURIComponent(data),
                     response: '...',
@@ -356,10 +359,10 @@
                     return [{
                         tag: tag,
                         event: e,
-                        _toConsole: function() { return src }
+                        _toConsole: function () { return src }
                     }]
                 } else {
-                    e._toConsole = function() { return e.message }
+                    e._toConsole = function () { return e.message }
                     return [e, e.filename, e.lineno + ':' + e.colno]
                 }
             }
@@ -367,7 +370,7 @@
         }
 
         // 插入视图
-        setTimeout(function() {
+        setTimeout(function () {
             document.body.appendChild(view)
         }, 1)
 
@@ -391,7 +394,7 @@
         intercept()
     }
     // #f12 切换
-    addEventListener('hashchange', function(e) {
+    addEventListener('hashchange', function (e) {
         if (location.hash.match('#f12')) {
             intercept()
             addClass(ConsoleEl, 'show')

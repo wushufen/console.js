@@ -30,7 +30,7 @@
                                 <div class="obj">
                                     <span class="key">key</span>
                                     <span class="value">multi
-line</span>
+                                    line</span>
                                     <div class="children">
                                     </div>
                                 </div>
@@ -70,6 +70,7 @@ line</span>
         </ul>
         <textarea class="input" placeholder="$"></textarea>
     </div>
+    <!--  -->
     <div console>
         <style type="text/css">
         .console {
@@ -129,14 +130,28 @@ line</span>
             margin-bottom: -3em;
             max-height: 350px;
             overflow: auto;
-            -webkit-overflow-scrolling: touch;
+        }
+
+        /* ios 滚动异常 */
+        @media all{
+            .console ul {
+                height: 350px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .console ul:before {
+                content:"";
+                width: 1px;
+                float: left;
+                height: calc(100% + 1px);
+                margin-left: -1px;
+            }
         }
 
         .console ul li {
             padding: .5em;
             border-bottom: solid 1px #f7f7f7;
             overflow: auto;
-            -webkit-overflow-scrolling: touch;
+            x-webkit-overflow-scrolling: touch;
         }
 
         .console ul li>.obj {
@@ -195,12 +210,6 @@ line</span>
         }
 
         .console .value {
-            /*float: left;*/
-            /*display: inline-block;*/
-            vertical-align: top;
-            max-width: 30em;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .console .value.tag {

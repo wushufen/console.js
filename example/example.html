@@ -129,9 +129,9 @@
     </div>
     <script>
     function show(fn) {
-        var i = show.i || 1
-        show.i = i + 1
-        setTimeout(fn, i * 1000 + 1000)
+        show.i = show.i || 0
+        show.i += 1
+        setTimeout(fn, show.i * 250)
     }
 
     show(function() {
@@ -179,6 +179,9 @@
     show(function() {
         console.log(document)
     })
+    // show(function() {
+    //     console.log(1)
+    // })
     </script>
 </body>
 
