@@ -311,7 +311,7 @@
 
             var onreadystatechange = xhr.onreadystatechange
             xhr.onreadystatechange = function (e) {
-                onreadystatechange.apply(this, arguments)
+                onreadystatechange && onreadystatechange.apply(this, arguments)
 
                 if (xhr.readyState != 4) return
 
