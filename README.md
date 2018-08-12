@@ -20,7 +20,7 @@ url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
 
 ## 加载器
 [console.loader.js](https://wusfen.github.io/console.js/dist/console.loader.js) 
-是个积体很小的文件 ，```#f12``` 时才会自动去加载 ```console.js```  
+这不是必须的，但它积体会小很多，```#f12``` 时才会自动去加载 ```console.js```  
 
 ```html
 <!-- 把两个文件放在同一目录 -->
