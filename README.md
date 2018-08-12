@@ -7,7 +7,7 @@
 <script src="path/to/console.js"></script>
 ```
 
-2. url加上 `#f12` 开启
+2. 需要调试时，在`url`上加上`#f12`即可开启
 ```css
 http://domain.com/usage.html#f12
 ```
