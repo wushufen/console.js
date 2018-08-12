@@ -1,5 +1,5 @@
 # console.js
-移动端浏览器webview调试
+移动端浏览器webview调试控制台
 
 ## 用法
 1. 引入 [console.js](https://wusfen.github.io/console.js/dist/console.js)  
