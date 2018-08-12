@@ -1,12 +1,12 @@
 # console.js
 
-#### usage.html ####
-[console.js](https://wusfen.github.io/console.js/dist/console.js)  
+## 用法
+1. 引入 [console.js](https://wusfen.github.io/console.js/dist/console.js)  
 ```html
 <script src="path/to/console.js"></script>
 ```
 
-#### #f12 开启 ####
+2. url加上 `#f12` 开启
 ```css
 http://domain.com/usage.html#f12
 ```
@@ -18,14 +18,16 @@ url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
  ```
 
 #### 加载器 ####
-[console.loader.js](https://wusfen.github.io/console.js/dist/console.loader.js)  
-```console.loader.js``` 是个积体很小的文件 ，```#f12``` 时才会自动去加载 ```console.js```  
+[console.loader.js](https://wusfen.github.io/console.js/dist/console.loader.js) 
+是个积体很小的文件 ，```#f12``` 时才会自动去加载 ```console.js```  
 
 ```html
 <!-- 把两个文件放在同一目录 -->
 <script src="path/to/console.loader.js"></script>
-
-<!-- 或者 console属性 指定 console.js 的路径 -->
+```
+或者
+```html
+<!-- console属性 指定 console.js 的路径 -->
 <script src="path/to/console.loader.js" console="path/to/console.js"></script>
 ```
 
