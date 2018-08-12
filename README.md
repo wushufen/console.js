@@ -1,6 +1,7 @@
 # console.js
 
 #### usage.html ####
+[console.js](https://wusfen.github.io/console.js/dist/console.js)  
 ```html
 <script src="path/to/console.js"></script>
 ```
@@ -17,6 +18,7 @@ url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
  ```
 
 #### 加载器 ####
+[console.loader.js](https://wusfen.github.io/console.js/dist/console.loader.js)  
 ```console.loader.js``` 是个积体很小的文件 ，```#f12``` 时才会自动去加载 ```console.js```  
 
 ```html
