@@ -1,4 +1,5 @@
 # console.js
+移动端浏览器webview调试
 
 ## 用法
 1. 引入 [console.js](https://wusfen.github.io/console.js/dist/console.js)  
@@ -11,13 +12,13 @@
 http://domain.com/usage.html#f12
 ```
 
-#### 注意 ####
+## 注意
 hash路由可用以下代替
 ```javascript
 url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
  ```
 
-#### 加载器 ####
+## 加载器
 [console.loader.js](https://wusfen.github.io/console.js/dist/console.loader.js) 
 是个积体很小的文件 ，```#f12``` 时才会自动去加载 ```console.js```  
 
@@ -31,6 +32,6 @@ url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
 <script src="path/to/console.loader.js" console="path/to/console.js"></script>
 ```
 
-#### 演示 ####
+## 演示
 https://wusfen.github.io/console.js/example/example.html  
 ![console](example/example.png)  
