@@ -6,11 +6,17 @@
 ```html
 <script src="path/to/console.js"></script>
 ```
-
 2. 需要调试时，在`url`上加上`#f12`即可开启
 ```css
 http://domain.com/usage.html#f12
 ```
+3. OK完成，就是这么简单
+
+
+## 演示
+https://wusfen.github.io/console.js/example/example.html  
+![console](example/example.png)  
+
 
 ## 注意
 hash路由可用以下代替
@@ -32,6 +38,3 @@ url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
 <script src="path/to/console.loader.js" console="path/to/console.js"></script>
 ```
 
-## 演示
-https://wusfen.github.io/console.js/example/example.html  
-![console](example/example.png)  
