@@ -4,7 +4,7 @@
 ## 用法
 1. 引入 [console.js](https://wusfen.github.io/console.js/dist/console.js)  
 ```html
-<script src="path/to/console.js"></script>
+<script src="https://wusfen.github.io/console.js/dist/console.js"></script>
 ```
 2. 需要调试时，在`url`上加上`#f12`即可开启
 ```css
