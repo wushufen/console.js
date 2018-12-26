@@ -131,6 +131,7 @@
 
         // 点击时遍历对象
         keyEl.onclick = valueEl.onclick = function () {
+            InputEl.value = value
             window.v = value
 
             // toggle children, value...
@@ -234,7 +235,10 @@
         if (!code) return
 
         // 打印输入
-        printLi('cmd', [code])
+        var cmdLi = printLi('cmd', [code])
+        cmdLi.onclick = function () {
+            InputEl.value = code
+        }
 
         // 执行
         code = code.match(/^\s*{/) ? '(' + code + ')' : code; // ({})
