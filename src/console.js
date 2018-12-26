@@ -87,12 +87,9 @@
 
     // print
     var printLi = function (type, objs, isDir) {
-        // 判断滚动条是不是在最下方，是则打印后继续滚到最后
-        if (UlEl.scrollTop + UlEl.clientHeight > UlEl.scrollHeight - 20) {
-            setTimeout(function () {
-                UlEl.scrollTop += 999
-            }, 41)
-        }
+        // 判断滚动条是不是在最下方
+        var isEnd = UlEl.scrollTop + UlEl.clientHeight > UlEl.scrollHeight - 40
+        // document.title = UlEl.scrollTop + 't ' + UlEl.clientHeight + 'h ' + UlEl.scrollHeight + 'H ' + isEnd
 
         // 复制一个 li 
         var liEl = LiEl.cloneNode(true)
@@ -108,6 +105,11 @@
         // 限制打印列表长度
         if (UlEl.children.length > 500) {
             UlEl.removeChild(UlEl.children[0])
+        }
+
+        // 滚到最后
+        if (isEnd) {
+            UlEl.scrollTop += 9999
         }
 
         return liEl
@@ -243,7 +245,6 @@
 
         // 清空输入框，滚动
         InputEl.value = ''
-        UlEl.scrollTop += 9999
     }
 
     // 执行 js
