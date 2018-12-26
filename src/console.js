@@ -227,6 +227,25 @@
         }
     }
 
+    function run() {
+        var code = InputEl.value
+        if (!code) return
+
+        // 打印输入
+        printLi('cmd', [code])
+
+        // 执行
+        code = code.match(/^\s*{/) ? '(' + code + ')' : code; // ({})
+        var rs = window.eval(code)
+
+        // 打印结果
+        console.log(rs)
+
+        // 清空输入框，滚动
+        InputEl.value = ''
+        UlEl.scrollTop += 9999
+    }
+
     // 执行 js
     InputEl.onkeydown = function (event) {
         var code = InputEl.value
@@ -242,22 +261,13 @@
         }
         // 打印与执行
         if (event.keyCode == 13) {
-            // 打印输入
-            printLi('cmd', [code])
-
-            // 选择完清空输入框，滚动
-            setTimeout(function () {
-                InputEl.value = ''
-                UlEl.scrollTop += 9999
-            }, 41)
-
-            // 执行
-            code = code.match(/^\s*{/) ? '(' + code + ')' : code; // ({})
-            var rs = window.eval(code)
-            // 打印结果
-            console.log(rs)
+            run()
             return false
         }
+    }
+
+    InputEl.onblur = function (event) {
+        run()
     }
 
     // console 拦截
