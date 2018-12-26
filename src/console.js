@@ -131,7 +131,6 @@
 
         // 点击时遍历对象
         keyEl.onclick = valueEl.onclick = function () {
-            InputEl.value = value
             window.v = value
 
             // toggle children, value...
