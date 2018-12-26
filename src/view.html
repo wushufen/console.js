@@ -30,6 +30,7 @@
                 margin-right: auto;
                 text-align: left;
                 display: none;
+                -webkit-overflow-scrolling: touch;
             }
             @media all and (min-width:768px) {
                 console ::-webkit-scrollbar {
@@ -104,25 +105,10 @@
                 background: rgba(255, 255, 255, .8);
             }
 
-            /* ios 滚动异常 */
-            @media all{
-                console ul {
-                    -webkit-overflow-scrolling: touch;
-                }
-                console ul:before {
-                    content:"";
-                    float: left;
-                    height: calc(100% + 1px);
-                    width: 1px;
-                    margin-left: -1px;
-                }
-            }
-
             console ul li {
                 padding: .5em;
                 border-bottom: solid 1px #f7f7f7;
                 overflow: auto;
-                -webkit-overflow-scrolling: touch;
             }
 
             console ul li>.obj {
@@ -175,8 +161,6 @@
             }
 
             console .key {
-                /*float: left;*/
-                /*margin-right: 1ex;*/
                 color: #a71d5d;
             }
 
