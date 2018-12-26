@@ -21,7 +21,7 @@ https://wusfen.github.io/console.js/example/example.html
 ## 注意
 hash路由可用以下代替
 ```javascript
-url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
+url#/route#f12    url?f12    url?k=v&f12
  ```
 
 ## 加载器

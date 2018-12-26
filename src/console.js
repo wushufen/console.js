@@ -4,7 +4,7 @@
  * #f12 开启 Console控制台
  *
  * hash路由可用以下代替
- * url#/page#f12    url##f12    url#/#f12    url?f12    url?k=v&f12
+ * url#/route#f12    url?f12    url?k=v&f12
  */
 !(function () {
 
