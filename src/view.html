@@ -49,6 +49,20 @@
               }
             }
 
+            /* fix: ios 无法滚动及滚动内容异常 */
+            @media all {
+              console ul {
+                -webkit-overflow-scrolling: touch;
+              }
+              console ul:before {
+                content: "";
+                float: left;
+                height: calc(100% + 1px);
+                width: 1px;
+                margin-left: -1px;
+              }
+            }
+
             console * {
                 font: inherit;
                 box-sizing: border-box;
