@@ -106,7 +106,7 @@
         }
 
         // 限制打印列表长度
-        if (UlEl.children.length > 100) {
+        if (UlEl.children.length > 500) {
             UlEl.removeChild(UlEl.children[0])
         }
 
