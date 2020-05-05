@@ -15,7 +15,7 @@ http://domain.com/usage.html#f12
 
 ## 演示
 https://wusfen.github.io/console.js/example/example.html  
-![console](example/example.png)  
+![console](https://wusfen.github.io/console.js/example/example.png)  
 
 
 ## 注意
