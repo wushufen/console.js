@@ -82,7 +82,8 @@
         left: 0;
         right: 0;
         bottom: -1px;
-        max-height: 0;
+        height: 0;
+        max-height: calc(100vh - 30px);
         max-width: 768px;
         margin-left: auto;
         margin-right: auto;
@@ -91,7 +92,7 @@
         line-height: 1.5;
         background: rgba(255, 255, 255, .98);
         box-shadow: rgba(0, 0, 0, 0.2) 0px 0 15px 0;
-        transition: .375s;
+        transition: .45s;
         text-align: left;
         cursor: default;
         -webkit-overflow-scrolling: touch;
@@ -101,15 +102,14 @@
         display: block;
       }
       console.open {
-        max-height: 355px;
-        max-height: calc(100vh - 30px);
+        height: 412px;
       }
       @media all and (min-width:768px) {
         console ::-webkit-scrollbar {
           width: 6px;
           height: 10px;
         }
-          console ::-webkit-scrollbar-thumb {
+        console ::-webkit-scrollbar-thumb {
           border-radius: 9px;
           border: 1px solid transparent;
           box-shadow: 0 0 0 5px rgba(0, 0, 0, .1) inset;
@@ -144,12 +144,11 @@
         border: solid 1px #eee;
         border-bottom: 0;
         border-radius: 5px 5px 0 0;
-        background: rgba(255, 255, 255, .98);
+        background: rgba(255, 255, 255, .8);
         box-shadow: rgba(0, 0, 0, 0.1) 4px -4px 10px -4px;
         color: #555;
         letter-spacing: -1px;
         cursor: pointer;
-        opacity: .8;
       }
       console .words{
         position: absolute;
@@ -171,8 +170,7 @@
         padding: .375em .25em;
       }
       console ul {
-        height: 355px;
-        max-height: calc(100vh - 30px - 36px);
+        height: 100%;
         padding: 0;
         padding-top: 28px;
         padding-bottom: 3em;
