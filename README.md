@@ -21,7 +21,7 @@ console.show = 2 // 显示并展开
 
 
 ## 演示
-https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.2/example/example.html  
+https://wusfen.github.io/console.js/example/example.html
 <!-- ![console](https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.2/example/example.png)   -->
 ![console](https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.2/example/console.js.png)  
 
