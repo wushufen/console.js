@@ -748,12 +748,16 @@
     }
   })
   // console.show = true || 1 || 2
+  var consoleShowValue = undefined
   Object.defineProperty(console, 'show', {
+    configurable: true,
     set(value){
+      consoleShowValue = value
       if (value) {
         intercept()
         setTimeout(function(){
           addClass(ConsoleEl, 'show')
+          removeClass(ConsoleEl, 'open')
         })
       }
       if (value == 2) {
@@ -761,6 +765,13 @@
           addClass(ConsoleEl, 'open')
         }, 100)
       }
+      if (!value) {
+        removeClass(ConsoleEl, 'show')
+        removeClass(ConsoleEl, 'open')
+      }
+    },
+    get(){
+      return consoleShowValue
     }
   })
 

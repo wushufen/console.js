@@ -31,3 +31,21 @@ hash路由可用以下代替
 ```javascript
 url#/route#f12    url?f12    url?k=v&f12
  ```
+
+## 动态引入
+1. 同步方式
+```javascript
+!function(){
+  document.write('<script src=https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.2/dist/console.js><\/script>')
+  document.write('<script> console.show=2 <\/script>')
+}()
+```
+2. 异步方式
+```javascript
+!function(){
+  var s=document.createElement('script')
+  s.src = 'https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.2/dist/console.js'
+  s.onload = function(){ console.show = 2 }
+  document.body.appendChild(s)
+}()
+```
