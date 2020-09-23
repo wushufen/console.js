@@ -1,5 +1,101 @@
 {
+  "scripts": {
+    "gulp": "npx gulp",
+    "gulp:watch": "npx gulp watch",
+    "webpack": "npx webpack",
+    "babel": "npx babel ./src --out-dir ./dist"
+  },
   "devDependencies": {
-    "gulp-util": "^3.0.8"
-  }
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "babel-preset-minify": "^0.5.1",
+    "eslint": "^7.9.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-uglify": "^3.0.2",
+    "html-webpack-plugin": "^4.5.0",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
+  },
+  "babel": {
+    "presets": [
+      [
+        "minify",
+        {
+          "keepFnName": true
+        }
+      ],
+      [
+        "@babel/preset-env"
+      ]
+    ]
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true,
+      "browser": true,
+      "es6": true
+    },
+    "extends": [
+      "eslint:recommended"
+    ],
+    "rules": {
+      "no-empty": [
+        1,
+        {
+          "allowEmptyCatch": true
+        }
+      ],
+      "no-unused-vars": [
+        1,
+        {
+          "vars": "all",
+          "args": "none",
+          "ignoreRestSiblings": true,
+          "argsIgnorePattern": "^_|e"
+        }
+      ],
+      "vue/no-unused-components": 1,
+      "space-before-function-paren": 0,
+      "no-console": 0,
+      "vue/max-attributes-per-line": 0,
+      "vue/html-self-closing": [
+        1,
+        {
+          "html": {
+            "void": "always",
+            "normal": "never",
+            "component": "any"
+          },
+          "svg": "never",
+          "math": "never"
+        }
+      ]
+    },
+    "globals": {
+      "wx": true
+    },
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "overrides": [
+      {
+        "files": [
+          "**/__tests__/*.{j,t}s?(x)",
+          "**/tests/unit/**/*.spec.{j,t}s?(x)"
+        ],
+        "env": {
+          "jest": true
+        }
+      }
+    ]
+  },
+  "browserslist": [
+    "last 1 chrome versions",
+    "> 0.01%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

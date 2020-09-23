@@ -1,26 +1,28 @@
-var gulp = require('gulp')
-var gutil = require('gulp-util')
+const { watch, src, dest } = require('gulp')
+const babel = require('gulp-babel')
+const uglify = require('gulp-uglify')
 
-gulp.task('default')
-setTimeout(function() {
-    gulp.run('js')
-}, 1)
+var tasks = {
+  js(){
+    return src('src/*.js')
+    .pipe(babel({
+      "presets": ["@babel/preset-env"]
+    }))
+    .pipe(uglify({
+      output: {
+        comments: 'some'
+      }
+    }))
+    .pipe(dest('dist/'))
+  },
+  css(){},
+  watch(){
+    watch('src/*.js', tasks.js)
+  },
+  default(){
+    return tasks.js()
+  },
+}
 
-
-gulp.task('js', function() {
-    var rename = require('gulp-rename')
-    var uglify = require('gulp-uglify')
-
-    gulp.src('src/**.js')
-        .pipe(uglify({
-            output: {
-                comments: 'some'
-            }
-        }))
-        .on('error', function(err) {
-            gutil.log(gutil.colors.red('[Error]'), err.toString())
-        })
-        // .pipe(rename({ extname: '.min.js' }))
-        .pipe(gulp.dest('./dist'))
-
-})
+exports.watch = tasks.watch
+exports.default = tasks.default
