@@ -162,6 +162,7 @@
         overflow: auto;
         border-bottom: solid 1px rgba(230, 230, 230, 0.38);
         background: rgba(243, 250, 255, 0.5);
+        -webkit-backdrop-filter: blur(1px);
         backdrop-filter: blur(1px);
         text-shadow: 1px 1px 5px #fff;
       }
@@ -192,6 +193,7 @@
         position: relative;
         background: rgba(255, 255, 255, .5);
         -webkit-backdrop-filter: blur(1px);
+        backdrop-filter: blur(1px);
       }
       console ul li {
         padding: .375em .5em;
