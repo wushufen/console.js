@@ -7,7 +7,7 @@
  * url#/route#f12    url?f12    url?k=v&f12
  */
 
-!(function () {
+!(function (window) {
   var noop = function () { }
 
   var extend = function (obj, _obj) {
@@ -21,12 +21,15 @@
     var arr = []
     var length = arrayLike.length
     while (length--) {
-      arr[length] = arrayLike[length];
+      arr[length] = arrayLike[length]
     }
     return arr
   }
 
   var typeOf = function (obj) {
+    if (obj instanceof Element) {
+      return 'element'
+    }
     return Object.prototype.toString.call(obj).slice(8, -1).toLowerCase()
   }
 
@@ -102,7 +105,7 @@
         display: block;
       }
       console.open {
-        height: 412px;
+        height: 400px;
       }
       @media all and (min-width:768px) {
         console ::-webkit-scrollbar {
@@ -151,14 +154,16 @@
         cursor: pointer;
       }
       console .words{
+        display: flex;
         position: absolute;
         z-index: 1;
         top: 0;
         left: 0;
         right: 0;
-        padding: 0 .75em;
+        padding: 0 .5em;
         white-space: nowrap;
         overflow: auto;
+        border-top: solid 1px rgba(230, 230, 230, 0.0);
         border-bottom: solid 1px rgba(230, 230, 230, 0.38);
         background: rgba(243, 250, 255, 0.5);
         -webkit-backdrop-filter: blur(1px);
@@ -166,13 +171,12 @@
         text-shadow: 1px 1px 5px #fff;
       }
       console .words>*{
-        display: inline-block;
-        padding: .375em .25em;
+        padding: .25em .5em;
       }
       console ul {
         height: 100%;
         padding: 0;
-        padding-top: 28px;
+        padding-top: 26px;
         padding-bottom: 3em;
         margin: 0;
         margin-bottom: -3em;
@@ -194,16 +198,21 @@
         backdrop-filter: blur(1px);
       }
       console ul li {
-        padding: .375em .5em;
+        display: flex;
+        padding: .25em .5em;
         border-bottom: solid 1px rgba(230, 230, 230, 0.38);
         border-top: solid 1px #fff;
         overflow: auto;
         white-space: nowrap;
+        color: #333;
       }
       console ul li>.obj {
         display: inline-block;
         vertical-align: top;
         padding: 0 .5em;
+      }
+      console ul li>.obj:last-child {
+        flex: 1;
       }
       console .log {
         color: #555;
@@ -235,23 +244,27 @@
       console .obj {
         white-space: nowrap;
       }
-      console .obj:after {
-        content: "";
-        display: table;
-        clear: both;
-      }
       console .key {
         color: #a71d5d;
       }
       console .value {}
-      console .value.tag {
+      console .log .htmldocument>.value {
         color: #a71d5d;
       }
-      console .value.tag:after {
+      console .log .htmldocument>.value:after {
         content: ' ⇿';
       }
-      console .open>.value.tag:after {
-        content: '';
+      console .log .htmldocument.open>.value:after {
+        visibility: hidden;
+      }
+      console .log .element>.value {
+        color: #a71d5d;
+      }
+      console .log .element>.value:after {
+        content: ' ⇿';
+      }
+      console .log .element.open>.value:after {
+        visibility: hidden;
       }
       console .children {
         clear: both;
@@ -259,12 +272,13 @@
         border-left: dotted 1px #ddd;
         display: none;
       }
-      console .open>.value {
+      console .obj .obj.open>.value {
         display: inline-block;
         vertical-align: top;
-        white-space: pre;
-        overflow: visible;
-        max-width: none;
+        max-width: 100vw;
+        white-space: pre-wrap;
+        word-break: break-word;
+        padding-right: 2em;
       }
       console .open>.children {
         display: block;
@@ -280,11 +294,11 @@
       <span>document.cookie</span>
       <span>window</span>
       <span>screen</span>
-      <span>devicePixelRatio</span>
       <span>navigator</span>
       <span>history</span>
       <span>performance</span>
-      <span>temp1</span>
+      <span>getComputedStyle($0)</span>
+      <span>dir(temp1)</span>
       <a href="https://github.com/wusfen/console.js" target="_blank">
         <svg style="height: 1em;width:1em;vertical-align:middle" viewBox="0 0 16 16" version="1.1" aria-hidden="true">
           <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
@@ -313,78 +327,94 @@
 
   UlEl.innerHTML = ''
 
-  // console 折叠
+  // console toggle
   F12El.onclick = function () {
     toggleClass(ConsoleEl, 'open')
   }
 
   // print
-  var printLi = function (type, objs, isDir) {
-    // 判断滚动条是不是在最下方
+  var printLi = function (type, objs) {
+    // is scroll end
     var isEnd = UlEl.scrollTop + UlEl.clientHeight > UlEl.scrollHeight - 40
-    // document.title = UlEl.scrollTop + 't ' + UlEl.clientHeight + 'h ' + UlEl.scrollHeight + 'H ' + isEnd
 
-    // 复制一个 li 
+    // clone li 
     var liEl = LiEl.cloneNode(true)
     addClass(liEl, type)
     liEl.innerHTML = ''
     UlEl.appendChild(liEl)
 
-    // 打印 log(a,b,c) 多个参数
+    // log(a,b,...c)
     for (var i = 0; i < objs.length; i++) {
-      printObj('', objs[i], liEl, isDir)
+      printObj('', objs[i], liEl, type)
     }
 
-    // 限制打印列表长度
+    // li max
     if (UlEl.children.length > 500) {
       UlEl.removeChild(UlEl.children[0])
     }
 
-    // 滚到最后
+    // scroll
     if (isEnd) {
       UlEl.scrollTop += 9999
     }
 
     return liEl
   }
-  var printObj = function (key, value, target, isDir) {
-    // 复制一个 obj view
+
+  // li>.obj
+  var printObj = function (key, value, target, type) {
+    // clone objEl
     var objEl = ObjEl.cloneNode(true)
     var keyEl = find(objEl, 'key')
     var valueEl = find(objEl, 'value')
     var childrenEl = find(objEl, 'children')
     target.appendChild(objEl)
 
-    // value print convert
-    var kvs = printConvert(key, value, isDir)
-    keyEl.innerText = kvs.key
-    valueEl.innerHTML = escapeTag(kvs.string)
-    value = kvs.value
-    addClass(valueEl, kvs.type)
+    // key
+    keyEl.innerText = key
 
-    // 点击时遍历对象
-    keyEl.onclick = valueEl.onclick = function () {
-      // toggle children, value...
+    // value
+    valueEl.innerHTML = escapeTag(toString(value))
+    addClass(objEl, typeOf(value))
+
+    // chidren
+    objEl.onclick = valueEl.onclick = function (e) {
+      // toggle
       toggleClass(objEl, 'open')
 
+      // stop
+      e.stopPropagation()
       if (typeof value != 'object') return
-      window.v = value
-      window.temp1 = value
 
-      // 是否已经打印过了
-      if (valueEl._printed) {
-        return
+      // tem1
+      for (var $i = 10; $i >= 0; $i--) {
+        window['temp' + $i] = window['temp' + ($i - 1)]
+        window['$' + $i] = window['$' + ($i - 1)]
       }
+      window.temp1 = value
+      window.$0 = value
+      window.v = value
+
+      // _printed?
+      if (valueEl._printed) return
       valueEl._printed = true
 
-      var isArray = typeOf(value) == 'array'
+      // childNodes
+      if (value && value.childNodes && type !== 'dir') {
+        var childNodes = toArray(value.childNodes)
+        for (var i = 0; i < childNodes.length; i++) {
+          var childNode = childNodes[i]
+          printObj('', childNode, childrenEl)
+        }
+        return
+      }
 
-      // 打印 children
-      for (var i in value) {
-        printObj(i, value[i], childrenEl, isDir)
-        // 过长
-        if (isArray && i > 500) {
-          printObj('...', '', childrenEl, isDir)
+      // keys
+      for (var k in value) {
+        printObj(k, value[k], childrenEl)
+        // max
+        if (typeOf(value) == 'array' && k > 500) {
+          printObj('...', '', childrenEl)
           return
         }
       }
@@ -392,75 +422,79 @@
     }
   }
 
-  var printConvert = function (key, value, isDir) {
-    var string = value
-    var type = typeOf(value)
-    if (value && !value.toString && !value.valueOf) {
-      string = '{...}'
+  // value show
+  function toString(value) {
+    // !
+    if (!value) {
+      return value + ''
     }
 
-    if (!isDir) {
-
-      // node
-      if (value && value.nodeType) {
-        var node = value
-        var nodeType = node.nodeType
-
-        // doctype
-        if (nodeType == 10) {
-          string = '<!DOCTYPE html>'
-        }
-        // tag
-        else if (nodeType == 1) {
-          var tag = node.cloneNode().outerHTML
-          var tag_lr = tag.split('></')
-          var tagl = tag_lr[0] + (tag_lr[1] ? '>' : '') // ?有无闭合标签
-          var tagr = '</' + tag_lr[1]
-          string = tagl
-          type = 'tag'
-        }
-        // text
-        else if (nodeType == 3) {
-          string = node.nodeValue
-        }
-        // #document
-        else if (nodeType == 9) {
-          string = node.nodeName
-          type = 'tag'
-        }
-        // commemt
-        else if (nodeType == 8) {
-          string = '<!--' + node.nodeValue + '-->'
-        }
-
-        // childNodes
-        value = toArray(node.childNodes)
-        if (!isNaN(key)) {
-          key = ''
-        }
-      }
-
-      // array
-      else if (typeOf(value) == 'array') {
-        string = '(' + value.length + ')[' + value + ']'
-      }
-
-      // __string__
-      else if (value && value.__string__) {
-        string = value.__string__
-        delete value.__string__
-      }
-
+    // __string__
+    if (value && value.__string__) {
+      var __string__ = value.__string__
+      delete value.__string__
+      return __string__
     }
 
-    return {
-      key: key,
-      value: value,
-      string: string + '',
-      type: type
+    // object
+    if (typeOf(value) == 'object') {
+      var k0 = Object.keys(value)[0]
+      var v0 = value[k0]
+      return `${value}{${k0}:${v0} ...}`.replace(/^\[object /, '[')
     }
+
+    // ErrorEvent
+    if (value.message) {
+      return value.message
+    }
+
+    // event.type:error
+    if (value.type === 'error') {
+      return `[error] ${toString(value.target)}`
+    }
+
+    // array
+    if (value instanceof Array) {
+      return '(' + value.length + ')[' + value + ']'
+    }
+
+    // node
+    var node = value || ''
+    var nodeType = node.nodeType
+
+    // #document
+    if (nodeType == 9) {
+      return node.nodeName
+    }
+
+    // doctype
+    if (nodeType == 10) {
+      return '<!DOCTYPE html>'
+    }
+
+    // tag
+    if (nodeType == 1) {
+      var tag = node.cloneNode().outerHTML
+      var tag_lr = tag.split('></')
+      var tagl = tag_lr[0] + (tag_lr[1] ? '>' : '') // ?selfClose
+      // var tagr = '</' + tag_lr[1]
+      return tagl
+    }
+
+    // text
+    if (nodeType == 3) {
+      return node.nodeValue
+    }
+
+    // commemt
+    if (nodeType == 8) {
+      return '<!--' + node.nodeValue + '-->'
+    }
+
+    return value + ''
   }
 
+  // run code
   function run() {
     var code = InputEl.value
     if (!code) return
@@ -470,48 +504,47 @@
       return
     }
 
-    // 打印输入
+    // print input
     var cmdLi = printLi('cmd', [code])
-    cmdLi.onclick = function () {
-      InputEl.value = code
-    }
+    // input again
+    cmdLi.code = code
+    cmdLi.addEventListener('click', function () {
+      InputEl.value = cmdLi.code
+    }, true)
 
-    // 滚到最后
+    // scroll
     setTimeout(function () {
       UlEl.scrollTop += 9999
     })
 
-    // 执行
-    code = code.match(/^\s*{/) ? '(' + code + ')' : code; // ({})
+    // exec, print
+    code = /^\s*{/.test(code) ? '(' + code + ')' : code // ({})
+    code = /^await/.test(code) ? `(async()=>{console.log(${code})})()` : code // await 1
+    code = `with(console){${code}}` // dir
     var rs = window.eval(code)
-
-    // 打印结果
-    console.log(rs)
-
-    // 清空输入框，滚动
     InputEl.value = ''
+    console.log(rs)
   }
 
-  // 执行 js
+  // input code
   InputEl.onkeydown = function (event) {
     var code = InputEl.value
 
-    // 换行
+    // br
     if (event.keyCode == 13 && code.match(/[[{(,;]$/)) {
       return
     }
-    // 清空
+    // clear
     if (event.keyCode == 13 && code === '') {
       UlEl.innerHTML = '';
       return false;
     }
-    // 打印与执行
+    // run
     if (event.keyCode == 13) {
       run()
       return false
     }
   }
-
   InputEl.onblur = function (event) {
     run()
   }
@@ -525,50 +558,44 @@
     run()
   }
 
-  // console 拦截
+  // intercept: console, error, xhr, fetch
   function intercept() {
-    if (intercept.bool) {
-      return
-    }
+    if (intercept.bool) return
     intercept.bool = true
 
-    // _console 副本
+    // _console
     var con = {
       log: noop,
       info: noop,
       warn: noop,
       error: noop,
-      dir: noop
+      dir: noop,
+      table: noop
     }
     window.console = window.console || con
-    // console.loader.js 还原
-    if (console._back) {
-      console._back()
-      delete console._back
-    }
     var _console = extend({}, window.console)
 
-    // console 拦截
+    // intercept console
     for (var type in con) {
       ! function (type) {
         console[type] = function (arg) {
           _console[type].apply(console, arguments)
-          printLi(type, arguments, type == 'dir')
+          printLi(type, arguments)
         }
       }(type)
     }
 
-    // 捕获 js 异常
+    // intercept error
     addEventListener('error', function (e) {
-      printLi('error', converErrors([e]))
-      // true 捕获阶段，能捕获 js css img 加载异常
+      printLi('error', [e])
+      // true catch (js, css, img) error
     }, true)
 
-    // ajax 拦截
+    // intercept xhr
     var XHR = window.XMLHttpRequest || noop
     var XHRopen = XHR.prototype.open
     var XHRsend = XHR.prototype.send
-    XHR.prototype.open = function (type, url) {
+    XHR.prototype.open = function (method, url) {
       var xhr = this
       var sendData
       var liEl
@@ -579,15 +606,15 @@
         onreadystatechange && onreadystatechange.apply(xhr, arguments)
         if (xhr.readyState != 4) return
 
-        var logType = /^(2..|3..)$/.test(xhr.status) ? 'info' : 'error'
         var endTime = new Date
         var time = endTime - startTime
+        var status = xhr.status
+        var logType = /^(2..|3..)$/.test(status) ? 'info' : 'error'
 
-        addClass(liEl, logType)
         liEl.innerHTML = ''
-
+        addClass(liEl, logType)
         printObj('', {
-          __string__: '[' + type + '] (' + xhr.status + ') ' + (time + 'ms') + ' ' + url,
+          __string__: `[${method}] (${status}) ${time}ms ${url}`,
           data: sendData,
           dataParsed: function () {
             try {
@@ -613,7 +640,7 @@
 
         sendData = data
         liEl = printLi('info', [{
-          __string__: '[' + type + '] ' + '(pending)' + ' ' + url,
+          __string__: `[${method}] (pending) ${url}`,
           data: data,
           dataParsed: function () {
             try {
@@ -629,7 +656,7 @@
       }
     }
 
-    // fetch 拦截
+    // intercept fetch
     var _fetch = window.fetch
     if (_fetch) {
       window.fetch = function () {
@@ -639,7 +666,7 @@
         var startTime = new Date
 
         var liEl = printLi('info', [{
-          __string__: '[' + method + '] ' + '(pending)' + ' ' + url,
+          __string__: `[${method}] (pending) ${url}`,
           RequestInit: options,
           Response: 'pending'
         }])
@@ -649,20 +676,21 @@
           .then(function (res) {
             var endTime = new Date
             var time = endTime - startTime
-            var logType = /^(2..|3..)$/.test(res.status) ? 'info' : 'error'
-            addClass(liEl, logType)
+            var status = res.status
+            var logType = /^(2..|3..)$/.test(status) ? 'info' : 'error'
 
             res.clone().text().then(function (text) {
               liEl.innerHTML = ''
+              addClass(liEl, logType)
               printObj('', {
-                __string__: '[' + method + '] (' + res.status + ') ' + (time + 'ms') + ' ' + url,
+                __string__: `[${method}] (${status}) ${time}ms ${url}`,
                 RequestInit: options,
                 Response: res,
-                ResponseHeaders: function(){
+                ResponseHeaders: function () {
                   var keys = res.headers.keys()
                   var next
                   var obj = {}
-                  while((next = keys.next()), !next.done){
+                  while ((next = keys.next()), !next.done) {
                     obj[next.value] = res.headers.get(next.value)
                   }
                   return obj
@@ -681,7 +709,7 @@
             addClass(liEl, 'error')
             liEl.innerHTML = ''
             printObj('', {
-              __string__: '[' + method + '] (Failed) ' + url,
+              __string__: `[${method}] (Failed) ${url}`,
               RequestInit: options,
               Response: e.message,
             }, liEl)
@@ -693,75 +721,32 @@
       }
     }
 
-    function converErrors(arr) {
-      if (arr.length == 1) {
-        var e = arr[0]
-        var target = e.target
-        var src = target.src || target.href
-        if (src) {
-          var tag = e.target.outerHTML
-          src = decodeURIComponent(src)
-          return [{
-            tag: tag,
-            event: e,
-            __string__: src
-          }]
-        } else {
-          e.__string__ = e.message
-          return [e]
-        }
-      }
-      return arr
-    }
+    // temp
+    window.temp1 = document
+    window.$0 = document.body
 
-    // 插入视图
+    // insert ConsoleEl
     setTimeout(function () {
-      document.body.appendChild(ConsoleEl)
+      document.documentElement.appendChild(ConsoleEl)
     }, 1)
 
-    // 打印 loader 的 logs ======================
-    var _logs = console._logs || []
-    for (var i = 0; i < _logs.length; i++) {
-      var _log = _logs[i]
-      printLi(_log.type, _log.type == 'error' ? converErrors(_log.arr) : _log.arr)
-    }
-    delete console._logs
   }
 
-  // 手机预先拦截，以接管 console
-  if (navigator.userAgent.match(/mobile/i)) {
-    intercept()
-  }
-  // pc端为了不影响 console 的代码定位，#f12 才拦截
-  // #f12 显示， pc端拦截
-  if (location.href.match(/[?&#]f12/)) {
-    intercept()
-    addClass(ConsoleEl, 'show')
-  }
-  // #f12 切换
-  addEventListener('hashchange', function (e) {
-    if (location.hash.match('#f12')) {
-      intercept()
-      addClass(ConsoleEl, 'show')
-    } else {
-      removeClass(ConsoleEl, 'show')
-    }
-  })
   // console.show = true || 1 || 2
-  var consoleShowValue = undefined
+  var consoleShow = undefined
   Object.defineProperty(console, 'show', {
     configurable: true,
-    set(value){
-      consoleShowValue = value
+    set(value) {
+      consoleShow = value
       if (value) {
         intercept()
-        setTimeout(function(){
+        setTimeout(function () {
           addClass(ConsoleEl, 'show')
           removeClass(ConsoleEl, 'open')
         })
       }
       if (value == 2) {
-        setTimeout(function(){
+        setTimeout(function () {
           addClass(ConsoleEl, 'open')
         }, 100)
       }
@@ -770,9 +755,25 @@
         removeClass(ConsoleEl, 'open')
       }
     },
-    get(){
-      return consoleShowValue
+    get() {
+      return consoleShow
+    }
+  })
+  // mobile
+  if (navigator.userAgent.match(/mobile/i)) {
+    intercept()
+  }
+  // pc when #f12
+  if (location.href.match(/[?&#]f12/)) {
+    console.show = 1
+  }
+  // #f12
+  addEventListener('hashchange', function (e) {
+    if (location.hash.match('#f12')) {
+      console.show = 1
+    } else {
+      console.show = 0
     }
   })
 
-})()
+})(window)
