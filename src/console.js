@@ -382,20 +382,24 @@
       // toggle
       toggleClass(objEl, 'open')
 
+      // temp, $n
+      var $i = 10
+      if (value instanceof Element) {
+        while ($i--) {
+          console['$' + $i] = console['$' + ($i - 1)]
+        }
+        console.$0 = value
+      } else {
+        while ($i--) {
+          console['temp' + $i] = console['temp' + ($i - 1)]
+        }
+        console.temp1 = value
+        console.v = value
+      }
+
       // stop
       e.stopPropagation()
       if (typeof value != 'object') return
-
-      // tem1
-      for (var $i = 10; $i >= 0; $i--) {
-        window['temp' + $i] = window['temp' + ($i - 1)]
-        window['$' + $i] = window['$' + ($i - 1)]
-      }
-      window.temp1 = value
-      window.$0 = value
-      window.v = value
-
-      // _printed?
       if (valueEl._printed) return
       valueEl._printed = true
 
@@ -439,8 +443,9 @@
     // object
     if (typeOf(value) == 'object') {
       var k0 = Object.keys(value)[0]
+      if (k0 === undefined) return '[Object]{}'
       var v0 = value[k0]
-      return `${value}{${k0}:${v0} ...}`.replace(/^\[object /, '[')
+      return `${value}{ ${k0}: ${String(v0).slice(0, 15)} …}`.replace(/^\[object /, '[')
     }
 
     // ErrorEvent
@@ -597,7 +602,8 @@
     var XHRsend = XHR.prototype.send
     XHR.prototype.open = function (method, url) {
       var xhr = this
-      var sendData
+      var requestHeaders = {}
+      var requestBody
       var liEl
       var startTime = new Date
 
@@ -605,53 +611,48 @@
       xhr.onreadystatechange = function (e) {
         onreadystatechange && onreadystatechange.apply(xhr, arguments)
         if (xhr.readyState != 4) return
-
         var endTime = new Date
         var time = endTime - startTime
         var status = xhr.status
-        var logType = /^(2..|3..)$/.test(status) ? 'info' : 'error'
+        var logType = /^(2..|304)$/.test(status) ? 'info' : 'error'
 
         liEl.innerHTML = ''
         addClass(liEl, logType)
         printObj('', {
           __string__: `[${method}] (${status}) ${time}ms ${url}`,
-          data: sendData,
-          dataParsed: function () {
+          requestHeaders,
+          requestBody: function () {
+            requestBody = decodeURIComponent(requestBody)
             try {
-              return JSON.parse(decodeURIComponent(sendData))
+              return JSON.parse(requestBody)
             } catch (e) { }
-            return decodeURIComponent(sendData)
+            return requestBody
           }(),
-          AllResponseHeaders: xhr.getAllResponseHeaders(),
-          responseParsed: (function () {
+          responseHeaders: xhr.getAllResponseHeaders(),
+          responseBody: (function () {
+            var response = xhr.response || xhr.responseText
             try {
-              return JSON.parse(xhr.responseText)
+              return JSON.parse(response)
             } catch (e) { }
-            return xhr.responseText
+            return response
           })(),
-          event: e,
-          xhr: xhr
+          xhr: xhr,
         }, liEl)
       }
 
+      // apply
       XHRopen.apply(this, arguments)
 
-      xhr.send = function (data) {
+      // headers
+      var setRequestHeader = xhr.setRequestHeader
+      xhr.setRequestHeader = function (key, value) {
+        requestHeaders[key] = value
+        setRequestHeader.apply(this, arguments)
+      }
 
-        sendData = data
-        liEl = printLi('info', [{
-          __string__: `[${method}] (pending) ${url}`,
-          data: data,
-          dataParsed: function () {
-            try {
-              return JSON.parse(decodeURIComponent(sendData))
-            } catch (e) { }
-            return decodeURIComponent(sendData)
-          }(),
-          response: 'pending',
-          xhr: xhr
-        }])
-
+      xhr.send = function (requestBody) {
+        // pending
+        liEl = printLi('info', [{ __string__: `[${method}] (pending) ${url}`, requestBody }])
         XHRsend.apply(this, arguments)
       }
     }
@@ -665,11 +666,8 @@
         var method = options.method || 'GET'
         var startTime = new Date
 
-        var liEl = printLi('info', [{
-          __string__: `[${method}] (pending) ${url}`,
-          RequestInit: options,
-          Response: 'pending'
-        }])
+        // pending
+        var liEl = printLi('info', [{ __string__: `[${method}] (pending) ${url}`, requestInit: options }])
 
         // apply
         var promise = _fetch.apply(this, arguments)
@@ -677,16 +675,16 @@
             var endTime = new Date
             var time = endTime - startTime
             var status = res.status
-            var logType = /^(2..|3..)$/.test(status) ? 'info' : 'error'
+            var logType = /^(2..|304)$/.test(status) ? 'info' : 'error'
 
+            // end
             res.clone().text().then(function (text) {
               liEl.innerHTML = ''
               addClass(liEl, logType)
               printObj('', {
                 __string__: `[${method}] (${status}) ${time}ms ${url}`,
-                RequestInit: options,
-                Response: res,
-                ResponseHeaders: function () {
+                requestInit: options,
+                responseHeaders: function () {
                   var keys = res.headers.keys()
                   var next
                   var obj = {}
@@ -695,11 +693,12 @@
                   }
                   return obj
                 }(),
-                ResponseBodyParsed: function () {
+                responseBody: function () {
                   try {
                     return JSON.parse(text)
                   } catch (e) { }
-                }()
+                }(),
+                response: res,
               }, liEl)
             })
 
@@ -710,8 +709,8 @@
             liEl.innerHTML = ''
             printObj('', {
               __string__: `[${method}] (Failed) ${url}`,
-              RequestInit: options,
-              Response: e.message,
+              requestInit: options,
+              response: e.message,
             }, liEl)
 
             return Promise.reject(e)
@@ -722,8 +721,8 @@
     }
 
     // temp
-    window.temp1 = document
-    window.$0 = document.body
+    console.temp1 = document
+    console.$0 = document.body
 
     // insert ConsoleEl
     setTimeout(function () {
@@ -733,7 +732,7 @@
   }
 
   // console.show = true || 1 || 2
-  var consoleShow = undefined
+  var consoleShow = console.show
   Object.defineProperty(console, 'show', {
     configurable: true,
     set(value) {
@@ -759,6 +758,9 @@
       return consoleShow
     }
   })
+  if (consoleShow) {
+    console.show = consoleShow
+  }
   // mobile
   if (navigator.userAgent.match(/mobile/i)) {
     intercept()
