@@ -83,7 +83,7 @@
 </head>
 
 <body>
-  <!-- <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
   <script src="lib/ajax.js"></script>
   <script src="../src/console.js"></script>
   <!-- <script>
@@ -148,7 +148,7 @@
       this.fun()
     })
     show(function () {
-      ajax({
+      $.ajax({
         url: './ajax.json',
         // url: 'http://domai.com',
         type: 'get',
@@ -176,7 +176,7 @@
       })
     })
     show(function () {
-      // fetch('./ajax.json?fetch')
+      fetch('./ajax.json?fetch')
       fetch('http://error.fetch.com')
     })
     show(function () {

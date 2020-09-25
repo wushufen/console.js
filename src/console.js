@@ -94,6 +94,7 @@
         font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
         line-height: 1.5;
         background: rgba(255, 255, 255, .98);
+        color: #555;
         box-shadow: rgba(0, 0, 0, 0.2) 0px 0 15px 0;
         transition: .45s;
         text-align: left;
@@ -166,6 +167,7 @@
         border-top: solid 1px rgba(230, 230, 230, 0.0);
         border-bottom: solid 1px rgba(230, 230, 230, 0.38);
         background: rgba(243, 250, 255, 0.5);
+        color: #333;
         -webkit-backdrop-filter: blur(1px);
         backdrop-filter: blur(1px);
         text-shadow: 1px 1px 5px #fff;
@@ -204,7 +206,6 @@
         border-top: solid 1px #fff;
         overflow: auto;
         white-space: nowrap;
-        color: #333;
       }
       console ul li>.obj {
         display: inline-block;
@@ -215,7 +216,6 @@
         flex: 1;
       }
       console .log {
-        color: #555;
         background: #fcfeff;
       }
       console .info {
@@ -248,29 +248,17 @@
         color: #a71d5d;
       }
       console .value {}
-      console .log .htmldocument>.value {
+      console .htmldocument>.value,
+      console .element>.value {
         color: #a71d5d;
       }
-      console .log .htmldocument>.value:after {
+      console .htmldocument>.value:after,
+      console .element>.value:after {
         content: ' ⇿';
       }
-      console .log .htmldocument.open>.value:after {
+      console .htmldocument.open>.value:after,
+      console .element.open>.value:after {
         visibility: hidden;
-      }
-      console .log .element>.value {
-        color: #a71d5d;
-      }
-      console .log .element>.value:after {
-        content: ' ⇿';
-      }
-      console .log .element.open>.value:after {
-        visibility: hidden;
-      }
-      console .children {
-        clear: both;
-        padding-left: 1em;
-        border-left: dotted 1px #ddd;
-        display: none;
       }
       console .obj .obj.open>.value {
         display: inline-block;
@@ -280,8 +268,21 @@
         word-break: break-word;
         padding-right: 2em;
       }
+      console .children {
+        max-width: 350px;
+        max-height: 0;
+        padding-left: 1em;
+        border-left: dotted 1px #ddd;
+        overflow: hidden;
+        opacity: 0;
+        transition: .375s cubic-bezier(0, 1, 0, 1);
+      }
       console .open>.children {
-        display: block;
+        max-width: 9999px;
+        max-height: 9999px;
+        overflow: auto;
+        opacity: 1;
+        transition: .375s cubic-bezier(1, 0, 1, 1);
       }
     </style>
     <span class="f12">F12</span>
@@ -325,6 +326,7 @@
   var InputEl = find(ConsoleEl, 'input')
   var WordsEl = find(ConsoleEl, 'words')
 
+  // init clear
   UlEl.innerHTML = ''
 
   // console toggle
@@ -434,7 +436,7 @@
     }
 
     // __string__
-    if (value && value.__string__) {
+    if (value.__string__) {
       var __string__ = value.__string__
       delete value.__string__
       return __string__
@@ -480,10 +482,9 @@
     // tag
     if (nodeType == 1) {
       var tag = node.cloneNode().outerHTML
-      var tag_lr = tag.split('></')
-      var tagl = tag_lr[0] + (tag_lr[1] ? '>' : '') // ?selfClose
-      // var tagr = '</' + tag_lr[1]
-      return tagl
+      var tagLR = tag.split(/(?=<\/|$)/)
+      var tagL = tagLR[0]
+      return tagL
     }
 
     // text
@@ -575,7 +576,7 @@
       warn: noop,
       error: noop,
       dir: noop,
-      table: noop
+      table: noop,
     }
     window.console = window.console || con
     var _console = extend({}, window.console)
@@ -584,7 +585,7 @@
     for (var type in con) {
       ! function (type) {
         console[type] = function (arg) {
-          _console[type].apply(console, arguments)
+          _console[type].apply(this, arguments)
           printLi(type, arguments)
         }
       }(type)
@@ -697,6 +698,7 @@
                   try {
                     return JSON.parse(text)
                   } catch (e) { }
+                  return text
                 }(),
                 response: res,
               }, liEl)
