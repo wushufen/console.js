@@ -605,6 +605,7 @@
     var XHRsend = XHR.prototype.send
     XHR.prototype.open = function (method, url) {
       var xhr = this
+      var subUrl = url.split(/\/(?=[^/]+\/[^/]+$)/)[1] || url // last2/last1?query
       var requestHeaders = {}
       var requestBody
       var liEl
@@ -622,7 +623,8 @@
         liEl.innerHTML = ''
         addClass(liEl, logType)
         printObj('', {
-          __string__: `[${method}] (${status}) ${time}ms ${url}`,
+          __string__: `[${method}] (${status}) ${time}ms ${subUrl}`,
+          url,
           requestHeaders,
           requestBody: function () {
             requestBody = decodeURIComponent(requestBody)
@@ -631,6 +633,7 @@
             } catch (e) { }
             return requestBody
           }(),
+          xhr: xhr,
           responseHeaders: xhr.getAllResponseHeaders(),
           responseBody: (function () {
             var response = xhr.response || xhr.responseText
@@ -639,7 +642,6 @@
             } catch (e) { }
             return response
           })(),
-          xhr: xhr,
         }, liEl)
       }
 
@@ -655,7 +657,7 @@
 
       xhr.send = function (requestBody) {
         // pending
-        liEl = printLi('info', [{ __string__: `[${method}] (pending) ${url}`, requestBody }])
+        liEl = printLi('info', [{ __string__: `[${method}] (pending) ${subUrl}`, url, requestBody }])
         XHRsend.apply(this, arguments)
       }
     }
@@ -663,14 +665,14 @@
     // intercept fetch
     var _fetch = window.fetch
     if (_fetch) {
-      window.fetch = function () {
-        var url = arguments[0]
+      window.fetch = function (url) {
+        var subUrl = url.split(/\/(?=[^/]+\/[^/]+$)/)[1] || url // last2/last1?query
         var options = arguments[1] || ''
         var method = options.method || 'GET'
         var startTime = new Date
 
         // pending
-        var liEl = printLi('info', [{ __string__: `[${method}] (pending) ${url}`, requestInit: options }])
+        var liEl = printLi('info', [{ __string__: `[${method}] (pending) ${subUrl}`, url, requestInit: options }])
 
         // apply
         var promise = _fetch.apply(this, arguments)
@@ -685,8 +687,10 @@
               liEl.innerHTML = ''
               addClass(liEl, logType)
               printObj('', {
-                __string__: `[${method}] (${status}) ${time}ms ${url}`,
+                __string__: `[${method}] (${status}) ${time}ms ${subUrl}`,
+                url,
                 requestInit: options,
+                response: res,
                 responseHeaders: function () {
                   var keys = res.headers.keys()
                   var next
@@ -702,7 +706,6 @@
                   } catch (e) { }
                   return text
                 }(),
-                response: res,
               }, liEl)
             })
 
@@ -712,7 +715,8 @@
             addClass(liEl, 'error')
             liEl.innerHTML = ''
             printObj('', {
-              __string__: `[${method}] (Failed) ${url}`,
+              __string__: `[${method}] (Failed) ${subUrl}`,
+              url,
               requestInit: options,
               response: e.message,
             }, liEl)
