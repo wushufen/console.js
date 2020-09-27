@@ -275,14 +275,14 @@
         border-left: dotted 1px #ddd;
         overflow: hidden;
         opacity: 0;
-        transition: .375s cubic-bezier(0, 1, 0, 1);
+        transition: .375s cubic-bezier(0, 1, 0, 1), opacity 1s;
       }
       console .open>.children {
         max-width: 9999px;
         max-height: 9999px;
         overflow: auto;
         opacity: 1;
-        transition: .375s cubic-bezier(1, 0, 1, 1);
+        transition: .375s cubic-bezier(1, 0, 1, 0), opacity .1s;
       }
     </style>
     <span class="f12">F12</span>
