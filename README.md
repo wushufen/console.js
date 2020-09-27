@@ -3,9 +3,9 @@
 
 
 ## 用法
-1. 引入 [console.js](https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.5/dist/console.js)  
+1. 引入 [console.js](https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.6/dist/console.js)  
 ```html
-<script src="https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.5/dist/console.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.6/dist/console.js"></script>
 ```
 2. 开启
   * 方式一：在`url`上加上`#f12`即可开启
@@ -22,8 +22,8 @@ console.show = 2 // 显示并展开
 
 ## 演示
 https://wusfen.github.io/console.js/example/example.html
-<!-- ![console](https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.5/example/example.png)   -->
-![console](https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.5/example/console.js.png)  
+<!-- ![console](https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.6/example/example.png)   -->
+![console](https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.6/example/console.js.png)  
 
 
 ## 注意
@@ -36,7 +36,7 @@ url#/route#f12    url?f12    url?k=v&f12
 1. 同步方式
 ```javascript
 !function(){
-  document.write('<script src=https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.5/dist/console.js><\/script>')
+  document.write('<script src=https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.6/dist/console.js><\/script>')
   document.write('<script> console.show=2 <\/script>')
 }()
 ```
@@ -44,7 +44,7 @@ url#/route#f12    url?f12    url?k=v&f12
 ```javascript
 !function(){
   var s=document.createElement('script')
-  s.src = 'https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.5/dist/console.js'
+  s.src = 'https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.6/dist/console.js'
   s.onload = function(){ console.show = 2 }
   document.body.appendChild(s)
 }()
