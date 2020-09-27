@@ -96,17 +96,19 @@
         background: rgba(255, 255, 255, .98);
         color: #555;
         box-shadow: rgba(0, 0, 0, 0.2) 0px 0 15px 0;
-        transition: .45s;
+        transition: .3s ease-in;
         text-align: left;
         cursor: default;
-        -webkit-overflow-scrolling: touch;
         touch-action: manipulation;
+        -webkit-overflow-scrolling: touch;
+        -webkit-text-size-adjust: none;
       }
       console.show {
         display: block;
       }
       console.open {
         height: 400px;
+        transition: .3s ease-out;
       }
       @media all and (min-width:768px) {
         console ::-webkit-scrollbar {
@@ -275,14 +277,14 @@
         border-left: dotted 1px #ddd;
         overflow: hidden;
         opacity: 0;
-        transition: .375s cubic-bezier(0, 1, 0, 1), opacity 1s;
+        transition: .3s cubic-bezier(0, 1, 0, 1), opacity .7s;
       }
       console .open>.children {
-        max-width: 9999px;
-        max-height: 9999px;
+        max-width: 59999px;
+        max-height: 59999px;
         overflow: auto;
         opacity: 1;
-        transition: .375s cubic-bezier(1, 0, 1, 0), opacity .1s;
+        transition: .3s cubic-bezier(1, 0, 1, 0), opacity .7s;
       }
     </style>
     <span class="f12">F12</span>
