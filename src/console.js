@@ -187,20 +187,6 @@
         overflow: auto;
         list-style: none;
       }
-      console .input {
-        line-height: 1.25;
-        display: block;
-        width: 100%;
-        border: none;
-        outline: none;
-        height: 3em;
-        padding: .25em 1em;
-        resize: none;
-        position: relative;
-        background: rgba(255, 255, 255, .5);
-        -webkit-backdrop-filter: blur(1px);
-        backdrop-filter: blur(1px);
-      }
       console ul li {
         display: flex;
         padding: .25em .5em;
@@ -240,14 +226,8 @@
         vertical-align: top;
         padding: 0 .5em;
       }
-      console li>.obj:nth-last-child(2) {
-        flex: 1;
-      }
       console .obj {
         white-space: nowrap;
-      }
-      console .obj.trace>.value {
-        color: #ddd;
       }
       console .key {
         color: #a71d5d;
@@ -290,6 +270,24 @@
         opacity: 1;
         transition: .3s cubic-bezier(1, 0, 1, 0), opacity .7s;
       }
+      console .input {
+        line-height: 1.25;
+        display: block;
+        width: 100%;
+        border: none;
+        outline: none;
+        height: 3em;
+        padding: .25em 1em;
+        resize: none;
+        position: relative;
+        background: rgba(255, 255, 255, .5);
+        -webkit-backdrop-filter: blur(1px);
+        backdrop-filter: blur(1px);
+      }
+
+      console li>.obj:nth-last-child(2) { flex: 1 }
+      console .obj.trace { margin-right: -.5em }
+      console .obj.trace>.value { color: #ddd }
     </style>
     <span class="f12">F12</span>
     <div class="words">
@@ -328,7 +326,6 @@
   var UlEl = find(ConsoleEl, 'ul')
   var LiEl = find(ConsoleEl, 'li')
   var ObjEl = find(ConsoleEl, 'obj')
-  var ChildrenEl = find(ConsoleEl, 'children')
   var InputEl = find(ConsoleEl, 'input')
   var WordsEl = find(ConsoleEl, 'words')
 
