@@ -4,7 +4,8 @@
     "gulp": "npx gulp",
     "gulp:watch": "npx gulp watch",
     "webpack": "npx webpack",
-    "babel": "npx babel ./src --out-dir ./dist"
+    "babel": "npx babel ./src --out-dir ./dist",
+    "git:log": "git log --graph --oneline"
   },
   "devDependencies": {
     "@babel/cli": "^7.11.6",
