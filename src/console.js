@@ -444,11 +444,11 @@
     try {
       throw new Error('trace')
     } catch (e) {
-      var trace = e.stack.replace(/^Error.*\n/, '').split(/\n/).slice(2)
-      var trace0 = (trace[0] || ' ').match(/[^/]*$|$/)[0]
-      var file = trace0.match(/.+?\.[^?:]+|$/)[0]
-      var line = trace0.match(/:\d+|$/)[0]
-      trace.__string__ = `${file}${line}` || 'trace'
+      var trace = e.stack.replace(/^Error.*\n/, '').split(/\n/).slice(2) // !ios: -Error... => []
+      var trace0 = (trace[0] || ' ').match(/[^/]*$|$/)[0] // file.ext?query:line:column
+      var file = trace0.match(/.+?\.[^?:]+|$/)[0] // file.ext
+      var line = trace0.match(/:\d+|$/)[0] // :line
+      trace.__string__ = `${file}${line}` || 'trace' // file.ext:line
       return trace
     }
   }
