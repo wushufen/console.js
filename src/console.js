@@ -644,8 +644,8 @@
         // pending
         var subUrl = url.split(/\/(?=[^/]+\/[^/]+$)/)[1] || url // last2/last1?query
         var liEl = printLi('info', [{ __string__: `[${method}] (pending) ${subUrl}`, url, requestBody }])
-        var startTime = new Date
         var trace = getTrace()
+        var startTime = new Date
 
         // onload
         var onreadystatechange = xhr.onreadystatechange
@@ -690,14 +690,13 @@
     var _fetch = window.fetch
     if (_fetch) {
       window.fetch = function (url) {
-        var subUrl = url.split(/\/(?=[^/]+\/[^/]+$)/)[1] || url // last2/last1?query
-        var options = arguments[1] || ''
-        var method = options.method || 'GET'
-        var startTime = new Date
-        var trace = getTrace()
-
         // pending
-        var liEl = printLi('ajax info', [{ __string__: `[${method}] (pending) ${subUrl}`, url, requestInit: options }])
+        var subUrl = url.split(/\/(?=[^/]+\/[^/]+$)/)[1] || url // last2/last1?query
+        var requestInit = arguments[1] || ''
+        var method = requestInit.method || 'GET'
+        var liEl = printLi('ajax info', [{ __string__: `[${method}] (pending) ${subUrl}`, url, requestInit }])
+        var trace = getTrace()
+        var startTime = new Date
 
         // apply
         var promise = _fetch.apply(this, arguments)
@@ -712,7 +711,7 @@
               var liEl2 = printLi(logType, [{
                 __string__: `[${method}] (${status}) ${time}ms ${subUrl}`,
                 url,
-                requestInit: options,
+                requestInit,
                 response: res,
                 responseHeaders: function () {
                   var keys = res.headers.keys()
@@ -739,7 +738,7 @@
             var liEl2 = printLi('ajax error', [{
               __string__: `[${method}] (Failed) ${subUrl}`,
               url,
-              requestInit: options,
+              requestInit,
               response: e.message,
             }], trace)
             liEl.parentNode.replaceChild(liEl2, liEl)
@@ -797,12 +796,12 @@
     intercept()
   }
   // pc when #f12
-  if (location.href.match(/[?&#]f12/)) {
+  if (location.href.match(/[?&#]f12\b/)) {
     console.show = 1
   }
   // #f12
   addEventListener('hashchange', function (e) {
-    if (location.hash.match('#f12')) {
+    if (location.hash.match(/#f12\b/)) {
       console.show = 1
     } else {
       console.show = 0

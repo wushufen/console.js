@@ -1,8 +1,8 @@
 {
   "scripts": {
+    "server": "npx live-server",
     "gulp": "npx gulp",
     "gulp:watch": "npx gulp watch",
-    "server:gulp:watch": "npx live-server & npx gulp watch",
     "webpack": "npx webpack",
     "babel": "npx babel ./src --out-dir ./dist"
   },
@@ -16,6 +16,7 @@
     "gulp-babel": "^8.0.0",
     "gulp-uglify": "^3.0.2",
     "html-webpack-plugin": "^4.5.0",
+    "live-server": "^1.2.1",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
   },
