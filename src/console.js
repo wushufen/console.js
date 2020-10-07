@@ -209,14 +209,6 @@
         overflow: auto;
         white-space: nowrap;
       }
-      console ul li>.obj {
-        display: inline-block;
-        vertical-align: top;
-        padding: 0 .5em;
-      }
-      console ul li>.obj:last-child {
-        flex: 1;
-      }
       console .log {
         background: #fcfeff;
       }
@@ -243,8 +235,19 @@
         left: 0;
         color: #ddd;
       }
+      console li>.obj {
+        display: inline-block;
+        vertical-align: top;
+        padding: 0 .5em;
+      }
+      console li>.obj:nth-last-child(2) {
+        flex: 1;
+      }
       console .obj {
         white-space: nowrap;
+      }
+      console .obj.trace>.value {
+        color: #ddd;
       }
       console .key {
         color: #a71d5d;
@@ -271,7 +274,7 @@
         padding-right: 2em;
       }
       console .children {
-        max-width: 350px;
+        max-width: 0;
         max-height: 0;
         padding-left: 1em;
         border-left: dotted 1px #ddd;
@@ -337,7 +340,7 @@
   }
 
   // print
-  var printLi = function (type, objs) {
+  var printLi = function (type, objs, trace) {
     // is scroll end
     var isEnd = UlEl.scrollTop + UlEl.clientHeight > UlEl.scrollHeight - 40
 
@@ -351,6 +354,10 @@
     for (var i = 0; i < objs.length; i++) {
       printObj('', objs[i], liEl, type)
     }
+
+    // trace
+    var objEl = printObj('', trace || '', liEl)
+    addClass(objEl, 'trace')
 
     // li max
     if (UlEl.children.length > 500) {
@@ -427,6 +434,22 @@
         }
       }
 
+    }
+
+    return objEl
+  }
+
+  // file.ext:line
+  function getTrace() {
+    try {
+      throw new Error('trace')
+    } catch (e) {
+      var trace = e.stack.replace(/^Error.*\n/, '').split(/\n/).slice(2)
+      var trace0 = (trace[0] || ' ').match(/[^/]*$|$/)[0]
+      var file = trace0.match(/.+?\.[^?:]+|$/)[0]
+      var line = trace0.match(/:\d+|$/)[0]
+      trace.__string__ = `${file}${line}` || 'trace'
+      return trace
     }
   }
 
@@ -588,7 +611,7 @@
       ! function (type) {
         console[type] = function (arg) {
           _console[type].apply(this, arguments)
-          printLi(type, arguments)
+          printLi(type, arguments, getTrace())
         }
       }(type)
     }
@@ -596,7 +619,7 @@
     // intercept error
     addEventListener('error', function (e) {
       printLi('error', [e])
-      // true catch (js, css, img) error
+      // true: catch (js, css, img) error
     }, true)
 
     // intercept xhr
@@ -605,59 +628,60 @@
     var XHRsend = XHR.prototype.send
     XHR.prototype.open = function (method, url) {
       var xhr = this
-      var subUrl = url.split(/\/(?=[^/]+\/[^/]+$)/)[1] || url // last2/last1?query
-      var requestHeaders = {}
-      var requestBody
-      var liEl
-      var startTime = new Date
-
-      var onreadystatechange = xhr.onreadystatechange
-      xhr.onreadystatechange = function (e) {
-        onreadystatechange && onreadystatechange.apply(xhr, arguments)
-        if (xhr.readyState != 4) return
-        var endTime = new Date
-        var time = endTime - startTime
-        var status = xhr.status
-        var logType = /^(2..|304)$/.test(status) ? 'info' : 'error'
-
-        liEl.innerHTML = ''
-        addClass(liEl, logType)
-        printObj('', {
-          __string__: `[${method}] (${status}) ${time}ms ${subUrl}`,
-          url,
-          requestHeaders,
-          requestBody: function () {
-            requestBody = decodeURIComponent(requestBody)
-            try {
-              return JSON.parse(requestBody)
-            } catch (e) { }
-            return requestBody
-          }(),
-          xhr: xhr,
-          responseHeaders: xhr.getAllResponseHeaders(),
-          responseBody: (function () {
-            var response = xhr.response || xhr.responseText
-            try {
-              return JSON.parse(response)
-            } catch (e) { }
-            return response
-          })(),
-        }, liEl)
-      }
-
-      // apply
+      // open
       XHRopen.apply(this, arguments)
 
-      // headers
+      // setRequestHeader
+      var requestHeaders = {}
       var setRequestHeader = xhr.setRequestHeader
       xhr.setRequestHeader = function (key, value) {
         requestHeaders[key] = value
         setRequestHeader.apply(this, arguments)
       }
 
+      // send
       xhr.send = function (requestBody) {
         // pending
-        liEl = printLi('info', [{ __string__: `[${method}] (pending) ${subUrl}`, url, requestBody }])
+        var subUrl = url.split(/\/(?=[^/]+\/[^/]+$)/)[1] || url // last2/last1?query
+        var liEl = printLi('info', [{ __string__: `[${method}] (pending) ${subUrl}`, url, requestBody }])
+        var startTime = new Date
+        var trace = getTrace()
+
+        // onload
+        var onreadystatechange = xhr.onreadystatechange
+        xhr.onreadystatechange = function (e) {
+          onreadystatechange && onreadystatechange.apply(xhr, arguments)
+          if (xhr.readyState != 4) return
+          var endTime = new Date
+          var time = endTime - startTime
+          var status = xhr.status
+          var logType = /^(2..|304)$/.test(status) ? 'ajax info' : 'ajax error'
+
+          var liEl2 = printLi(logType, [{
+            __string__: `[${method}] (${status}) ${time}ms ${subUrl}`,
+            url,
+            requestHeaders,
+            requestBody: function () {
+              requestBody = decodeURIComponent(requestBody)
+              try {
+                return JSON.parse(requestBody)
+              } catch (e) { }
+              return requestBody
+            }(),
+            xhr: xhr,
+            responseHeaders: xhr.getAllResponseHeaders(),
+            responseBody: (function () {
+              var response = xhr.response || xhr.responseText
+              try {
+                return JSON.parse(response)
+              } catch (e) { }
+              return response
+            })(),
+          }], trace)
+          liEl.parentNode.replaceChild(liEl2, liEl)
+        }
+
+        // send
         XHRsend.apply(this, arguments)
       }
     }
@@ -670,9 +694,10 @@
         var options = arguments[1] || ''
         var method = options.method || 'GET'
         var startTime = new Date
+        var trace = getTrace()
 
         // pending
-        var liEl = printLi('info', [{ __string__: `[${method}] (pending) ${subUrl}`, url, requestInit: options }])
+        var liEl = printLi('ajax info', [{ __string__: `[${method}] (pending) ${subUrl}`, url, requestInit: options }])
 
         // apply
         var promise = _fetch.apply(this, arguments)
@@ -680,13 +705,11 @@
             var endTime = new Date
             var time = endTime - startTime
             var status = res.status
-            var logType = /^(2..|304)$/.test(status) ? 'info' : 'error'
+            var logType = /^(2..|304)$/.test(status) ? 'ajax info' : 'ajax error'
 
             // end
             res.clone().text().then(function (text) {
-              liEl.innerHTML = ''
-              addClass(liEl, logType)
-              printObj('', {
+              var liEl2 = printLi(logType, [{
                 __string__: `[${method}] (${status}) ${time}ms ${subUrl}`,
                 url,
                 requestInit: options,
@@ -706,20 +729,20 @@
                   } catch (e) { }
                   return text
                 }(),
-              }, liEl)
+              }], trace)
+              liEl.parentNode.replaceChild(liEl2, liEl)
             })
 
             return res
           })
           .catch(function (e) {
-            addClass(liEl, 'error')
-            liEl.innerHTML = ''
-            printObj('', {
+            var liEl2 = printLi('ajax error', [{
               __string__: `[${method}] (Failed) ${subUrl}`,
               url,
               requestInit: options,
               response: e.message,
-            }, liEl)
+            }], trace)
+            liEl.parentNode.replaceChild(liEl2, liEl)
 
             return Promise.reject(e)
           })
