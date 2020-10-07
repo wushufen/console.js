@@ -269,6 +269,7 @@
         display: inline-block;
         vertical-align: top;
         max-width: 100vw;
+        width: max-content;
         white-space: pre-wrap;
         word-break: break-word;
         padding-right: 2em;
@@ -445,9 +446,9 @@
       throw new Error('trace')
     } catch (e) {
       var trace = e.stack.replace(/^Error.*\n/, '').split(/\n/).slice(2) // !ios: -Error... => []
-      var trace0 = (trace[0] || ' ').match(/[^/]*$|$/)[0] // file.ext?query:line:column
+      var trace0 = (trace[0] || ' ').match(/[^/]*$|$/)[0] // file.ext?query:line:column || ...:column)
       var file = trace0.match(/.+?\.[^?:]+|$/)[0] // file.ext
-      var line = trace0.match(/:\d+|$/)[0] // :line
+      var line = trace0.match(/(:\d+):\d+[)]?$|$/)[1] // :line
       trace.__string__ = `${file}${line}` || 'trace' // file.ext:line
       return trace
     }
