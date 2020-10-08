@@ -35,13 +35,14 @@ url#/route#f12    url?f12    url?k=v&f12
 ## 动态引入
 1. 同步方式
 ```javascript
-!function(){
+if (/[?&#]f12\b/.test(location.href)) {
   document.write('<script src=https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.7/dist/console.js><\/script>')
-  document.write('<script> console.show=2 <\/script>')
-}()
+  document.write('<script> console.show=1 <\/script>')
+}
 ```
 2. 异步方式
 ```javascript
+// if
 !function(){
   var s=document.createElement('script')
   s.src = 'https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.7/dist/console.js'
