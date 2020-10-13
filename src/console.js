@@ -74,6 +74,20 @@
     }
   }
 
+  function tween(start, end, cb, duration = 300) {
+    var times = duration / 15
+    var step = (end - start) / times
+    var i = 0
+    var timer = setInterval(() => {
+      start += step
+      if (++i >= times) {
+        start = end
+        clearInterval(timer)
+      }
+      cb(start)
+    }, 15)
+  }
+
   // view
   var ConsoleEl = parse(`
   <console>
@@ -163,7 +177,6 @@
         top: 0;
         left: 0;
         right: 0;
-        padding: 0 .5em;
         white-space: nowrap;
         overflow: auto;
         border-top: solid 1px rgba(230, 230, 230, 0.0);
@@ -189,7 +202,8 @@
       }
       console ul li {
         display: flex;
-        padding: .25em .5em;
+        align-items: start;
+        padding: .25em;
         border-bottom: solid 1px rgba(230, 230, 230, 0.38);
         border-top: solid 1px #fff;
         overflow: auto;
@@ -245,14 +259,13 @@
       console .element.open>.value:after {
         visibility: hidden;
       }
-      console .obj .obj.open>.value {
+      console .obj.open>.value {
         display: inline-block;
         vertical-align: top;
-        max-width: 100vw;
+        max-width: calc(100vw - 2em);
         width: max-content;
         white-space: pre-wrap;
         word-break: break-word;
-        padding-right: 2em;
       }
       console .children {
         max-width: 0;
@@ -286,7 +299,6 @@
       }
 
       console li>.obj:nth-last-child(2) { flex: 1 }
-      console .obj.trace { margin-right: -.5em }
       console .obj.trace>.value { color: #ddd }
     </style>
     <span class="f12">F12</span>
@@ -348,6 +360,16 @@
     liEl.innerHTML = ''
     UlEl.appendChild(liEl)
 
+    // log('%c...', 'style', ...)
+    var obj0 = objs[0] + ''
+    var obj0m = obj0.match(/%c.+?(?=%c|$)+/g)
+    if (obj0m) {
+      for (var ci = 0; ci < obj0m.length; ci++) {
+        printObj('', obj0m[ci].slice(2), liEl).setAttribute('style', objs[ci + 1])
+      }
+      objs = ['']
+    }
+
     // log(a,b,...c)
     for (var i = 0; i < objs.length; i++) {
       printObj('', objs[i], liEl, type)
@@ -386,10 +408,16 @@
     valueEl.innerHTML = escapeTag(toString(value))
     addClass(objEl, typeOf(value))
 
-    // chidren
+    // open chidren
     objEl.onclick = valueEl.onclick = function (e) {
       // toggle
       toggleClass(objEl, 'open')
+
+      // scrollLeft
+      setTimeout(() => {
+        if(objEl.offsetLeft<50) return
+        tween(target.scrollLeft, objEl.offsetLeft, v => target.scrollLeft = v)
+      }, 150)
 
       // temp, $n
       var $i = 10
@@ -442,11 +470,9 @@
     try {
       throw new Error('trace')
     } catch (e) {
-      var trace = e.stack.replace(/^Error.*\n/, '').split(/\n/).slice(2) // !ios: -Error... => []
-      var trace0 = (trace[0] || ' ').match(/[^/]*$|$/)[0] // file.ext?query:line:column || ...:column)
-      var file = trace0.match(/.+?\.[^?:]+|$/)[0] // file.ext
-      var line = trace0.match(/(:\d+):\d+[)]?$|$/)[1] // :line
-      trace.__string__ = `${file}${line}` || 'trace' // file.ext:line
+      var trace = e.stack.replace(/^Error.*\n/, '').split(/\n/).slice(2).concat('trace') // !ios: -Error... => []
+      var m = trace[0].match(/([^/?=&#:() ]+)(\?[^?]*?)?(:\d+)(:\d+)\)?$/) // file.ext?query:line:column  |  ..)?
+      trace.__string__ = m ? `${m[1]}${m[3]}` : trace[0]
       return trace
     }
   }
@@ -607,7 +633,7 @@
     // intercept console
     for (var type in con) {
       ! function (type) {
-        console[type] = function (arg) {
+        console[type] = function () {
           _console[type].apply(this, arguments)
           printLi(type, arguments, getTrace())
         }

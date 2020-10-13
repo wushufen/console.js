@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "server": "npx live-server",
+    "server": "npx live-server --port=3333",
     "gulp": "npx gulp",
     "gulp:watch": "npx gulp watch",
     "webpack": "npx webpack",
