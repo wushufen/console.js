@@ -828,7 +828,7 @@
     if (location.hash.match(/#f12\b/)) {
       console.show = 1
     } else {
-      console.show = 0
+      // console.show = 0
     }
   })
 

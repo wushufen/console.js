@@ -5,7 +5,7 @@
 ## 用法
 1. 引入 `console.js`
 ```html
-<script src="https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.8/dist/console.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.9/dist/console.js"></script>
 ```
 2. 开启
   * 方式一：在`url`上加上 ` ?f12 &f12 #f12 ` 即可开启
@@ -21,15 +21,15 @@ console.show = 2 // 显示并展开
 
 ## 演示
 https://wusfen.github.io/console.js/example/example.html
-<!-- ![console](https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.8/example/example.png)   -->
-![console](https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.8/example/console.js.png)  
+<!-- ![console](https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.9/example/example.png)   -->
+![console](https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.9/example/console.js.png)  
 
 
 ## 动态引入
 1. 同步方式
 ```javascript
 if (/[?&#]f12\b/.test(location.href)) {
-  document.write('<script src=https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.8/dist/console.js><\/script>')
+  document.write('<script src=https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.9/dist/console.js><\/script>')
   document.write('<script> console.show=1 <\/script>')
 }
 ```
@@ -38,7 +38,7 @@ if (/[?&#]f12\b/.test(location.href)) {
 // if
 !function(){
   var s=document.createElement('script')
-  s.src = 'https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.8/dist/console.js'
+  s.src = 'https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.9/dist/console.js'
   s.onload = function(){ console.show = 2 }
   document.body.appendChild(s)
 }()
