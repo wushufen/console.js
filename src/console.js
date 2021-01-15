@@ -9,13 +9,6 @@
 !(function(window) {
   var noop = function() {}
 
-  var extend = function(obj, _obj) {
-    for (var k in _obj) {
-      obj[k] = _obj[k]
-    }
-    return obj
-  }
-
   var toArray = function(arrayLike) {
     var arr = []
     var length = arrayLike.length
@@ -81,7 +74,7 @@
     }
   }
 
-  function tween(start, end, cb, duration = 300) {
+  function tween(start, end, cb, duration = 500) {
     var times = duration / 15
     var step = (end - start) / times
     var i = 0
@@ -300,6 +293,9 @@
       console :not(.ajax)>.object.open>.value {
         opacity: .1;
       }
+      console .obj.current>.value{
+        color: #ff00bc;
+      }
       console .children {
         max-width: 0;
         max-height: 0;
@@ -461,80 +457,117 @@
 
     // open chidren
     objEl.onclick = valueEl.onclick = function(e) {
-      // toggle
-      toggleClass(objEl, 'open')
-
-      // scrollLeft
-      setTimeout(() => {
-        if (objEl.offsetLeft < 50) return
-        tween(
-          target.scrollLeft,
-          objEl.offsetLeft,
-          (v) => (target.scrollLeft = v)
-        )
-      }, 150)
-      // scrollTop
-      setTimeout(() => {
-        var ulRect = UlEl.getBoundingClientRect()
-        var objRect = objEl.getBoundingClientRect()
-        var diffTop = objRect.top - ulRect.top
-        tween(
-          UlEl.scrollTop,
-          UlEl.scrollTop + diffTop - 26 - 4,
-          (v) => (UlEl.scrollTop = v)
-        )
-      }, 150)
-
-      // scrollIntoView
-      if (value.scrollIntoView) {
-        value.scrollIntoView({
-          behavior: 'smooth',
-        })
-      }
-
-      // temp, $n
-      var $i = 10
-      if (value instanceof Element) {
-        while ($i--) {
-          console['$' + $i] = console['$' + ($i - 1)]
-        }
-        console.$0 = value
-      } else {
-        while ($i--) {
-          console['temp' + $i] = console['temp' + ($i - 1)]
-        }
-        console.temp1 = value
-        console.v = value
-      }
-
-      // stop
-      e.stopPropagation()
-      if (typeof value != 'object') return
-      if (valueEl._printed) return
-      valueEl._printed = true
-
-      // childNodes
-      if (value && value.childNodes && type !== 'dir') {
-        var childNodes = toArray(value.childNodes)
-        for (var i = 0; i < childNodes.length; i++) {
-          var childNode = childNodes[i]
-          printObj('', childNode, childrenEl)
-        }
-        return
-      }
-
-      // keys
-      for (var k in value) {
-        printObj(k, value[k], childrenEl)
-        // max
-        if (typeOf(value) == 'array' && k > 500) {
-          printObj('...', '', childrenEl)
-          return
-        }
-      }
+      clickObj(key, value, target, type, objEl, valueEl, childrenEl, e)
     }
 
     return objEl
+  }
+
+  // click obj: print children
+  function clickObj(key, value, target, type, objEl, valueEl, childrenEl, e) {
+    // toggle
+    toggleClass(objEl, 'open')
+    clickObj.objEl && removeClass(clickObj.objEl, 'current')
+    clickObj.objEl = objEl
+    addClass(objEl, 'current')
+
+    // scrollLeft
+    setTimeout(() => {
+      if (objEl.offsetLeft < 50) return
+      tween(target.scrollLeft, objEl.offsetLeft, (v) => (target.scrollLeft = v))
+    }, 150)
+    // scrollTop
+    setTimeout(() => {
+      var ulRect = UlEl.getBoundingClientRect()
+      var objRect = objEl.getBoundingClientRect()
+      var diffTop = objRect.top - ulRect.top
+      tween(
+        UlEl.scrollTop,
+        UlEl.scrollTop + diffTop - 26 - 4,
+        (v) => (UlEl.scrollTop = v)
+      )
+    }, 150)
+
+    // scrollIntoView
+    if (value.scrollIntoView) {
+      value.scrollIntoView({
+        behavior: 'smooth',
+      })
+      showElementBox(value)
+    }
+
+    // temp, $n
+    var $i = 10
+    if (value instanceof Element) {
+      while ($i--) {
+        console['$' + $i] = console['$' + ($i - 1)]
+      }
+      console.$0 = value
+    } else {
+      while ($i--) {
+        console['temp' + $i] = console['temp' + ($i - 1)]
+      }
+      console.temp1 = value
+      console.v = value
+    }
+
+    // stop
+    e.stopPropagation()
+    if (typeof value != 'object') return
+    if (valueEl._printed) return
+    valueEl._printed = true
+
+    // childNodes
+    if (value && value.childNodes && type !== 'dir') {
+      var childNodes = toArray(value.childNodes)
+      for (var i = 0; i < childNodes.length; i++) {
+        var childNode = childNodes[i]
+        printObj('', childNode, childrenEl)
+      }
+      return
+    }
+
+    // keys
+    for (var k in value) {
+      printObj(k, value[k], childrenEl)
+      // max
+      if (typeOf(value) == 'array' && k > 500) {
+        printObj('...', '', childrenEl)
+        return
+      }
+    }
+  }
+
+  // show element box
+  function showElementBox(el) {
+    if (!showElementBox.box) {
+      showElementBox.box = document.createElement('div')
+      document.body.appendChild(showElementBox.box)
+    }
+    var box = showElementBox.box
+
+    var rootRect = document.body.getBoundingClientRect()
+    var rect = el.getBoundingClientRect()
+    box.setAttribute(
+      'style',
+      `
+      position: absolute;
+      top: ${rect.top - rootRect.top}px;
+      left: ${rect.left - rootRect.left}px;
+      width: ${rect.width}px;
+      height: ${rect.height}px;
+      border: dashed 1px #f0c;
+      z-index: 999999998;
+      pointer-events: none;
+      transition: .5s;
+      text-align: right;
+      font-size: 12px;
+      color: #f0c;
+      text-shadow: 1px 1px 1px #bbb;
+      white-space: nowrap;
+    `
+    )
+    box.innerHTML = `${rect.width.toFixed(2)} x ${rect.height.toFixed(2)}`
   }
 
   // file.ext:line
@@ -708,7 +741,7 @@
       table: noop,
     }
     window.console = window.console || con
-    var _console = extend({}, window.console)
+    var _console = Object.assign({}, window.console)
 
     // intercept console
     for (var type in con) {
@@ -828,7 +861,11 @@
         var requestInit = arguments[1] || ''
         var method = requestInit.method || 'GET'
         var liEl = printLi('ajax', [
-          { __string__: `[${method}] (pending) ${subUrl}`, url, requestInit },
+          {
+            __string__: `[${method}] (pending) ${subUrl}`,
+            url,
+            requestInit,
+          },
         ])
         var trace = getTrace()
         var startTime = new Date()
