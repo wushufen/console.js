@@ -28,12 +28,12 @@
       }
 
       body {
-        max-width: 768px;
+        /* max-width: 768px; */
         margin: auto;
       }
 
       body:after {
-        content: '';
+        /* content: ''; */
         position: absolute;
         z-index: 999999999999999999;
         top: 0;
@@ -108,13 +108,13 @@
       console.log("console.log('console.js')")
     </script>
 
-    <img src="gh.qr.png" width="100" height="100" style="float: right;" />
+    <img src="gh.qr.png" width="100" height="100" style="float: right" />
 
     <h1>
       <a href="https://github.com/wusfen/console.js">
         console.js
         <svg
-          style="height:1em;width:1em;vertical-align:text-bottom"
+          style="height: 1em; width: 1em; vertical-align: text-bottom"
           viewBox="0 0 16 16"
           version="1.1"
           aria-hidden="true"
@@ -133,10 +133,28 @@
     <h2>#f12 开启</h2>
     <pre><code>http://domain.com/usage.html#f12</code></pre>
 
+    <div style="width: 300px; overflow: auto; white-space: nowrap">
+      <span>1###############</span>
+      <span>2###############</span>
+      <span>3###############</span>
+      <span>4###############</span>
+      <span>5###############</span>
+      <span>6###############</span>
+      <span>7###############</span>
+      <span>8###############</span>
+      <span>9###############</span>
+    </div>
+
     <div>
       <!-- <script src="404.js"></script> -->
       <!-- <link href="404.css" rel="stylesheet"> -->
-      <img src="404.png" width="0" height="0" />
+      <img
+        src="404.png"
+        alt="404"
+        xwidth="0"
+        xheight="0"
+        style="margin-top: 500px"
+      />
     </div>
 
     <script>
@@ -146,16 +164,16 @@
         setTimeout(fn, show.i * 250)
       }
 
-      show(function() {
+      show(function () {
         console.info("console.info('info')")
       })
-      show(function() {
+      show(function () {
         console.warn("console.warn('warn')")
       })
-      show(function() {
+      show(function () {
         this.fun()
       })
-      show(function() {
+      show(function () {
         $.ajax({
           url: './ajax.json?xhr',
           // url: 'http://domai.com',
@@ -173,25 +191,25 @@
             },
           },
           data: {},
-          error: function(res) {
+          error: function (res) {
             console.trace('error')
           },
-          success: function(res) {
+          success: function (res) {
             console.trace('success')
           },
         })
       })
-      show(function() {
+      show(function () {
         // fetch('./ajax.json?fetch')
         fetch('http://error.fetch.com')
       })
-      show(function() {
+      show(function () {
         console.log('obj', { key: 'value' })
       })
-      show(function() {
+      show(function () {
         console.log(document)
       })
-      show(function() {
+      show(function () {
         console.log('click->', window)
       })
       // show(function() {
@@ -204,9 +222,9 @@
       // addEventListener('touchmove', (e) => {
       //   console.log(e)
       // })
-      addEventListener('touchend', (e) => {
+      addEventListener('touchend', e => {
         setTimeout(() => {
-          console.log(e)
+          // console.log(e)
         }, 1)
       })
     </script>

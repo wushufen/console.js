@@ -22,10 +22,7 @@
     if (obj instanceof Element) {
       return 'element'
     }
-    return Object.prototype.toString
-      .call(obj)
-      .slice(8, -1)
-      .toLowerCase()
+    return Object.prototype.toString.call(obj).slice(8, -1).toLowerCase()
   }
 
   var escapeTag = function(html) {
@@ -86,6 +83,7 @@
       }
       cb(start)
     }, 15)
+    return timer
   }
 
   // view
@@ -192,7 +190,7 @@
         overflow: auto;
         border-top: solid 1px rgba(255, 255, 255, 0.2);
         border-bottom: solid 1px rgba(200, 200, 200, 0.2);
-        background: rgba(250, 250, 250, 0.5);
+        background: rgba(250, 250, 250, 0.8);
         color: #333;
         -webkit-backdrop-filter: blur(1.5px);
         backdrop-filter: blur(1.5px);
@@ -267,6 +265,7 @@
       console .value {}
       console .number>.value { color: #5b00ff }
       console .string>.value { color: #666 }
+      console li>.string>.value{ color: inherit }
       console .boolean>.value { color: #ff0060 }
       console .null>.value { color: #ccc }
       console .undefined>.value { color: #ccc }
@@ -323,7 +322,7 @@
         padding: .25em 1em;
         resize: none;
         position: relative;
-        background: rgba(255, 255, 255, .25);
+        background: rgba(255, 255, 255, .6);
         -webkit-backdrop-filter: blur(1.5px);
         backdrop-filter: blur(1.5px);
         color: #333;
@@ -394,7 +393,7 @@
   }
 
   // print
-  var printLi = function(type, objs, trace) {
+  var printLi = function(type, valueList, trace) {
     // is scroll end
     var isEnd = UlEl.scrollTop + UlEl.clientHeight > UlEl.scrollHeight - 40
 
@@ -405,25 +404,25 @@
     UlEl.appendChild(liEl)
 
     // log('%c...', 'style', ...)
-    var obj0 = objs[0] + ''
+    var obj0 = valueList[0] + ''
     var obj0m = obj0.match(/%c.+?(?=%c|$)+/g)
     if (obj0m) {
       for (var ci = 0; ci < obj0m.length; ci++) {
-        printObj('', obj0m[ci].slice(2), liEl).setAttribute(
+        printKeyValue(liEl, '', obj0m[ci].slice(2)).setAttribute(
           'style',
-          objs[ci + 1]
+          valueList[ci + 1]
         )
       }
-      objs = ['']
+      valueList = ['']
     }
 
     // log(a,b,...c)
-    for (var i = 0; i < objs.length; i++) {
-      printObj('', objs[i], liEl, type)
+    for (var i = 0; i < valueList.length; i++) {
+      printKeyValue(liEl, '', valueList[i], type)
     }
 
     // trace
-    var objEl = printObj('', trace || '', liEl)
+    var objEl = printKeyValue(liEl, '', trace || '')
     addClass(objEl, 'trace')
 
     // li max
@@ -439,14 +438,30 @@
     return liEl
   }
 
-  // li>.obj
-  var printObj = function(key, value, target, type) {
+  /**
+   * li
+   *  .key-value  .key-value
+   *    .value
+   *    .sub.obj
+   *      .key-value
+   *      .key-value
+   *        .key
+   *        .value
+   *        .sub.obj
+   *          .key-value
+   *          .key-value
+   * @param {*} parentElement
+   * @param {*} key
+   * @param {*} value
+   * @param {*} type
+   */
+  var printKeyValue = function(parentElement, key, value, type) {
     // clone objEl
-    var objEl = ObjEl.cloneNode(true)
+    var objEl = ObjEl.cloneNode(true) // key-value
     var keyEl = find(objEl, 'key')
     var valueEl = find(objEl, 'value')
     var childrenEl = find(objEl, 'children')
-    target.appendChild(objEl)
+    parentElement.appendChild(objEl)
 
     // key
     keyEl.innerText = key
@@ -455,26 +470,56 @@
     valueEl.innerHTML = escapeTag(toString(value))
     addClass(objEl, typeOf(value))
 
-    // open chidren
+    // save
+    childrenEl.value = value
+
+    // open children
     objEl.onclick = valueEl.onclick = function(e) {
-      clickObj(key, value, target, type, objEl, valueEl, childrenEl, e)
+      clickValue(parentElement, key, value, type, objEl, valueEl, childrenEl, e)
     }
 
     return objEl
   }
 
   // click obj: print children
-  function clickObj(key, value, target, type, objEl, valueEl, childrenEl, e) {
+  function clickValue(
+    parentElement,
+    key,
+    value,
+    type,
+    objEl,
+    valueEl,
+    childrenEl,
+    e
+  ) {
+    // function call
+    if (typeof value === 'function') {
+      try {
+        console.log(
+          'call:',
+          value.call(parentElement.value),
+          '<=',
+          value,
+          'by',
+          parentElement.value
+        )
+      } catch (e) {}
+    }
+
     // toggle
     toggleClass(objEl, 'open')
-    clickObj.objEl && removeClass(clickObj.objEl, 'current')
-    clickObj.objEl = objEl
+    clickValue.objEl && removeClass(clickValue.objEl, 'current')
+    clickValue.objEl = objEl
     addClass(objEl, 'current')
 
     // scrollLeft
     setTimeout(() => {
       if (objEl.offsetLeft < 50) return
-      tween(target.scrollLeft, objEl.offsetLeft, (v) => (target.scrollLeft = v))
+      tween(
+        parentElement.scrollLeft,
+        objEl.offsetLeft,
+        (v) => (parentElement.scrollLeft = v)
+      )
     }, 150)
     // scrollTop
     setTimeout(() => {
@@ -483,16 +528,13 @@
       var diffTop = objRect.top - ulRect.top
       tween(
         UlEl.scrollTop,
-        UlEl.scrollTop + diffTop - 26 - 4,
+        UlEl.scrollTop + diffTop - 26 * 2 - 4,
         (v) => (UlEl.scrollTop = v)
       )
     }, 150)
 
-    // scrollIntoView
-    if (value.scrollIntoView) {
-      value.scrollIntoView({
-        behavior: 'smooth',
-      })
+    // showElementBox
+    if (value && value.tagName) {
       showElementBox(value)
     }
 
@@ -522,32 +564,42 @@
       var childNodes = toArray(value.childNodes)
       for (var i = 0; i < childNodes.length; i++) {
         var childNode = childNodes[i]
-        printObj('', childNode, childrenEl)
+        printKeyValue(childrenEl, '', childNode)
       }
       return
     }
 
     // keys
     for (var k in value) {
-      printObj(k, value[k], childrenEl)
+      printKeyValue(childrenEl, k, value[k])
       // max
       if (typeOf(value) == 'array' && k > 500) {
-        printObj('...', '', childrenEl)
+        printKeyValue(childrenEl, '...', '')
         return
       }
     }
   }
 
   // show element box
-  function showElementBox(el) {
+  function showElementBox(el, isNoScroll) {
+    var htmlEl = document.documentElement
     if (!showElementBox.box) {
       showElementBox.box = document.createElement('div')
-      document.body.appendChild(showElementBox.box)
+      htmlEl.appendChild(showElementBox.box)
+      addEventListener(
+        'scroll',
+        (e) => {
+          showElementBox(showElementBox.el, true)
+        },
+        true
+      )
     }
+    showElementBox.el = el
     var box = showElementBox.box
 
-    var rootRect = document.body.getBoundingClientRect()
+    var rootRect = htmlEl.getBoundingClientRect()
     var rect = el.getBoundingClientRect()
+    var style = getComputedStyle(el)
     box.setAttribute(
       'style',
       `
@@ -557,17 +609,44 @@
       width: ${rect.width}px;
       height: ${rect.height}px;
       border: dashed 1px #f0c;
+      box-sizing: border-box;
       z-index: 999999998;
       pointer-events: none;
-      transition: .5s;
-      text-align: right;
+      transition: ${isNoScroll ? 0 : 0.5}s;
+      transition-property: top, left, width, height;
       font-size: 12px;
       color: #f0c;
       text-shadow: 1px 1px 1px #bbb;
       white-space: nowrap;
+      text-align: right;
     `
     )
-    box.innerHTML = `${rect.width.toFixed(2)} x ${rect.height.toFixed(2)}`
+    box.innerHTML = `
+      <p style="
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: 0;
+        border: solid 0 rgba(200, 255, 200, 0.5);
+        border-width: ${style.padding};
+      "></p>
+      <span style="position:relative">
+        ${rect.width.toFixed(2)} x ${rect.height.toFixed(2)}
+      </span>
+    `
+
+    // scrollIntoView
+    if (!isNoScroll) {
+      el.scrollIntoViewIfNeeded()
+      clearTimeout(showElementBox.timer)
+      showElementBox.timer = tween(
+        window.scrollY,
+        rect.top - rootRect.top - 100,
+        (v) => window.scrollTo(0, v)
+      )
+    }
   }
 
   // file.ext:line
@@ -650,7 +729,7 @@
       return node.nodeValue
     }
 
-    // commemt
+    // comment
     if (nodeType == 8) {
       return '<!--' + node.nodeValue + '-->'
     }
