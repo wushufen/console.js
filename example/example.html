@@ -20,16 +20,21 @@
     <meta name="msapplication-tap-highlight" content="no" />
     <title>console.js</title>
     <style>
-      body {
-        font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
-        font-size: 14px;
+      * {
         margin: 0;
-        padding: 1em;
+        box-sizing: border-box;
       }
 
-      body {
-        /* max-width: 768px; */
+      html {
+        font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+        font-size: 14px;
+      }
+
+      .container {
+        max-width: 768px;
+        padding: 2em 1em;
         margin: auto;
+        overflow: hidden;
       }
 
       body:after {
@@ -82,151 +87,153 @@
         overflow: auto;
       }
     </style>
-  </head>
-
-  <body>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
     <script src="lib/ajax.js"></script>
     <script src="../src/console.js"></script>
     <!-- <script>
-    !function(){
-      var s=document.createElement('script')
-      s.src = 'https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.2/dist/console.js'
-      s.onload = function(){ console.show = 2 }
-      document.body.appendChild(s)
-    }()
-  </script> -->
-    <!-- <script>
-    !function(){
-      document.write('<script src=https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.2/dist/console.js><\/script>')
-      document.write('<script>console.show=2<\/script>')
-    }()
-  </script> -->
+      !function(){
+        document.write('<script src=https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.10/dist/console.js><\/script>')
+        document.write('<script>console.show=2<\/script>')
+      }()
+    </script> -->
 
     <script>
       console.show = 2
       console.log("console.log('console.js')")
     </script>
+  </head>
 
-    <img src="gh.qr.png" width="100" height="100" style="float: right" />
+  <body>
+    <div class="container">
+      <img src="gh.qr.png" width="100" height="100" style="float: right" />
 
-    <h1>
-      <a href="https://github.com/wusfen/console.js">
-        console.js
-        <svg
-          style="height: 1em; width: 1em; vertical-align: text-bottom"
-          viewBox="0 0 16 16"
-          version="1.1"
-          aria-hidden="true"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-          ></path>
-        </svg>
-      </a>
-    </h1>
+      <h1>
+        <a href="https://github.com/wusfen/console.js">
+          console.js
+          <svg
+            style="height: 1em; width: 1em; vertical-align: text-bottom"
+            viewBox="0 0 16 16"
+            version="1.1"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+            ></path>
+          </svg>
+        </a>
+      </h1>
 
-    <h2>usage.html</h2>
-    <pre><code>&lt;script src="path/to/console.js"&gt;&lt;/script&gt;</code></pre>
+      <h2>usage.html</h2>
+      <pre><code>&lt;script src="path/to/console.js"&gt;&lt;/script&gt;</code></pre>
 
-    <h2>#f12 开启</h2>
-    <pre><code>http://domain.com/usage.html#f12</code></pre>
+      <h2>#f12 开启</h2>
+      <pre><code>http://domain.com/usage.html#f12</code></pre>
 
-    <div style="width: 300px; overflow: auto; white-space: nowrap">
-      <span>1###############</span>
-      <span>2###############</span>
-      <span>3###############</span>
-      <span>4###############</span>
-      <span>5###############</span>
-      <span>6###############</span>
-      <span>7###############</span>
-      <span>8###############</span>
-      <span>9###############</span>
-    </div>
+      <div
+        style="
+          margin: 30em 2em;
+          border: solid 10px #eee;
+          border-width: 10px 20px 30px 40px;
+          padding: 10px 20px 30px 40px;
+        "
+      >
+        <!-- <script src="404.js"></script> -->
+        <!-- <link href="404.css" rel="stylesheet"> -->
+        <img src="404.png" alt="404" style="margin-top: 100px" />
 
-    <div>
-      <!-- <script src="404.js"></script> -->
-      <!-- <link href="404.css" rel="stylesheet"> -->
-      <img
-        src="404.png"
-        alt="404"
-        xwidth="0"
-        xheight="0"
-        style="margin-top: 500px"
-      />
+        <div style="width: 100%; overflow: auto; white-space: nowrap">
+          <span>1###############</span>
+          <span>2###############</span>
+          <span>3###############</span>
+          <span>4###############</span>
+          <span>5###############</span>
+          <span>6###############</span>
+          <span>7###############</span>
+          <span>8###############</span>
+          <span>9###############</span>
+        </div>
+      </div>
     </div>
 
     <script>
-      function show(fn) {
-        show.i = show.i || 0
-        show.i += 1
-        setTimeout(fn, show.i * 250)
-      }
+      !(function () {
+        function show(fn) {
+          show.i = show.i || 0
+          show.i += 1
+          setTimeout(fn, show.i * 250)
+        }
 
-      show(function () {
-        console.info("console.info('info')")
-      })
-      show(function () {
-        console.warn("console.warn('warn')")
-      })
-      show(function () {
-        this.fun()
-      })
-      show(function () {
-        $.ajax({
-          url: './ajax.json?xhr',
-          // url: 'http://domai.com',
-          type: 'get',
-          data: {
-            a: 1,
-            b: 2,
-            o: {
-              o1: 1,
-              o2: 2,
-              oo: {
-                oo1: 1,
-                oo2: 2,
+        show(function () {
+          console.info("console.info('info')")
+        })
+        show(function () {
+          console.warn("console.warn('warn')")
+        })
+        show(function () {
+          this.fun()
+        })
+        show(function () {
+          $.ajax({
+            url: './ajax.json?xhr',
+            // url: 'http://error.xhr.com',
+            type: 'get',
+            data: {
+              a: 1,
+              b: 2,
+              o: {
+                o1: 1,
+                o2: 2,
+                oo: {
+                  oo1: 1,
+                  oo2: 2,
+                },
               },
             },
-          },
-          data: {},
-          error: function (res) {
-            console.trace('error')
-          },
-          success: function (res) {
-            console.trace('success')
-          },
+            data: {},
+            error: function (res) {
+              console.trace('error')
+            },
+            success: function (res) {
+              console.trace('success')
+            },
+          })
         })
-      })
-      show(function () {
-        // fetch('./ajax.json?fetch')
-        fetch('http://error.fetch.com')
-      })
-      show(function () {
-        console.log('obj', { key: 'value' })
-      })
-      show(function () {
-        console.log(document)
-      })
-      show(function () {
-        console.log('click->', window)
-      })
-      // show(function() {
-      //     console.log(1)
-      // })
+        show(function () {
+          // fetch('./ajax.json?fetch')
+          fetch('http://error.fetch.com')
+            .catch((e) => {
+              console.trace('catch')
+            })
+            .then((e) => {
+              console.trace('then')
+            })
+        })
+        show(function () {
+          console.log('obj', { key: 'value' })
+        })
+        show(function () {
+          console.log(document)
+        })
+        show(function () {
+          console.log('click->', window)
+        })
+        // show(function() {
+        //     console.log(1)
+        // })
 
-      // addEventListener('touchstart', (e) => {
-      //   console.log(e)
-      // })
-      // addEventListener('touchmove', (e) => {
-      //   console.log(e)
-      // })
-      addEventListener('touchend', e => {
-        setTimeout(() => {
-          // console.log(e)
-        }, 1)
-      })
+        // addEventListener('touchstart', (e) => {
+        //   console.log(e)
+        // })
+        // addEventListener('touchmove', (e) => {
+        //   console.log(e)
+        // })
+        addEventListener('touchend', (e) => {
+          setTimeout(() => {
+            // console.log(e)
+          }, 1)
+        })
+      })()
     </script>
   </body>
 </html>
