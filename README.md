@@ -1,31 +1,50 @@
 # console.js
 
-移动端浏览器 webview 调试控制台
+Console for mobile browser or webview
 
-## 用法
+## Features
 
-1. 引入 `console.js`
+- console logs
+- log's traces
+- document tree
+- show element's box and path
+- storages (localStorage, sessionStorage, document.cookie)
+- ajax (xhr, fetch)
+- runtime errors
+- resource errors
+- uncaught promises
+- window, screen, navigator, history
+- run js
+- $0, ..., $9 (click element)
+- temp1 (click object)
+- call function (click function)
+- input again (click code)
+- print promise (auto await)
+
+## USAGE
+
+1. install
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.10/dist/console.js"></script>
 ```
 
-2. 开启
+2. open
 
-- 方式一：在`url`上加上 `?f12 &f12 #f12` 即可开启
+- by url: `?f12 &f12 #f12`
 
 ```
 http://domain.com/usage.html#f12
 ```
 
-- 方式二：通过代码打开
+- by code
 
 ```javascript
-console.show = 1 // 右下角显示f12，点击展开
-console.show = 2 // 显示并展开
+console.show = 1 // show [f12] button
+console.show = 2 // open console view
 ```
 
-## 演示
+## PREVIEW
 
 https://wusfen.github.io/console.js/example/example.html
 
@@ -33,29 +52,23 @@ https://wusfen.github.io/console.js/example/example.html
 
 ![console](https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.10/example/console.js.png)
 
-## 动态引入
-
-1. 同步方式
+## INSTALL BY JS
 
 ```javascript
-if (/[?&#]f12\b/.test(location.href)) {
-  document.write(
-    '<script src=https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.10/dist/console.js></script>'
-  )
-  document.write('<script> console.show=1 </script>')
-}
-```
-
-2. 异步方式
-
-```javascript
-// if
 !(function() {
-  var s = document.createElement('script')
-  s.src = 'https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.10/dist/console.js'
-  s.onload = function() {
-    console.show = 2
+  if (/[?&#]f12\b/.test(location.href)) {
+    // sync
+    document.write(
+      '<script f12 src=https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.10/dist/console.js></script>'
+    )
+
+    // async
+    if (!document.querySelector('[f12]')) {
+      var s = document.createElement('script')
+      s.src =
+        'https://cdn.jsdelivr.net/gh/wusfen/console.js@0.0.10/dist/console.js'
+      document.body.appendChild(s)
+    }
   }
-  document.body.appendChild(s)
 })()
 ```

@@ -1,15 +1,19 @@
 /*!
  * @preserve https://github.com/wusfen/console.js
- *
- * #f12 开启 Console控制台
- *
- * hash路由可用以下代替
- * url#/route#f12    url?f12    url?k=v&f12
+ * 
+ * Console for mobile browser or webview
  */
 !(function(window) {
-  var noop = function() {}
+  /**
+   * do nothing
+   */
+  function noop() {}
 
-  var toArray = function(arrayLike) {
+  /**
+   * childNodes => [childNode, ...]
+   * @param {*} arrayLike 
+   */
+  function toArray(arrayLike) {
     var arr = []
     var length = arrayLike.length
     while (length--) {
@@ -18,59 +22,114 @@
     return arr
   }
 
-  var typeOf = function(obj) {
+  /**
+   * null => null
+   * undefined => undefined
+   * 1 => Number
+   * 'string' => String
+   * <body> => Element
+   * @param {*} obj 
+   * @returns {Function} constructor
+   */
+  function typeOf(obj) {
     if (obj instanceof Element) {
       return 'element'
     }
     return Object.prototype.toString.call(obj).slice(8, -1).toLowerCase()
   }
 
-  var escapeTag = function(html) {
+  /**
+   * < => &lt;
+   * > => &gt;
+   * @param {string} html 
+   */
+  function escapeTag(html) {
     return html.replace(/</g, '&lt;').replace(/>/g, '&gt;')
   }
 
-  var parse = function(html) {
-    var el = (parse.el = parse.el || document.createElement('div'))
-    el.innerHTML = html
-    return el.children[0]
+  /**
+   * parse html
+   * @param {string} html 
+   * @returns {Element}
+   */
+  function parse(html) {
+    var parseEl = (parse.el = parse.el || document.createElement('div'))
+    parseEl.innerHTML = html
+    var el = parseEl.children[0]
+    el.isParse = true
+    parseEl.removeChild(el) // - parentNode
+    return el
   }
 
-  var find = function(el, selector) {
+  /**
+   * find element
+   * @param {Elemnt} el parentElemnt
+   * @param {string} name tagName || attrName
+   * @returns {Element}
+   */
+  function find(el, name) {
     for (var i = 0; i < el.children.length; i++) {
-      var child = el.children[i]
-      if (
-        selector == child.className ||
-        selector == child.tagName.toLowerCase()
-      ) {
-        return child
-      } else {
-        var r = find(child, selector)
-        if (r) {
-          return r
-        }
+      var childEl = el.children[i]
+
+      if (name == childEl.tagName.toLowerCase()) return childEl
+      if (hasAttribute(childEl, name)) return childEl
+
+      var r = find(childEl, name)
+      if (r) {
+        return r
       }
     }
   }
 
-  var addClass = function(el, className) {
-    if (!hasClass(el, className)) {
-      el.className += ' ' + className
-    }
-  }
-  var removeClass = function(el, className) {
-    el.className = el.className.replace(RegExp(' *' + className, 'ig'), '')
-  }
-  var hasClass = function(el, className) {
-    return el.className.match(className)
-  }
-  var toggleClass = function(el, className) {
-    if (hasClass(el, className)) {
-      removeClass(el, className)
-    } else {
-      addClass(el, className)
-    }
+  /**
+   * (el, 'attr') => <el attr></el>
+   * @param {Element} el 
+   * @param {string} attr 
+   */
+  function setAttribute(el, attr) {
+    attr.split(/\s+/).map(attr => {
+      el.setAttribute(attr, '')
+    })
   }
 
+  /**
+   * <el attr></el> => <el></el>
+   * @param {Element} el 
+   * @param {string} attr 
+   */
+  function removeAttribute(el, attr) {
+    el.removeAttribute(attr)
+  }
+
+  /**
+   * <el attr></el> => true
+   * @param {Element} el
+   * @param {string} attr
+   */
+  function hasAttribute(el, attr) {
+    return el.hasAttribute(attr)
+  }
+
+  /**
+   * <el></el> => <el attr></el>
+   * <el attr></el> => <el></el>
+   * @param {Element} el
+   * @param {string} attr
+   */
+  function toggleAttribute(el, attr) {
+    if (hasAttribute(el, attr)) {
+      removeAttribute(el, attr)
+    } else {
+      setAttribute(el, attr)
+    }
+  }
+  /**
+   * tween
+   * @param {number} start 
+   * @param {number} end 
+   * @param {function} cb 
+   * @param {number?} duration 
+   */
   function tween(start, end, cb, duration = 500) {
     var times = duration / 15
     var step = (end - start) / times
@@ -88,38 +147,65 @@
 
   // view
   var htmlEl = document.documentElement
-  var ConsoleEl = parse(`
-  <console>
+  var headEl = document.head
+
+  var styleEl = parse(`
     <style>
-      html {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        min-height: 100vh;
+      head{
+        display: block;
       }
-      console {
+      console,
+      box{
+        box-sizing: border-box;
         display:block;
-        z-index: 999999995;
+        font-size: 12px;
+        font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+        line-height: 1.5;
+        color: #333;
+        text-align: left;
+        cursor: default;
+        transition: .3s, opacity .6s;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-overflow-scrolling: touch;
+        -webkit-text-size-adjust: none;
+      }
+      console *,
+      box * {
+        box-sizing: inherit;
+        font: inherit;
+        color: inherit;
+        text-decoration: none;
+        transition: inherit;
+      }
+
+      console {
         position: fixed;
+        z-index: 999999995;
         left: 0;
         right: 0;
         bottom: 0;
         width: 100%;
         max-width: 768px;
+        height: 322px;
         margin: auto auto 0;
-        font-size: 12px;
-        font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-        line-height: 1.5;
-        color: #333;
-        box-shadow: rgba(125, 125, 125, 0.3) 0px 0 15px 0;
-        text-align: left;
-        cursor: default;
         text-shadow: 0px 1px 1px #fff;
-        touch-action: manipulation;
-        -webkit-overflow-scrolling: touch;
-        -webkit-text-size-adjust: none;
+        transition: .3s cubic-bezier(0, 0, .25, 1);
+        transform: translate(0, 100%);
       }
-      console key {
+      console[open] {
+        max-height: calc(100vh - 30px);
+        transition: .3s cubic-bezier(.25, 0, 1, 1);
+        transform: translate(0, 0);
+        box-shadow: rgba(125, 125, 125, 0.3) 0px 0 15px 0;
+      }
+      console[hidden]{
+        display: none;
+      }
+      console main{
+        height: 100%;
+      }
+      console [f12] {
         position: absolute;
         bottom: 100%;
         right: 1em;
@@ -128,25 +214,185 @@
         border-bottom: 0;
         border-radius: 8px 8px 0 0;
         background: rgba(255, 255, 255, .8);
-        box-shadow: rgba(0, 0, 0, 0.1) 4px -4px 10px -4px;
-        color: #555;
-        cursor: pointer;
+        box-shadow: 4px -4px 10px -4px rgba(0, 0, 0, 0.1);
       }
-      console main{
-        display: block;
+      console nav{
+        display: flex;
+        position: absolute;
+        z-index: 9;
+        top: 0;
+        left: 0;
+        right: 0;
+        white-space: nowrap;
+        overflow: auto;
+        border-top: solid 1px rgba(255, 255, 255, 0.2);
+        border-bottom: solid 1px rgba(200, 200, 200, 0.2);
+        background: rgba(250, 250, 250, 0.8);
+        -webkit-xxbackdrop-filter: blur(1.5px);
+        xxbackdrop-filter: blur(1.5px);
+      }
+      console nav>*{
+        padding: .25em .5em;
+      }
+
+      console ul {
+        height: 100%;
+        padding: 26px 0 4em;
+        margin: 0;
+        overflow: auto;
+        list-style: none;
+        background: rgba(255, 255, 255, 0.95);
+      }
+      console li {}
+      console li > [map] {
+        display: flex;
+        align-items: start;
+        padding: .25em;
+        border-top: solid 1px rgba(255, 255, 255, 0.4);
+        border-bottom: solid 1px rgba(200, 200, 200, 0.2);
+        overflow: auto;
+        white-space: nowrap;
+      }
+      console li > [map] > [key-value] {
+        display: inline-block;
+        vertical-align: top;
+        padding: 0 .5em;
+      }
+      console li > [map] > [key-value]:nth-last-child(2) {flex: 1}
+
+      console [ajax] {
+        background: rgba(125, 243, 255, 0.1);
+        color: #bbb;
+      }
+      console [log] {
+        background: rgba(250, 250, 255, 0.1);
+      }
+      console [info] {
+        background: rgba(125, 200, 255, 0.1);
+        color: #0095ff;
+      }
+      console [warn] {
+        background: rgba(255, 225, 125, 0.1);
+        color: #FF6F00;
+      }
+      console [error] {
+        background: rgba(255, 125, 125, 0.1);
+        color: red;
+      }
+      console [success] {
+        color: #00ccee;
+      }
+
+      console [cmd] {
         position: relative;
-        height: 322px;
-        max-height: calc(100vh - 30px);
-        transition: .3s cubic-bezier(.25, 0, 1, 1);
+        background: rgba(125, 243, 255, 0.1);
+        color: #0af;
       }
-      console.hidden {
-        display: none;
+      console [cmd] [key]:before {
+        content: "$ ";
+        position: absolute;
+        left: 0;
+        color: #ddd;
       }
-      console.closed main {
+
+      console [map] {}
+      console [key-value] {white-space: nowrap}
+      console [key] {color: #a71d5d}
+      console [value] {}
+
+      console [value][number] {color: #6900ff}
+      console [value][string] {color: #666}
+      console [value][boolean] {color: #ff0060}
+      console [value][null] {color: #ccc}
+      console [value][undefined] {color: #ccc}
+      console [value][function] {color: #489ae0}
+      console [value][htmldocument] {color: #a71d5d}
+      console [value][element] {color: #a71d5d}
+      
+      console li > [map] > [key-value] > [string] {color: inherit}
+      console [cmd] [value] {color: #0af}
+      console [trace] > [value] {color: #ccc}
+
+
+      console [htmldocument]:after,
+      console [element]:after {content: ' ⇿'; color: #888}
+      console [open] > [htmldocument]:after,
+      console [open] > [element]:after {visibility: hidden}
+
+      console [value] + [map] {
+        max-width: 0;
         max-height: 0;
+        padding-left: 1em;
+        border-left: dotted 1px #ddd;
         overflow: hidden;
-        transition: .3s cubic-bezier(0, 0, .25, 1);
+        opacity: 0;
+        transition: .3s cubic-bezier(0, 1, 0, 1), opacity .6s;
       }
+      console [key-value][open] > [map] {
+        max-width: 59999px;
+        max-height: 59999px;
+        overflow: auto;
+        opacity: 1;
+        transition: .3s cubic-bezier(1, 0, 1, 0), opacity .6s;
+      }
+      console [key-value][open] > [value]:not([element]) { opacity: .5 }
+
+      console [key-value][active] > [value]{
+        color: #f0a;
+        display: inline-block;
+        vertical-align: top;
+        max-width: calc(100vw - 2em);
+        width: max-content;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      console textarea {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        line-height: 1.25;
+        display: block;
+        width: 100%;
+        border: none;
+        border-radius: 0;
+        outline: none;
+        height: 3em;
+        padding: .25em 1em;
+        resize: none;
+        background: rgba(255, 255, 255, .6);
+        -webkit-xxbackdrop-filter: blur(1.5px);
+        xxbackdrop-filter: blur(1.5px);
+        color: #333;
+      }
+      console [run]{
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        padding: .25em 1em;
+        border: solid 1px #bbb;
+        border-radius: 5px;
+        background: #fff;
+        color: #bbb;
+      }
+      console textarea:focus {height: 8em}
+      console textarea:invalid + [run] {opacity: 0}
+
+      console ul + a{
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        font-size: 1.5em;
+        text-align: center;
+        opacity: 0;
+      }
+      console ul:empty + a{
+        opacity: .25;
+        top: 48px;
+      }
+
       @media all and (min-width:768px) {
         console ::-webkit-scrollbar {
           width: 6px;
@@ -175,187 +421,28 @@
           margin-left: -1px;
         }
       }
-      console * {
-        font: inherit;
-        box-sizing: border-box;
-        transition: .3s, opacity .6s;
-      }
-      console nav{
-        display: flex;
-        position: absolute;
-        z-index: 1;
-        top: 0;
-        left: 0;
-        right: 0;
-        white-space: nowrap;
-        overflow: auto;
-        border-top: solid 1px rgba(255, 255, 255, 0.2);
-        border-bottom: solid 1px rgba(200, 200, 200, 0.2);
-        background: rgba(250, 250, 250, 0.8);
-        color: #333;
-        -webkit-backdrop-filter: blur(1.5px);
-        backdrop-filter: blur(1.5px);
-      }
-      console nav>*{
-        padding: .25em .5em;
-      }
-      console ul {
-        height: 100%;
-        padding: 0;
-        padding-top: 26px;
-        padding-bottom: 3em;
-        margin: 0;
-        overflow: auto;
-        list-style: none;
-        background: rgba(255, 255, 255, 0.95);
-      }
-      console ul li {
-        display: flex;
-        align-items: start;
-        padding: .25em;
-        border-top: solid 1px rgba(255, 255, 255, 0.4);
-        border-bottom: solid 1px rgba(200, 200, 200, 0.2);
-        overflow: auto;
-        white-space: nowrap;
-      }
-
-      console .ajax {
-        background: rgba(125, 243, 255, 0.1);
-        color: #bbb;
-      }
-      console .log {
-        background: rgba(250, 250, 255, 0.1);
-      }
-      console .info {
-        background: rgba(125, 200, 255, 0.1);
-        color: #0095ff;
-      }
-      console .warn {
-        background: rgba(255, 225, 125, 0.1);
-        color: #FF6F00;
-      }
-      console .error {
-        background: rgba(255, 125, 125, 0.1);
-        color: red;
-      }
-      console .success {
-        color: #00ccee;
-      }
-
-      console .cmd {
-        position: relative;
-        background: rgba(125, 243, 255, 0.1);
-      }
-      console .cmd .key:before {
-        content: "$ ";
-        position: absolute;
-        left: 0;
-        color: #ddd;
-      }
-
-      console li>.obj {
-        display: inline-block;
-        vertical-align: top;
-        padding: 0 .5em;
-      }
-      console .obj {
-        white-space: nowrap;
-      }
-      console .key {
-        color: #a71d5d;
-      }
-      console .value {}
-
-      console .open>.value { color: #eee }
-      console .number>.value { color: #6900ff }
-      console .string>.value { color: #666 }
-      console .boolean>.value { color: #ff0060 }
-      console .null>.value { color: #ccc }
-      console .undefined>.value { color: #ccc }
-      console .function>.value { color: #489ae0 }
-      console .htmldocument>.value,
-      console .element>.value { color: #a71d5d }
-      console .cmd .value{ color: #0af }
-      console li>.string>.value{ color: inherit }
-      console .ajax>.obj>.value{ color: inherit }
-
-      console .htmldocument>.value:after,
-      console .element>.value:after {
-        content: ' ⇿';
-      }
-      console .htmldocument.open>.value:after,
-      console .element.open>.value:after {
-        visibility: hidden;
-      }
-      console .obj.open>.value {
-        display: inline-block;
-        vertical-align: top;
-        max-width: calc(100vw - 2em);
-        width: max-content;
-        white-space: pre-wrap;
-        word-break: break-word;
-      }
-      console .obj.active>.value{
-        color: #f0a;
-      }
-
-      console li>.obj:nth-last-child(2) { flex: 1 }
-      console .obj.trace>.value { color: #ccc }
-
-      console .children {
-        max-width: 0;
-        max-height: 0;
-        padding-left: 1em;
-        border-left: dotted 1px #ddd;
-        overflow: hidden;
-        opacity: 0;
-        transition: .3s cubic-bezier(0, 1, 0, 1), opacity .6s;
-      }
-      console .open>.children {
-        max-width: 59999px;
-        max-height: 59999px;
-        overflow: auto;
-        opacity: 1;
-        transition: .3s cubic-bezier(1, 0, 1, 0), opacity .6s;
-      }
-
-      console textarea {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        line-height: 1.25;
-        display: block;
-        width: 100%;
-        border: none;
-        border-radius: 0;
-        outline: none;
-        height: 3em;
-        padding: .25em 1em;
-        resize: none;
-        background: rgba(255, 255, 255, .6);
-        -webkit-backdrop-filter: blur(1.5px);
-        backdrop-filter: blur(1.5px);
-        color: #333;
-      }
-      console textarea:focus{
-        height: 8em;
-      }
-
-      @supports (position: sticky){
-        console {
-          position: sticky
-        }
-      }
-      @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+      @supports (xxbackdrop-filter: blur(1px)) or (-webkit-xxbackdrop-filter: blur(1px)) {
         console ul {
           background: rgba(255, 255, 255, 0.8);
-          -webkit-backdrop-filter: blur(5px);
-          backdrop-filter: blur(5px);
+          -webkit-xxbackdrop-filter: blur(5px);
+          xxbackdrop-filter: blur(5px);
         }
       }
     </style>
-    <key>F12</key>
+  `)
+
+  var consoleLink = `
+  <a href="https://github.com/wusfen/console.js" target="_blank">
+    console.js
+    <svg style="height: 1em;width:1em;vertical-align:middle" viewBox="0 0 16 16" version="1.1" aria-hidden="true">
+      <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+    </svg>
+  </a>
+  `
+
+  var consoleEl = parse(`
+  <console>
+    <key f12>F12</key>
     <main>
       <nav>
         <b>clear</b>
@@ -368,267 +455,50 @@
         <b>history</b>
         <b>performance</b>
         <b>dir($0)</b>
-        <a href="https://github.com/wusfen/console.js" target="_blank">
-          console.js
-          <svg style="height: 1em;width:1em;vertical-align:middle" viewBox="0 0 16 16" version="1.1" aria-hidden="true">
-            <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
-          </svg>
-        </a>
+        ${consoleLink}
       </nav>
       <ul>
         <li>
-          <div class="obj">
-            <span class="key"></span>
-            <span class="value"></span>
-            <div class="children"></div>
+          <div map>
+            <div key-value>
+              <span key> </span>
+              <span value> </span>
+              <div map></div>
+            </div>
           </div>
         </li>
       </ul>
-      <textarea placeholder="$"></textarea>
+      ${consoleLink}
+      <textarea placeholder="$" required></textarea>
+      <button run>run</button>
     </main>
   </console>
   `)
-  var F12El = find(ConsoleEl, 'key')
-  // var MainEl = find(ConsoleEl, 'main')
-  var UlEl = find(ConsoleEl, 'ul')
-  var LiEl = find(ConsoleEl, 'li')
-  var ObjEl = find(ConsoleEl, 'obj')
-  var InputEl = find(ConsoleEl, 'textarea')
-  var WordsEl = find(ConsoleEl, 'nav')
-
-  // init clear
-  UlEl.innerHTML = ''
-
-  // to end 
-  function scrollToEnd() {
-    tween(UlEl.scrollTop, UlEl.scrollTop + UlEl.scrollHeight, v => UlEl.scrollTop = v)
-  }
-
-  // console toggle
-  F12El.onclick = function() {
-    toggleClass(ConsoleEl, 'closed')
-  }
-
-  // print
-  var printLi = function(type, valueList, trace) {
-    // is scroll end
-    var isEnd = UlEl.scrollTop + UlEl.clientHeight > UlEl.scrollHeight - 40
-
-    // clone li
-    var liEl = LiEl.cloneNode(true)
-    addClass(liEl, type)
-    liEl.innerHTML = ''
-    UlEl.appendChild(liEl)
-
-    // log('%c...', 'style', ...)
-    var obj0 = valueList[0] + ''
-    var obj0m = obj0.match(/%c.+?(?=%c|$)+/g)
-    if (obj0m) {
-      for (var ci = 0; ci < obj0m.length; ci++) {
-        printKeyValue(liEl, '', obj0m[ci].slice(2)).setAttribute(
-          'style',
-          valueList[ci + 1]
-        )
-      }
-      valueList = ['']
-    }
-
-    // log(a,b,...c)
-    for (var i = 0; i < valueList.length; i++) {
-      printKeyValue(liEl, '', valueList[i], type)
-    }
-
-    // trace
-    var objEl = printKeyValue(liEl, '', trace || '')
-    addClass(objEl, 'trace')
-
-    // li max
-    if (UlEl.children.length > 500) {
-      UlEl.removeChild(UlEl.children[0])
-    }
-
-    // scroll
-    if (isEnd) {
-      scrollToEnd()
-    }
-
-    return liEl
-  }
-
-  /**
-   * li
-   *  .key-value  .key-value
-   *    .value
-   *    .sub.obj
-   *      .key-value
-   *      .key-value
-   *        .key
-   *        .value
-   *        .sub.obj
-   *          .key-value
-   *          .key-value
-   * @param {*} parentElement
-   * @param {*} key
-   * @param {*} value
-   * @param {*} type
-   */
-  var printKeyValue = function(parentElement, key, value, type) {
-    // skip
-    if (ConsoleEl == value || boxEl == value) {
-      return
-    }
-
-    // clone objEl
-    var objEl = ObjEl.cloneNode(true) // key-value
-    var keyEl = find(objEl, 'key')
-    var valueEl = find(objEl, 'value')
-    var childrenEl = find(objEl, 'children')
-    parentElement.appendChild(objEl)
-
-    // key
-    keyEl.innerText = key
-
-    // value
-    valueEl.innerHTML = escapeTag(toString(value))
-    addClass(objEl, typeOf(value))
-
-    // save
-    childrenEl.value = value
-
-    // open children
-    objEl.onclick = valueEl.onclick = function(e) {
-      clickValue(parentElement, key, value, type, objEl, valueEl, childrenEl, e)
-    }
-
-    return objEl
-  }
-
-  // click obj: print children
-  function clickValue(
-    parentElement,
-    key,
-    value,
-    type,
-    objEl,
-    valueEl,
-    childrenEl,
-    e
-  ) {
-    // self
-    e.stopPropagation()
-
-    // toggle
-    toggleClass(objEl, 'open')
-    clickValue.objEl && removeClass(clickValue.objEl, 'active')
-    clickValue.objEl = objEl
-    addClass(objEl, 'active')
-
-    // function: call
-    if (typeof value === 'function' && key && hasClass(objEl, 'open')) {
-      // temp1
-      console.temp1 = parentElement.value
-      InputEl.value = `temp1.${key}('${/'(.*?)'/.test(InputEl.value) ? RegExp.$1 : InputEl.value || 'click to input'}')`
-
-      // call
-      run()
-      InputEl.value = ''
-
-      return
-    }
-
-    // scrollLeft
-    setTimeout(() => {
-      if (objEl.offsetLeft < 50) return
-      tween(
-        parentElement.scrollLeft,
-        objEl.offsetLeft,
-        (v) => (parentElement.scrollLeft = v)
-      )
-    }, 150)
-    // scrollTop
-    setTimeout(() => {
-      var ulRect = UlEl.getBoundingClientRect()
-      var objRect = objEl.getBoundingClientRect()
-      var diffTop = objRect.top - ulRect.top
-      tween(
-        UlEl.scrollTop,
-        UlEl.scrollTop + diffTop - 26 * 2 - 4,
-        (v) => (UlEl.scrollTop = v)
-      )
-    }, 150)
-
-    // showBox
-    if (value && value.tagName) {
-      showBox(value)
-    }
-
-    // $n
-    var $i = 10
-    if (value instanceof Element) {
-      while ($i--) {
-        console['$' + $i] = console['$' + ($i - 1)]
-      }
-      console.$0 = value
-    }
-
-    // object children
-    if (typeof value == 'object' && hasClass(objEl, 'open')) {
-      // reopen update
-      childrenEl.innerHTML = ''
-
-      // childNodes
-      if (value && value.childNodes && type !== 'dir') {
-        var childNodes = toArray(value.childNodes)
-        for (var i = 0; i < childNodes.length; i++) {
-          var childNode = childNodes[i]
-          printKeyValue(childrenEl, '', childNode)
-        }
-        return
-      }
-
-      // keys
-      for (var k in value) {
-        printKeyValue(childrenEl, k, value[k])
-        // max
-        if (typeOf(value) == 'array' && k > 500) {
-          printKeyValue(childrenEl, '...', '')
-          return
-        }
-      }
-    }
-
-  }
+  var f12El = find(consoleEl, 'key')
+  var listEl = find(consoleEl, 'ul')
+  var liEl = find(consoleEl, 'li')
+  var keyValueEl = find(consoleEl, 'key-value')
+  var inputEl = find(consoleEl, 'textarea')
+  var runEl = find(consoleEl, 'run')
+  var wordsEl = find(consoleEl, 'nav')
 
   var boxEl = parse(`
   <box>
     <style>
-      head{
-        display: block;
-      }
-      head>*{
-        display: none;
-      }
-      
-      box,
-      box *{
-        box-sizing: border-box;
-        transition: .5s;
-      }
       box{
         display: block;
         position: absolute;
         left: -9em;
         top: -9em;
-        box-sizing: border-box;
         z-index: 999999991;
-        pointer-events: none;
-        font-size: 12px;
         line-height: 1;
-        font-family: sans-serif;
         opacity: 1;
+        letter-spacing: -1px;
+        pointer-events: none;
       }
       box[hide]{
         opacity: 0;
+        display: none;
       }
       box[hide] path{
         display: none;
@@ -703,19 +573,242 @@
   var paddingEl = find(boxEl, 'padding')
   var textEl = find(boxEl, 'text')
   var pathEl = find(boxEl, 'path')
-  document.head.appendChild(boxEl)
-  boxEl.target = null
+
+  headEl.appendChild(styleEl)
+  headEl.appendChild(consoleEl)
+  headEl.appendChild(boxEl)
+
+  // init
+  listEl.innerHTML = ''
+  listerBox()
+
+  // print
+  function printLi(type, valueList, trace) {
+    // clone li
+    var _liEl = liEl.cloneNode(true)
+    var mapEl = find(_liEl, 'map')
+    listEl.appendChild(_liEl)
+    mapEl.innerHTML = ''
+    setAttribute(_liEl, type)
+
+    // log('%c...', 'style', ...)
+    var obj0 = valueList[0] + ''
+    var obj0m = obj0.match(/%c.+?(?=%c|$)+/g)
+    if (obj0m) {
+      for (var ci = 0; ci < obj0m.length; ci++) {
+        printKeyValue(mapEl, '', obj0m[ci].slice(2)).setAttribute(
+          'style',
+          valueList[ci + 1]
+        )
+      }
+      valueList = ['']
+    }
+
+    // log(a,b,...c)
+    for (var i = 0; i < valueList.length; i++) {
+      printKeyValue(mapEl, '', valueList[i], type)
+    }
+
+    // trace
+    var objEl = printKeyValue(mapEl, '', trace || '')
+    setAttribute(objEl, 'trace')
+
+    // li max
+    if (listEl.children.length > 500) {
+      listEl.removeChild(listEl.children[0])
+    }
+
+    // scroll
+    var isEnd = listEl.scrollTop + listEl.clientHeight > listEl.scrollHeight - 40
+    if (isEnd) {
+      scrollToEnd()
+    }
+
+    return _liEl
+  }
+
+  /**
+   * li.map
+   *  .key-value  .key-value
+   *    .value
+   *    .map
+   *      .key-value
+   *      .key-value
+   *        .key
+   *        .value
+   *        .map
+   *          .key-value
+   *          .key-value
+   * @param {Element} parentElement
+   * @param {string} key
+   * @param {string} value
+   * @param {string} type
+   */
+  function printKeyValue(parentEl, key, value, type) {
+    // skip
+    if (value && value.isParse) {
+      return
+    }
+
+    // clone keyValueEl
+    var _keyValueEl = keyValueEl.cloneNode(true)
+    var keyEl = find(_keyValueEl, 'key')
+    var valueEl = find(_keyValueEl, 'value')
+    var childrenEl = find(_keyValueEl, 'map')
+    parentEl.appendChild(_keyValueEl)
+
+    // key
+    keyEl.key = key
+    keyEl.innerText = key
+
+    // value
+    valueEl.value = value
+    valueEl.innerHTML = escapeTag(toString(value))
+    setAttribute(valueEl, typeOf(value))
+
+    // children
+    childrenEl.value = value
+
+    // open children
+    _keyValueEl.onclick = valueEl.onclick = function(e) {
+      // self
+      e.stopPropagation()
+
+      clickValue(_keyValueEl, keyEl, valueEl, childrenEl, type)
+    }
+
+    return _keyValueEl
+  }
+
+  function printKeyValueList(parentEl, keyValueList, type) {
+    var fragment = document.createDocumentFragment()
+    keyValueList.forEach(keyValue => {
+      printKeyValue(fragment, keyValue.key, keyValue.value, type)
+    })
+    parentEl.appendChild(fragment)
+  }
+
+  // click obj: print children
+  function clickValue(keyValueEl, keyEl, valueEl, childrenEl, type) {
+    var parentEl = keyValueEl.parentNode
+    var key = keyEl.key
+    var value = valueEl.value
+
+    // active
+    toggleAttribute(keyValueEl, 'active')
+    if (clickValue.lastEl && clickValue.lastEl != keyValueEl) {
+      removeAttribute(clickValue.lastEl, 'active')
+    }
+    clickValue.lastEl = keyValueEl
+
+    // function: call
+    if (typeof value === 'function' && key && hasAttribute(keyValueEl, 'active')) {
+      // temp1
+      console.temp1 = parentEl.value
+      inputEl.value = `temp1.${key}('${/'(.*?)'/.test(inputEl.value) ? RegExp.$1 : inputEl.value || 'click to input'}')`
+
+      // call
+      run()
+      inputEl.value = ''
+
+      return
+    }
+
+    // scrollTop
+    setTimeout(() => {
+      var ulRect = listEl.getBoundingClientRect()
+      var objRect = keyValueEl.getBoundingClientRect()
+      var diffTop = objRect.top - ulRect.top
+      tween(
+        listEl.scrollTop,
+        listEl.scrollTop + diffTop - 26 * 2 - 4,
+        (v) => (listEl.scrollTop = v)
+      )
+    }, 150)
+
+    // scrollLeft
+    setTimeout(() => {
+      if (keyValueEl.offsetLeft < 50) return
+      tween(
+        parentEl.scrollLeft,
+        keyValueEl.offsetLeft - 12 * 4,
+        (v) => (parentEl.scrollLeft = v)
+      )
+    }, 150)
+
+    // showBox
+    if (value && value.tagName) {
+      showBox(value, true)
+    }
+
+    // $n
+    var $i = 10
+    if (value instanceof Element) {
+      while ($i--) {
+        console['$' + $i] = console['$' + ($i - 1)]
+      }
+      console.$0 = value
+    }
+
+    // object children
+    if (typeof value == 'object') {
+      // toggle
+      toggleAttribute(keyValueEl, 'open')
+
+      // print children
+      if (hasAttribute(keyValueEl, 'open')) {
+        // reopen update
+        childrenEl.innerHTML = ''
+
+        // childNodes
+        if (value && value.childNodes && type !== 'dir') {
+          var childNodes = toArray(value.childNodes)
+          for (var i = 0; i < childNodes.length; i++) {
+            var childNode = childNodes[i]
+            printKeyValue(childrenEl, '', childNode)
+          }
+          return
+        }
+
+        // keys
+        var keyValueList = []
+        for (var k in value) {
+          keyValueList.push({
+            key: k,
+            value: value[k],
+          })
+          // max
+          if (typeOf(value) == 'array' && k > 500) {
+            keyValueList.push({
+              key: '...',
+              value: 'too max',
+            })
+            return
+          }
+        }
+        printKeyValueList(childrenEl, keyValueList)
+      }
+    }
+
+  }
 
   // touch||click||mouseover show box
-  setTimeout(() => {
+  function listerBox() {
+    if (!document.body) {
+      setTimeout(() => {
+        listerBox()
+      }, 300)
+      return
+    }
+
     document.body.addEventListener('touchstart', e => {
-      showBox(e.target, true)
+      showBox(e.target)
     })
     document.body.addEventListener('click', e => {
-      showBox(e.target, true)
+      showBox(e.target)
     })
     document.body.addEventListener('mouseover', e => {
-      showBox(e.target, true)
+      showBox(e.target)
     }, true)
 
     // scroll update box pos
@@ -723,16 +816,15 @@
     document.body.addEventListener('scroll', (e) => {
       clearTimeout(updateBoxTimer)
       updateBoxTimer = setTimeout(() => {
-        boxEl.target && showBox(boxEl.target, true)
+        boxEl.target && showBox(boxEl.target)
       }, 300);
     }, true)
-  }, 1)
-
+  }
 
   // show element box
-  function showBox(el, isNoScroll) {
+  function showBox(el, isNeedScroll) {
     // hide
-    if (hasClass(ConsoleEl, 'closed')) {
+    if (!hasAttribute(consoleEl, 'open')) {
       hideBox()
       return
     } else {
@@ -770,7 +862,7 @@
     pathEl.innerHTML = getPath(el)
 
     // scrollIntoView
-    if (!isNoScroll) {
+    if (isNeedScroll) {
       el.scrollIntoViewIfNeeded()
       clearTimeout(showBox.timer)
       showBox.timer = tween(
@@ -783,52 +875,12 @@
     }
   }
 
+  // hide element box
   function hideBox() {
     boxEl.setAttribute('hide', true)
   }
 
-  // `body div.container ul li img#id`
-  function getPath(el) {
-    var path = []
-
-    function loop(el) {
-      if (el && el.tagName && el != htmlEl) {
-
-        var tagName = el.tagName.toLowerCase()
-        var id = el.id
-        var className = el.className
-        className = typeof className == 'string' ? className.trim().split(/\s+/).join('.') : '' // svg className is object
-        var selector = `
-        <span style="white-space:nowrap">
-          <tag>${tagName}</tag>${id ? '#' + id : ''}${className ? '.' + className : ''}
-        </span>`
-        path.push(selector)
-
-        loop(el.parentNode)
-      }
-    }
-    loop(el)
-
-    return path.reverse().join(' ')
-  }
-
-  // file.ext:line
-  function getTrace() {
-    try {
-      throw new Error('trace')
-    } catch (e) {
-      var trace = e.stack
-        .replace(/^Error.*\n/, '')
-        .split(/\n/)
-        .slice(2)
-        .concat('trace') // !ios: -Error... => []
-      var m = trace[0].match(/([^/?=&#:() ]+)(\?[^?]*?)?(:\d+)(:\d+)\)?$/) // file.ext?query:line:column  |  ..)?
-      trace.__string__ = m ? `${m[1]}${m[3]}` : trace[0]
-      return trace
-    }
-  }
-
-  // value show
+  // value to print
   function toString(value) {
     // !
     if (!value) {
@@ -900,6 +952,52 @@
     return value + ''
   }
 
+  // file.ext:line
+  function getTrace() {
+    try {
+      throw new Error('trace')
+    } catch (e) {
+      var trace = e.stack
+        .replace(/^Error.*\n/, '')
+        .split(/\n/)
+        .slice(2)
+        .concat('trace') // !ios: -Error... => []
+      var m = trace[0].match(/([^/?=&#:() ]+)(\?[^?]*?)?(:\d+)(:\d+)\)?$/) // file.ext?query:line:column  |  ..)?
+      trace.__string__ = m ? `${m[1]}${m[3]}` : trace[0]
+      return trace
+    }
+  }
+
+  // `body div.container ul li img#id`
+  function getPath(el) {
+    var path = []
+
+    function loop(el) {
+      if (el && el.tagName && el != htmlEl) {
+
+        var tagName = el.tagName.toLowerCase()
+        var id = el.id
+        var className = el.className
+        className = typeof className == 'string' ? className.trim().split(/\s+/).join('.') : '' // svg className is object
+        var selector = `
+        <span style="white-space:nowrap">
+          <tag>${tagName}</tag>${id ? '#' + id : ''}${className ? '.' + className : ''}
+        </span>`
+        path.push(selector)
+
+        loop(el.parentNode)
+      }
+    }
+    loop(el)
+
+    return path.reverse().join(' ')
+  }
+
+  // to end 
+  function scrollToEnd() {
+    tween(listEl.scrollTop, listEl.scrollTop + listEl.scrollHeight, v => listEl.scrollTop = v)
+  }
+
   /**
    * run code
    *
@@ -910,7 +1008,7 @@
    * @returns result
    */
   function run() {
-    var code = InputEl.value
+    var code = inputEl.value
     if (!code) return
 
     // print input
@@ -921,9 +1019,9 @@
     cmdLi.addEventListener(
       'click',
       function() {
-        InputEl.value = cmdLi.code
-        InputEl.focus()
-        InputEl.setSelectionRange(99, 99)
+        inputEl.value = cmdLi.code
+        inputEl.focus()
+        inputEl.setSelectionRange(99, 99)
       },
       true
     )
@@ -951,45 +1049,42 @@
     return rs
   }
 
-  // enter run
-  InputEl.onkeydown = function(event) {
-    var code = InputEl.value
-
-    // run
-    if (event.keyCode == 13) {
-      if (!code) {
-        return false
-      }
-      if (/\n$/.test(code)) {
-        InputEl.blur()
-        run()
-        InputEl.value = ''
-        return false
-      }
-    }
+  // run button
+  runEl.onclick = function() {
+    run()
+    inputEl.value = ''
   }
 
   // words
-  WordsEl.onclick = function(e) {
+  wordsEl.onclick = function(e) {
     var b = e.target
     if (!/b/i.test(b.tagName)) return
     var code = b.innerHTML
 
     // clear
-    if (code == 'clear') {
-      if (InputEl.value) {
-        InputEl.value = ''
+    if (/clear/.test(code)) {
+      if (inputEl.value) {
+        inputEl.value = ''
       } else {
-        UlEl.innerHTML = ''
+        listEl.innerHTML = ''
       }
       return
     }
 
     // run
-    var oldValue = InputEl.value
-    InputEl.value = code
+    var oldValue = inputEl.value
+    inputEl.value = code
     run()
-    InputEl.value = oldValue
+    inputEl.value = oldValue
+  }
+
+  // console toggle
+  f12El.onclick = function() {
+    if (console.show == 1) {
+      console.show = 2
+    } else {
+      console.show = 1
+    }
   }
 
   // intercept: console, error, xhr, fetch
@@ -1003,6 +1098,7 @@
       info: noop,
       warn: noop,
       error: noop,
+      debug: noop,
       dir: noop,
       table: noop,
     }
@@ -1024,6 +1120,9 @@
       'error',
       function(e) {
         printLi('error', [e])
+        if (console.show === 1) {
+          console.show = 2
+        }
       },
       true // true: catch (js, css, img) error
     )
@@ -1223,13 +1322,31 @@
       'document.cookie': document.cookie,
     }
     console.temp1 = document
-    console.$0 = document.body
-
-    // insert ConsoleEl
-    setTimeout(function() {
-      htmlEl.appendChild(ConsoleEl)
-    }, 1)
+    console.$0 = document
   }
+
+  // toggle style
+  headEl.appendChild(parse(`
+  <style console>
+    html{
+      padding-bottom: 0;
+      transition: .3s;
+    }
+    box{
+      padding-bottom: 24px;
+    }
+  </style>
+  `))
+  var consoleOpenStyle = parse(`
+  <style console open>
+    html{
+      padding-bottom: 322px;
+    }
+    box{
+      padding-bottom: 344px;
+    }
+  </style>
+  `)
 
   // console.show = true || 1 || 2
   var consoleShow = console.show
@@ -1237,20 +1354,20 @@
     configurable: true,
     set(value) {
       consoleShow = value
+      consoleOpenStyle.parentNode && headEl.removeChild(consoleOpenStyle)
+
       if (value) {
         intercept()
-        setTimeout(function() {
-          removeClass(ConsoleEl, 'hidden')
-          addClass(ConsoleEl, 'closed')
-        })
+        removeAttribute(consoleEl, 'open')
       }
       if (value == 2) {
         setTimeout(function() {
-          removeClass(ConsoleEl, 'closed')
+          setAttribute(consoleEl, 'open')
+          headEl.appendChild(consoleOpenStyle)
         }, 100)
       }
       if (!value) {
-        addClass(ConsoleEl, 'hidden')
+        setAttribute(consoleEl, 'hidden')
       }
     },
     get() {
