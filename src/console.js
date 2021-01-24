@@ -953,19 +953,37 @@
   }
 
   // file.ext:line
-  function getTrace() {
-    try {
-      throw new Error('trace')
-    } catch (e) {
-      var trace = e.stack
-        .replace(/^Error.*\n/, '')
-        .split(/\n/)
-        .slice(2)
-        .concat('trace') // !ios: -Error... => []
-      var m = trace[0].match(/([^/?=&#:() ]+)(\?[^?]*?)?(:\d+)(:\d+)\)?$/) // file.ext?query:line:column  |  ..)?
-      trace.__string__ = m ? `${m[1]}${m[3]}` : trace[0]
-      return trace
+  function getTrace(error) {
+    var traceStart = 0
+    if (!error) {
+      try {
+        throw new Error('trace')
+      } catch (e) {
+        error = e
+        traceStart = 2
+      }
     }
+
+    /**
+      @example:
+      ReferenceError: fun is not defined
+          at fn (http://172.20.10.6:5500/example/example.html:176:13)
+          at http://172.20.10.6:5500/example/example.html:179:11
+      =>
+          at fn (http://172.20.10.6:5500/example/example.html:176:13)
+          at http://172.20.10.6:5500/example/example.html:179:11
+    */
+    var trace = error.stack
+      .replace(/^.*?Error.*\n/, '') // -line0
+      .split(/\n/) // => array
+      .slice(traceStart) // -line*2: new Error('trace')
+
+    // reg:                   file.ext       ?querry   :line :col  )
+    var m = trace[0].match(/([^/?=&#:() ]+)(\?[^?]*?)?(:\d+)(:\d+)\)?$/)
+    // file.ext:line
+    trace.__string__ = m ? `${m[1]}${m[3]}` : trace[0]
+
+    return trace
   }
 
   // `body div.container ul li img#id`
@@ -1119,7 +1137,9 @@
     addEventListener(
       'error',
       function(e) {
-        printLi('error', [e])
+        printLi('error', [e], e.error ? getTrace(e.error) : '')
+
+        // auto open console
         if (console.show === 1) {
           console.show = 2
         }
