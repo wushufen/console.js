@@ -63,7 +63,7 @@
 
   /**
    * find element
-   * @param {Elemnt} el parentElemnt
+   * @param {Elemnt} el parentElement
    * @param {string} name tagName || attrName
    * @returns {Element}
    */
@@ -978,7 +978,7 @@
       .split(/\n/) // => array
       .slice(traceStart) // -line*2: new Error('trace')
 
-    // reg:                   file.ext       ?querry   :line :col  )
+    // reg:                   file.ext       ?query   :line :col  )
     var m = trace[0].match(/([^/?=&#:() ]+)(\?[^?]*?)?(:\d+)(:\d+)\)?$/)
     // file.ext:line
     trace.__string__ = m ? `${m[1]}${m[3]}` : trace[0]
@@ -1124,14 +1124,17 @@
     var _console = Object.assign({}, window.console)
 
     // intercept console
-    for (var type in con) {
-      !(function(type) {
-        console[type] = function() {
-          _console[type].apply(this, arguments)
-          printLi(type, arguments, getTrace())
-        }
-      })(type)
+    for (let type in con) {
+      console[type] = function() {
+        _console[type].apply(this, arguments)
+        printLi(type, arguments, getTrace())
+      }
     }
+    // avoid cover
+    var consoleX = Object.assign({}, console)
+    setTimeout(() => {
+      Object.assign(console, consoleX)
+    }, 1)
 
     // intercept error
     addEventListener(
@@ -1158,12 +1161,12 @@
 
     // intercept xhr
     var XHR = window.XMLHttpRequest || noop
-    var XHRopen = XHR.prototype.open
-    var XHRsend = XHR.prototype.send
+    var XHROpen = XHR.prototype.open
+    var XHRSend = XHR.prototype.send
     XHR.prototype.open = function(method, url) {
       var xhr = this
       // open
-      XHRopen.apply(this, arguments)
+      XHROpen.apply(this, arguments)
 
       // setRequestHeader
       var requestHeaders = {}
@@ -1242,7 +1245,7 @@
         xhr.addEventListener('loadend', readystatechange)
 
         // send
-        XHRsend.apply(this, arguments)
+        XHRSend.apply(this, arguments)
       }
     }
 
