@@ -609,7 +609,7 @@
 
     // log('%c...', 'style', ...)
     var obj0 = valueList[0]
-    obj0 = obj0.toString? String(obj0): '{}'
+    obj0 = obj0 && obj0.toString ? String(obj0) : '{}'
     var obj0m = obj0.match(/%c.+?(?=%c|$)+/g)
     if (obj0m) {
       for (var ci = 0; ci < obj0m.length; ci++) {
