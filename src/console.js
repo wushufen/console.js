@@ -189,7 +189,7 @@
         right: 0;
         bottom: 0;
         width: 100%;
-        max-width: 768px;
+        max-width: 1080px;
         height: 322px;
         height: 270px;
         margin: auto auto 0;
@@ -231,7 +231,7 @@
         overflow: auto;
         border-top: solid 1px rgba(255, 255, 255, 0.2);
         border-bottom: solid 1px rgba(200, 200, 200, 0.2);
-        background: rgba(250, 250, 250, 0.8);
+        background: rgba(250, 250, 250, 0.5);
         -webkit-backdrop-filter: blur(1.5px);
         backdrop-filter: blur(1.5px);
       }
@@ -245,7 +245,7 @@
         margin: 0;
         overflow: auto;
         list-style: none;
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.95);
       }
       console li {}
       console li > [map] {
@@ -265,7 +265,7 @@
       console li > [map] > [key-value]:nth-last-child(2) {flex: 1}
 
       console [ajax] {
-        background: rgba(125, 243, 255, 0.1);
+        background: rgba(125, 255, 159, .1);
         color: #bbb;
       }
       console [log] {
@@ -284,7 +284,7 @@
         color: red;
       }
       console [success] {
-        color: #00ccee;
+        color: #00cc8a;
       }
 
       console [cmd] {
@@ -304,7 +304,7 @@
       console [key] {color: #a71d5d}
       console [value] {}
 
-      console [value][number] {color: #6900ff}
+      console [value][number] {color: #c000ff}
       console [value][string] {color: #666}
       console [value][boolean] {color: #ff0060}
       console [value][null] {color: #ccc}
@@ -427,7 +427,7 @@
       }
       @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
         console ul {
-          background: rgba(255, 255, 255, 0.8);
+          background: rgba(255, 255, 255, 0.9);
           -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
         }
@@ -551,16 +551,16 @@
         white-space: normal;
         animation: 4s box infinite;
 
-        position: fixed;
-        top: 0;
+        xxposition: fixed;
+        xxtop: 0;
         bottom: auto;
         padding: 0px 5px;
         margin-right: -5px;
         line-height: 18px;
-        border-radius: 0 0 5px 0;
-        xbackground: rgba(255, 255, 255, 0.7);
-        xcolor: #555;
-        animation: unset;
+        xxborder-radius: 0 0 5px 0;
+        background: rgba(255, 255, 255, 0.7);
+        color: #555;
+        xxanimation: unset;
       }
       box path tag{
         color: #f0a;
@@ -1049,7 +1049,8 @@
         </span>`
         path.push(selector)
 
-        loop(el.parentNode)
+        // too long
+        // loop(el.parentNode)
       }
     }
     loop(el)
