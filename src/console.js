@@ -191,7 +191,7 @@
         width: 100%;
         max-width: 1080px;
         height: 322px;
-        height: 270px;
+        height: 375px;
         margin: auto auto 0;
         text-shadow: 0px 1px 1px #fff;
         transition: .3s cubic-bezier(0, 0, .25, 1);
@@ -1427,7 +1427,7 @@
       padding-bottom: 322px;
     }
     box{
-      padding-bottom: calc(270px + 22px);
+      padding-bottom: calc(375px + 22px);
     }
   </style>
   `)
