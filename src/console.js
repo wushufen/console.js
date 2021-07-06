@@ -608,7 +608,8 @@
     setAttribute(_liEl, type)
 
     // log('%c...', 'style', ...)
-    var obj0 = valueList[0] + ''
+    var obj0 = valueList[0]
+    obj0 = obj0.toString? String(obj0): '{}'
     var obj0m = obj0.match(/%c.+?(?=%c|$)+/g)
     if (obj0m) {
       for (var ci = 0; ci < obj0m.length; ci++) {
@@ -934,7 +935,9 @@
       var k0 = Object.keys(value)[0]
       if (k0 === undefined) return '[Object]{}'
       var v0 = value[k0]
-      return `{ ${k0}: ${String(v0).slice(0, 20)} …}`
+      // !Object.create(null)?
+      var v0Str = v0.toString ? String(v0).slice(0, 20) : '{…}'
+      return `{ ${k0}: ${v0Str} …}`
     }
 
     // ErrorEvent
@@ -1145,10 +1148,10 @@
 
   // console toggle
   f12El.onclick = function() {
-    if (console.show == 1) {
-      console.show = 2
-    } else {
+    if (console.show == 2) {
       console.show = 1
+    } else {
+      console.show = 2
     }
   }
 
