@@ -1426,7 +1426,7 @@
       padding-bottom: 322px;
     }
     box{
-      padding-bottom: 344px;
+      padding-bottom: calc(270px + 22px);
     }
   </style>
   `)
