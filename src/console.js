@@ -1,6 +1,6 @@
 /*!
  * @preserve https://github.com/wusfen/console.js
- * 
+ *
  * Console for mobile browser or webview
  */
 !(function(window) {
@@ -11,7 +11,7 @@
 
   /**
    * childNodes => [childNode, ...]
-   * @param {*} arrayLike 
+   * @param {*} arrayLike
    */
   function toArray(arrayLike) {
     var arr = []
@@ -28,20 +28,23 @@
    * 1 => Number
    * 'string' => String
    * <body> => Element
-   * @param {*} obj 
+   * @param {*} obj
    * @returns {Function} constructor
    */
   function typeOf(obj) {
     if (obj instanceof Element) {
       return 'element'
     }
-    return Object.prototype.toString.call(obj).slice(8, -1).toLowerCase()
+    return Object.prototype.toString
+      .call(obj)
+      .slice(8, -1)
+      .toLowerCase()
   }
 
   /**
    * < => &lt;
    * > => &gt;
-   * @param {string} html 
+   * @param {string} html
    */
   function escapeTag(html) {
     return html.replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -49,7 +52,7 @@
 
   /**
    * parse html
-   * @param {string} html 
+   * @param {string} html
    * @returns {Element}
    */
   function parse(html) {
@@ -83,19 +86,19 @@
 
   /**
    * (el, 'attr') => <el attr></el>
-   * @param {Element} el 
-   * @param {string} attr 
+   * @param {Element} el
+   * @param {string} attr
    */
   function setAttribute(el, attr) {
-    attr.split(/\s+/).map(attr => {
+    attr.split(/\s+/).map((attr) => {
       el.setAttribute(attr, '')
     })
   }
 
   /**
    * <el attr></el> => <el></el>
-   * @param {Element} el 
-   * @param {string} attr 
+   * @param {Element} el
+   * @param {string} attr
    */
   function removeAttribute(el, attr) {
     el.removeAttribute(attr)
@@ -125,10 +128,10 @@
   }
   /**
    * tween
-   * @param {number} start 
-   * @param {number} end 
-   * @param {function} cb 
-   * @param {number?} duration 
+   * @param {number} start
+   * @param {number} end
+   * @param {function} cb
+   * @param {number?} duration
    */
   function tween(start, end, cb, duration = 500) {
     var times = duration / 15
@@ -188,6 +191,7 @@
         width: 100%;
         max-width: 768px;
         height: 322px;
+        height: 270px;
         margin: auto auto 0;
         text-shadow: 0px 1px 1px #fff;
         transition: .3s cubic-bezier(0, 0, .25, 1);
@@ -228,8 +232,8 @@
         border-top: solid 1px rgba(255, 255, 255, 0.2);
         border-bottom: solid 1px rgba(200, 200, 200, 0.2);
         background: rgba(250, 250, 250, 0.8);
-        -webkit-xxbackdrop-filter: blur(1.5px);
-        xxbackdrop-filter: blur(1.5px);
+        -webkit-backdrop-filter: blur(1.5px);
+        backdrop-filter: blur(1.5px);
       }
       console nav>*{
         padding: .25em .5em;
@@ -241,7 +245,7 @@
         margin: 0;
         overflow: auto;
         list-style: none;
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(255, 255, 255, 0.9);
       }
       console li {}
       console li > [map] {
@@ -362,8 +366,8 @@
         padding: .25em 1em;
         resize: none;
         background: rgba(255, 255, 255, .6);
-        -webkit-xxbackdrop-filter: blur(1.5px);
-        xxbackdrop-filter: blur(1.5px);
+        -webkit-backdrop-filter: blur(1.5px);
+        backdrop-filter: blur(1.5px);
         color: #333;
       }
       console [run]{
@@ -421,11 +425,11 @@
           margin-left: -1px;
         }
       }
-      @supports (xxbackdrop-filter: blur(1px)) or (-webkit-xxbackdrop-filter: blur(1px)) {
+      @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
         console ul {
           background: rgba(255, 255, 255, 0.8);
-          -webkit-xxbackdrop-filter: blur(5px);
-          xxbackdrop-filter: blur(5px);
+          -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
         }
       }
     </style>
@@ -530,10 +534,10 @@
         right: 0;
         padding: 1px 3px;
         border-radius: 0 0 0 5px;
-        background: rgba(0, 0, 0, .8);
+        background: rgba(0, 0, 0, .7);
         color: #fff;
         white-space: nowrap;
-        animation: 5s box infinite;
+        animation: 4s box infinite;
       }
       box path{
         position: absolute;
@@ -542,9 +546,21 @@
         margin-top: -1px;
         padding: 1px 3px;
         border-radius: 0 5px 5px 5px;
-        background: rgba(0, 0, 0, .8);
-        white-space: normal;
+        background: rgba(0, 0, 0, .7);
         color: #fff;
+        white-space: normal;
+        animation: 4s box infinite;
+
+        position: fixed;
+        top: 0;
+        bottom: auto;
+        padding: 0px 5px;
+        margin-right: -5px;
+        line-height: 18px;
+        border-radius: 0 0 5px 0;
+        xbackground: rgba(255, 255, 255, 0.7);
+        xcolor: #555;
+        animation: unset;
       }
       box path tag{
         color: #f0a;
@@ -619,7 +635,8 @@
     }
 
     // scroll
-    var isEnd = listEl.scrollTop + listEl.clientHeight > listEl.scrollHeight - 40
+    var isEnd =
+      listEl.scrollTop + listEl.clientHeight > listEl.scrollHeight - 40
     if (isEnd) {
       scrollToEnd()
     }
@@ -682,7 +699,7 @@
 
   function printKeyValueList(parentEl, keyValueList, type) {
     var fragment = document.createDocumentFragment()
-    keyValueList.forEach(keyValue => {
+    keyValueList.forEach((keyValue) => {
       printKeyValue(fragment, keyValue.key, keyValue.value, type)
     })
     parentEl.appendChild(fragment)
@@ -702,10 +719,18 @@
     clickValue.lastEl = keyValueEl
 
     // function: call
-    if (typeof value === 'function' && key && hasAttribute(keyValueEl, 'active')) {
+    if (
+      typeof value === 'function' &&
+      key &&
+      hasAttribute(keyValueEl, 'active')
+    ) {
       // temp1
       console.temp1 = parentEl.value
-      inputEl.value = `temp1.${key}('${/'(.*?)'/.test(inputEl.value) ? RegExp.$1 : inputEl.value || 'click to input'}')`
+      inputEl.value = `temp1.${key}('${
+        /'(.*?)'/.test(inputEl.value)
+          ? RegExp.$1
+          : inputEl.value || 'click to input'
+      }')`
 
       // call
       run()
@@ -789,7 +814,6 @@
         printKeyValueList(childrenEl, keyValueList)
       }
     }
-
   }
 
   // touch||click||mouseover show box
@@ -801,24 +825,32 @@
       return
     }
 
-    document.body.addEventListener('touchstart', e => {
+    document.body.addEventListener('touchstart', (e) => {
       showBox(e.target)
     })
-    document.body.addEventListener('click', e => {
+    document.body.addEventListener('click', (e) => {
       showBox(e.target)
     })
-    document.body.addEventListener('mouseover', e => {
-      showBox(e.target)
-    }, true)
+    document.body.addEventListener(
+      'mouseover',
+      (e) => {
+        showBox(e.target)
+      },
+      true
+    )
 
     // scroll update box pos
     var updateBoxTimer
-    document.body.addEventListener('scroll', (e) => {
-      clearTimeout(updateBoxTimer)
-      updateBoxTimer = setTimeout(() => {
-        boxEl.target && showBox(boxEl.target)
-      }, 300);
-    }, true)
+    document.body.addEventListener(
+      'scroll',
+      (e) => {
+        clearTimeout(updateBoxTimer)
+        updateBoxTimer = setTimeout(() => {
+          boxEl.target && showBox(boxEl.target)
+        }, 300)
+      },
+      true
+    )
   }
 
   // show element box
@@ -841,7 +873,8 @@
     var marginTop = parseFloat(style.marginTop)
     Object.assign(boxEl.style, {
       top: rect.top - rootRect.top - (marginTop < 0 ? 0 : marginTop) + 'px', // ? -margin
-      left: rect.left - rootRect.left - (marginLeft < 0 ? 0 : marginLeft) + 'px',
+      left:
+        rect.left - rootRect.left - (marginLeft < 0 ? 0 : marginLeft) + 'px',
     })
     Object.assign(marginEl.style, {
       borderLeftWidth: style.marginLeft,
@@ -863,13 +896,15 @@
 
     // scrollIntoView
     if (isNeedScroll) {
-      el.scrollIntoViewIfNeeded()
+      el.scrollIntoViewIfNeeded && el.scrollIntoViewIfNeeded()
       clearTimeout(showBox.timer)
       showBox.timer = tween(
         window.scrollY,
-        rect.height >= window.innerHeight ?
-          0 :
-          rect.top - rootRect.top - (window.innerHeight - 320 - rect.height - 16 * 3),
+        rect.height >= window.innerHeight
+          ? 0
+          : rect.top -
+              rootRect.top -
+              (window.innerHeight - 320 - rect.height - 16 * 3),
         (v) => window.scrollTo(0, v)
       )
     }
@@ -899,7 +934,7 @@
       var k0 = Object.keys(value)[0]
       if (k0 === undefined) return '[Object]{}'
       var v0 = value[k0]
-      return `{ ${k0}: ${String(v0).slice(0, 15)} …}`
+      return `{ ${k0}: ${String(v0).slice(0, 20)} …}`
     }
 
     // ErrorEvent
@@ -914,7 +949,7 @@
 
     // array
     if (value instanceof Array) {
-      return '(' + value.length + ')[' + value + ']'
+      return `(${value.length})[${String(value[0]).slice(0, 20)} …]`
     }
 
     // node
@@ -982,6 +1017,7 @@
     var m = trace[0].match(/([^/?=&#:() ]+)(\?[^?]*?)?(:\d+)(:\d+)\)?$/)
     // file.ext:line
     trace.__string__ = m ? `${m[1]}${m[3]}` : trace[0]
+    trace._stack = error.stack
 
     return trace
   }
@@ -992,14 +1028,21 @@
 
     function loop(el) {
       if (el && el.tagName && el != htmlEl) {
-
         var tagName = el.tagName.toLowerCase()
         var id = el.id
         var className = el.className
-        className = typeof className == 'string' ? className.trim().split(/\s+/).join('.') : '' // svg className is object
+        className =
+          typeof className == 'string'
+            ? className
+              .trim()
+              .split(/\s+/)
+              .join('.')
+            : '' // svg className is object
         var selector = `
         <span style="white-space:nowrap">
-          <tag>${tagName}</tag>${id ? '#' + id : ''}${className ? '.' + className : ''}
+          <tag>${tagName}</tag>${id ? '#' + id : ''}${
+    className ? '.' + className : ''
+  }
         </span>`
         path.push(selector)
 
@@ -1011,9 +1054,13 @@
     return path.reverse().join(' ')
   }
 
-  // to end 
+  // to end
   function scrollToEnd() {
-    tween(listEl.scrollTop, listEl.scrollTop + listEl.scrollHeight, v => listEl.scrollTop = v)
+    tween(
+      listEl.scrollTop,
+      listEl.scrollTop + listEl.scrollHeight,
+      (v) => (listEl.scrollTop = v)
+    )
   }
 
   /**
@@ -1056,7 +1103,7 @@
     // print
     if (rs && rs.then) {
       // promise
-      rs.then(v => {
+      rs.then((v) => {
         console.log('await', rs)
         console.log(v)
       })
@@ -1128,7 +1175,11 @@
       !(function(type) {
         console[type] = function() {
           _console[type].apply(this, arguments)
-          printLi(type, arguments, getTrace())
+          try {
+            printLi(type, arguments, getTrace())
+          } catch (error) {
+            console.warn('[console.js error]', error)
+          }
         }
       })(type)
     }
@@ -1148,20 +1199,19 @@
     )
 
     // intercept Uncaught (in promise)
-    addEventListener(
-      'unhandledrejection',
-      function(e) {
-        e.__string__ = 'Uncaught (in promise) ' + e.reason
-        printLi('error', [e])
-      }
-    )
+    addEventListener('unhandledrejection', function(e) {
+      e.__string__ = 'Uncaught (in promise) ' + e.reason
+      printLi('error', [e])
+    })
 
     // intercept xhr
     var XHR = window.XMLHttpRequest || noop
     var XHRopen = XHR.prototype.open
     var XHRsend = XHR.prototype.send
     XHR.prototype.open = function(method, url) {
+      url = String(url)
       var xhr = this
+
       // open
       XHRopen.apply(this, arguments)
 
@@ -1248,8 +1298,11 @@
 
     // intercept fetch
     var _fetch = window.fetch
-    if (_fetch && !/XMLHttpRequest/.test(_fetch)) { // !xhr polyfill
+    if (_fetch && !/XMLHttpRequest/.test(_fetch)) {
+      // !xhr polyfill
       window.fetch = function(url) {
+        url = String(url)
+
         // pending
         var subUrl = url.split(/\/(?=[^/]+\/[^/]+$)/)[1] || url // last2/last1?query
         var requestInit = arguments[1] || ''
@@ -1346,7 +1399,8 @@
   }
 
   // toggle style
-  headEl.appendChild(parse(`
+  headEl.appendChild(
+    parse(`
   <style console>
     html{
       padding-bottom: 0;
@@ -1356,7 +1410,8 @@
       padding-bottom: 24px;
     }
   </style>
-  `))
+  `)
+  )
   var consoleOpenStyle = parse(`
   <style console open>
     html{

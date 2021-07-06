@@ -158,27 +158,27 @@
     </div>
 
     <script>
-      !(function () {
+      !(function() {
         function show(fn) {
           show.i = show.i || 0
           show.i += 1
           setTimeout(fn, show.i * 250)
         }
 
-        show(function () {
+        show(function() {
           console.info("console.info('info')")
         })
-        show(function () {
+        show(function() {
           console.warn("console.warn('warn')")
         })
-        show(function () {
+        show(function() {
           function fn() {
             fun()
           }
 
           fn()
         })
-        show(function () {
+        show(function() {
           $.ajax({
             url: './ajax.json?xhr',
             // url: 'http://error.xhr.com',
@@ -196,15 +196,15 @@
               },
             },
             data: {},
-            error: function (res) {
+            error: function(res) {
               // console.trace('error')
             },
-            success: function (res) {
+            success: function(res) {
               // console.trace('success')
             },
           })
         })
-        show(function () {
+        show(function() {
           // fetch('./ajax.json?fetch')
           fetch('http://error.fetch.com')
             .catch((e) => {
@@ -214,13 +214,13 @@
               // console.trace('then')
             })
         })
-        show(function () {
+        show(function() {
           console.log('obj', { key: 'value' })
         })
-        show(function () {
+        show(function() {
           console.log(document)
         })
-        show(function () {
+        show(function() {
           console.log('click->', window)
         })
         // show(function() {
