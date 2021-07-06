@@ -192,14 +192,15 @@
         max-width: 1080px;
         height: 322px;
         height: 375px;
+        min-height: 25px;
         margin: auto auto 0;
         text-shadow: 0px 1px 1px #fff;
-        transition: .3s cubic-bezier(0, 0, .25, 1);
+        transition: .3s cubic-bezier(0, 0, .25, 1) transform;
         transform: translate(0, 100%);
       }
       console[open] {
         max-height: calc(100vh - 30px);
-        transition: .3s cubic-bezier(.25, 0, 1, 1);
+        transition: .3s cubic-bezier(.25, 0, 1, 1) transform;
         transform: translate(0, 0);
         box-shadow: rgba(125, 125, 125, 0.3) 0px 0 15px 0;
       }
@@ -207,6 +208,8 @@
         display: none;
       }
       console main{
+        position: relative;
+        overflow: hidden;
         height: 100%;
       }
       console [f12] {
@@ -1154,6 +1157,24 @@
     } else {
       console.show = 2
     }
+  }
+
+  // adjust height
+  var navEl = find(consoleEl, 'nav')
+  navEl.ontouchstart = e=> {
+    consoleEl.isStart = true
+    consoleEl.y = e.changedTouches[0].screenY
+    consoleEl.height = parseFloat(getComputedStyle(consoleEl).height)
+  }
+  navEl.ontouchmove = e=> {
+    if (consoleEl.isStart) {
+      setAttribute(consoleEl, 'open')
+      var y = e.changedTouches[0].screenY
+      consoleEl.style.height = consoleEl.height + (consoleEl.y - y) + 'px'
+    }
+  }
+  navEl.ontouchend = e=> {
+    consoleEl.isStart = false
   }
 
   // intercept: console, error, xhr, fetch
