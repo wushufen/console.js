@@ -1442,6 +1442,7 @@
 
       if (value) {
         intercept()
+        removeAttribute(consoleEl, 'hidden')
         removeAttribute(consoleEl, 'open')
       }
       if (value == 2) {
@@ -1451,6 +1452,7 @@
         }, 100)
       }
       if (!value) {
+        removeAttribute(consoleEl, 'open')
         setAttribute(consoleEl, 'hidden')
       }
     },
