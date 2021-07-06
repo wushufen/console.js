@@ -339,10 +339,10 @@
         opacity: 1;
         transition: .3s cubic-bezier(1, 0, 1, 0), opacity .6s;
       }
-      console [key-value][open] > [value]:not([element]) { opacity: .5 }
+      console [key-value][open] > [value]:not([element]) { xxopacity: .5 }
 
       console [key-value][active] > [value]{
-        color: #f0a;
+        xxcolor: #f0a;
         display: inline-block;
         vertical-align: top;
         max-width: calc(100vw - 2em);
@@ -1020,7 +1020,7 @@
     var m = trace[0].match(/([^/?=&#:() ]+)(\?[^?]*?)?(:\d+)(:\d+)\)?$/)
     // file.ext:line
     trace.__string__ = m ? `${m[1]}${m[3]}` : trace[0]
-    trace._stack = error.stack
+    // trace._stack = error.stack // dev
 
     return trace
   }
