@@ -384,7 +384,7 @@
         height: 3em;
         padding: .25em 1em;
         resize: none;
-        background: rgba(255, 255, 255, .6);
+        background: rgba(255, 255, 255, .0);
         -webkit-backdrop-filter: blur(1.5px);
         backdrop-filter: blur(1.5px);
         color: #333;
@@ -399,7 +399,11 @@
         background: #fff;
         color: #0af;
       }
-      console textarea:focus {height: 8em; box-shadow: #ddd 0px 0 15px 0}
+      console textarea:focus {
+        height: 8em;
+        background: #fff;
+        box-shadow: #ddd 0px 0 15px 0;
+      }
       console textarea:invalid + [run] {opacity: 0}
 
       console ul + a{
@@ -1084,11 +1088,13 @@
 
   // to end
   function scrollToEnd() {
-    tween(
-      listEl.scrollTop,
-      listEl.scrollTop + listEl.scrollHeight,
-      (v) => (listEl.scrollTop = v)
-    )
+    setTimeout(() => {
+      tween(
+        listEl.scrollTop,
+        listEl.scrollTop + listEl.scrollHeight,
+        (v) => (listEl.scrollTop = v)
+      )
+    }, 42);
   }
 
   /**
@@ -1182,27 +1188,30 @@
 
   // adjust height
   var adjustEl = find(consoleEl, 'f12')
-  adjustEl.ontouchstart = e=> {
+  var ontouchstart = e=> {
     consoleEl.isStart = true
     e = e.changedTouches ? e.changedTouches[0] : e
-    consoleEl.y = e.screenY
+    consoleEl.y = e.clientY
     consoleEl.height = getConsoleHeight()
   }
-  adjustEl.ontouchmove = e=> {
+  var ontouchmove = e=> {
     if (consoleEl.isStart) {
       e.preventDefault() // avoid scroll body
       setAttribute(consoleEl, 'open')
       e = e.changedTouches ? e.changedTouches[0] : e
-      var y = e.screenY
+      var y = e.clientY
       setConsoleHeight(consoleEl.height + (consoleEl.y - y))
     }
   }
-  adjustEl.ontouchend = e=> {
+  var ontouchend = e=> {
     consoleEl.isStart = false
   }
-  on(adjustEl, 'mousedown', adjustEl.ontouchstart)
-  on(document, 'mousemove', adjustEl.ontouchmove)
-  on(document, 'mouseup', adjustEl.ontouchend)
+  on(adjustEl, 'touchstart', ontouchstart)
+  on(adjustEl, 'touchmove', ontouchmove)
+  on(adjustEl, 'touchend', ontouchend)
+  on(adjustEl, 'mousedown', ontouchstart)
+  on(document, 'mousemove', ontouchmove)
+  on(document, 'mouseup', ontouchend)
   
   function getConsoleHeight() {
     return parseFloat(getComputedStyle(consoleEl).height)
