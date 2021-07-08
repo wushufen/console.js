@@ -868,6 +868,9 @@
     on(body, 'touchstart', (e) => {
       showBox(e.target)
     }, true)
+    on(body, 'touchend', (e) => {
+      showBox(e.target)
+    }, true)
     on(body, 'click', (e) => {
       showBox(e.target)
     }, true)
@@ -881,7 +884,7 @@
       clearTimeout(updateBoxTimer)
       updateBoxTimer = setTimeout(() => {
         boxEl.target && showBox(boxEl.target)
-      }, 300)
+      }, 83)
     }, true)
   }
 
@@ -937,11 +940,6 @@
         (v) => window.scrollTo(0, v)
       )
     }
-  }
-
-  // hide element box
-  function hideBox() {
-    boxEl.setAttribute('hide', true)
   }
 
   // value to print
