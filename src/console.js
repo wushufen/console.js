@@ -618,20 +618,27 @@
   listerBox()
 
   // print
-  function printLi() {
+  function printLi(type, valueList, trace) {
     try {
-      return printLi_.apply(this, arguments)
+      var _liEl = liEl.cloneNode(true)
+      listEl.appendChild(_liEl)
+      setAttribute(_liEl, type)
+      setTimeout(() => {
+        printLi_.apply(this, [_liEl, type, valueList, trace])
+      }, 41);
+      return _liEl
     } catch (e) {
       console.warn('[console.js error]', e)
     }
   }
-  function printLi_(type, valueList, trace) {
+  function printLi_(_liEl, type, valueList, trace) {
     // clone li
-    var _liEl = liEl.cloneNode(true)
+    // var _liEl = liEl.cloneNode(true)
+    // listEl.appendChild(_liEl)
+    // setAttribute(_liEl, type)
+
     var mapEl = find(_liEl, 'map')
-    listEl.appendChild(_liEl)
     mapEl.innerHTML = ''
-    setAttribute(_liEl, type)
 
     // log('%c...', 'style', ...)
     var obj0 = valueList[0]
