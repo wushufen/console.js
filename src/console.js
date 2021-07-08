@@ -867,10 +867,10 @@
 
     on(body, 'touchstart', (e) => {
       showBox(e.target)
-    })
+    }, true)
     on(body, 'click', (e) => {
       showBox(e.target)
-    })
+    }, true)
     on(body, 'mouseover', (e) => {
       showBox(e.target)
     }, true)
