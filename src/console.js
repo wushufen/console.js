@@ -865,27 +865,21 @@
       return
     }
 
-    on(body, 'touchstart', (e) => {
-      showBox(e.target)
-    }, true)
-    on(body, 'touchend', (e) => {
-      showBox(e.target)
-    }, true)
-    on(body, 'click', (e) => {
-      showBox(e.target)
-    }, true)
-    on(body, 'mouseover', (e) => {
-      showBox(e.target)
-    }, true)
-
-    // scroll update box pos
     var updateBoxTimer
-    on(body, 'scroll', (e) => {
+    function updateBox(target) {
       clearTimeout(updateBoxTimer)
       updateBoxTimer = setTimeout(() => {
-        boxEl.target && showBox(boxEl.target)
+        showBox(target)
       }, 83)
-    }, true)
+    }
+
+    'touchstart,touchend,click,mouseover'.split(',').forEach(n => {
+      on(body, n, e => updateBox(e.target), true)
+    })
+    'scroll,mousewheel'.split(',').forEach(n => {
+      on(body, n, e => boxEl.target && updateBox(boxEl.target), true)
+    })
+
   }
 
   // show element box
