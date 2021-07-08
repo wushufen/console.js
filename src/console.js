@@ -71,15 +71,14 @@
    * @returns {Element}
    */
   function find(el, name) {
+    if (name == el.tagName.toLowerCase()) return el
+    if (hasAttribute(el, name)) return el
+
     for (var i = 0; i < el.children.length; i++) {
       var childEl = el.children[i]
-
-      if (name == childEl.tagName.toLowerCase()) return childEl
-      if (hasAttribute(childEl, name)) return childEl
-
-      var r = find(childEl, name)
-      if (r) {
-        return r
+      var rs = find(childEl, name)
+      if (rs) {
+        return rs
       }
     }
   }
@@ -126,6 +125,11 @@
       setAttribute(el, attr)
     }
   }
+
+  function on(el, event, cb, options) {
+    el.addEventListener(event, cb, options)
+  }
+  
   /**
    * tween
    * @param {number} start
@@ -179,6 +183,7 @@
         font: inherit;
         color: inherit;
         text-decoration: none;
+        outline: none;
         transition: inherit;
       }
 
@@ -208,6 +213,7 @@
         display: none;
       }
       console main{
+        transition: .3s;
         position: relative;
         overflow: hidden;
         height: 100%;
@@ -216,12 +222,20 @@
         position: absolute;
         bottom: 100%;
         right: 1em;
+        width: 2.82em;
         padding: 3px 6px 0;
         border: solid 1px #eee;
         border-bottom: 0;
         border-radius: 8px 8px 0 0;
         background: rgba(255, 255, 255, .8);
         box-shadow: 4px -4px 10px -4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      console [f12]:after{
+        content: 'F12';
+      }
+      console[open] [f12]:after{
+        content: '↑↓';
       }
       console nav{
         display: flex;
@@ -232,6 +246,7 @@
         right: 0;
         white-space: nowrap;
         overflow: auto;
+        touch-action: pan-x;
         border-top: solid 1px rgba(255, 255, 255, 0.2);
         border-bottom: solid 1px rgba(200, 200, 200, 0.2);
         background: rgba(250, 250, 250, 0.5);
@@ -247,6 +262,7 @@
         padding: 26px 0 4em;
         margin: 0;
         overflow: auto;
+        overscroll-behavior: contain;
         list-style: none;
         background: rgba(255, 255, 255, 0.95);
       }
@@ -378,12 +394,12 @@
         bottom: 12px;
         right: 12px;
         padding: .25em 1em;
-        border: solid 1px #bbb;
+        border: solid 1px currentColor;
         border-radius: 5px;
         background: #fff;
-        color: #bbb;
+        color: #0af;
       }
-      console textarea:focus {height: 8em}
+      console textarea:focus {height: 8em; box-shadow: #ddd 0px 0 15px 0}
       console textarea:invalid + [run] {opacity: 0}
 
       console ul + a{
@@ -449,7 +465,7 @@
 
   var consoleEl = parse(`
   <console>
-    <key f12>F12</key>
+    <key f12></key>
     <main>
       <nav>
         <b>clear</b>
@@ -602,7 +618,14 @@
   listerBox()
 
   // print
-  function printLi(type, valueList, trace) {
+  function printLi() {
+    try {
+      return printLi_.apply(this, arguments)
+    } catch (e) {
+      console.warn('[console.js error]', e)
+    }
+  }
+  function printLi_(type, valueList, trace) {
     // clone li
     var _liEl = liEl.cloneNode(true)
     var mapEl = find(_liEl, 'map')
@@ -822,49 +845,40 @@
 
   // touch||click||mouseover show box
   function listerBox() {
-    if (!document.body) {
+    var body = document.body
+    
+    if (!body) {
       setTimeout(() => {
         listerBox()
       }, 300)
       return
     }
 
-    document.body.addEventListener('touchstart', (e) => {
+    on(body, 'touchstart', (e) => {
       showBox(e.target)
     })
-    document.body.addEventListener('click', (e) => {
+    on(body, 'click', (e) => {
       showBox(e.target)
     })
-    document.body.addEventListener(
-      'mouseover',
-      (e) => {
-        showBox(e.target)
-      },
-      true
-    )
+    on(body, 'mouseover', (e) => {
+      showBox(e.target)
+    }, true)
 
     // scroll update box pos
     var updateBoxTimer
-    document.body.addEventListener(
-      'scroll',
-      (e) => {
-        clearTimeout(updateBoxTimer)
-        updateBoxTimer = setTimeout(() => {
-          boxEl.target && showBox(boxEl.target)
-        }, 300)
-      },
-      true
-    )
+    on(body, 'scroll', (e) => {
+      clearTimeout(updateBoxTimer)
+      updateBoxTimer = setTimeout(() => {
+        boxEl.target && showBox(boxEl.target)
+      }, 300)
+    }, true)
   }
 
   // show element box
   function showBox(el, isNeedScroll) {
     // hide
     if (!hasAttribute(consoleEl, 'open')) {
-      hideBox()
       return
-    } else {
-      boxEl.removeAttribute('hide')
     }
 
     boxEl.target = el
@@ -1160,21 +1174,34 @@
   }
 
   // adjust height
-  var navEl = find(consoleEl, 'nav')
-  navEl.ontouchstart = e=> {
+  var adjustEl = find(consoleEl, 'f12')
+  adjustEl.ontouchstart = e=> {
     consoleEl.isStart = true
-    consoleEl.y = e.changedTouches[0].screenY
-    consoleEl.height = parseFloat(getComputedStyle(consoleEl).height)
+    e = e.changedTouches ? e.changedTouches[0] : e
+    consoleEl.y = e.screenY
+    consoleEl.height = getConsoleHeight()
   }
-  navEl.ontouchmove = e=> {
+  adjustEl.ontouchmove = e=> {
     if (consoleEl.isStart) {
+      e.preventDefault() // avoid scroll body
       setAttribute(consoleEl, 'open')
-      var y = e.changedTouches[0].screenY
-      consoleEl.style.height = consoleEl.height + (consoleEl.y - y) + 'px'
+      e = e.changedTouches ? e.changedTouches[0] : e
+      var y = e.screenY
+      setConsoleHeight(consoleEl.height + (consoleEl.y - y))
     }
   }
-  navEl.ontouchend = e=> {
+  adjustEl.ontouchend = e=> {
     consoleEl.isStart = false
+  }
+  on(adjustEl, 'mousedown', adjustEl.ontouchstart)
+  on(document, 'mousemove', adjustEl.ontouchmove)
+  on(document, 'mouseup', adjustEl.ontouchend)
+  
+  function getConsoleHeight() {
+    return parseFloat(getComputedStyle(consoleEl).height)
+  }
+  function setConsoleHeight(height) {
+    consoleEl.style.height = height + 'px'
   }
 
   // intercept: console, error, xhr, fetch
@@ -1200,11 +1227,7 @@
       !(function(type) {
         console[type] = function() {
           _console[type].apply(this, arguments)
-          try {
-            printLi(type, arguments, getTrace())
-          } catch (error) {
-            console.warn('[console.js error]', error)
-          }
+          printLi(type, arguments, getTrace())
         }
       })(type)
     }
@@ -1445,10 +1468,7 @@
   var consoleOpenStyle = parse(`
   <style console open>
     html{
-      padding-bottom: 322px;
-    }
-    box{
-      padding-bottom: calc(375px + 22px);
+      padding-bottom: calc(100vh - 30px);
     }
   </style>
   `)
@@ -1461,20 +1481,20 @@
       consoleShow = value
       consoleOpenStyle.parentNode && headEl.removeChild(consoleOpenStyle)
 
+      removeAttribute(consoleEl, 'open')
+      setAttribute(consoleEl, 'hidden')
+      setAttribute(boxEl, 'hide')
+
       if (value) {
         intercept()
         removeAttribute(consoleEl, 'hidden')
-        removeAttribute(consoleEl, 'open')
       }
       if (value == 2) {
         setTimeout(function() {
           setAttribute(consoleEl, 'open')
+          removeAttribute(boxEl, 'hide')
           headEl.appendChild(consoleOpenStyle)
         }, 100)
-      }
-      if (!value) {
-        removeAttribute(consoleEl, 'open')
-        setAttribute(consoleEl, 'hidden')
       }
     },
     get() {
