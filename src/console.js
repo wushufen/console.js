@@ -838,7 +838,13 @@
         for (var k in value) {
           keyValueList.push({
             key: k,
-            value: value[k],
+            value: function() {
+              try {
+                return value[k]
+              } catch (e) {
+                return e
+              }
+            }(),
           })
           // max
           if (typeOf(value) == 'array' && k > 500) {
