@@ -84,6 +84,8 @@ console.log(numberToBase64Char(biNumberToNumber('100000')))
 console.log(numberToBase64Char(biNumberToNumber('000001')))
 
 
+console.log(base64CharsToBiNumberArray('AACA'))
+console.log(base64CharsToBiNumberArray('AABA'))
 console.log(base64CharsToBiNumberArray('CCDC'))
 console.log(base64CharsToBiNumberArray('SAAU'))
 
