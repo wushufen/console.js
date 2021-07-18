@@ -66,7 +66,7 @@
 
   /**
    * find element
-   * @param {Elemnt} el parentElement
+   * @param {Element} el parentElement
    * @param {string} name tagName || attrName
    * @returns {Element}
    */
@@ -88,9 +88,9 @@
    * @param {Element} el
    * @param {string} attr
    */
-  function setAttribute(el, attr) {
+  function setAttribute(el, attr, value) {
     attr.split(/\s+/).map((attr) => {
-      el.setAttribute(attr, '')
+      el.setAttribute(attr, value || '')
     })
   }
 
@@ -625,11 +625,11 @@
   function printLi(type, valueList, trace) {
     try {
       var _liEl = liEl.cloneNode(true)
-      listEl.appendChild(_liEl)
-      setAttribute(_liEl, type)
       setTimeout(() => {
+        setAttribute(_liEl, type)
         printLi_.apply(this, [_liEl, type, valueList, trace])
-      }, 41);
+        listEl.appendChild(_liEl)
+      }, 0);
       return _liEl
     } catch (e) {
       console.warn('[console.js error]', e)
@@ -834,6 +834,7 @@
         }
 
         // keys
+        // TODO Object.getOwnPropertyNames Object.getOwnPropertyDescriptor
         var keyValueList = []
         for (var k in value) {
           keyValueList.push({
@@ -1037,16 +1038,17 @@
           at fn (http://172.20.10.6:5500/example/example.html:176:13)
           at http://172.20.10.6:5500/example/example.html:179:11
     */
-    var trace = error.stack
+    var stack = String(error.stack)
+    var trace = stack
       .replace(/^.*?Error.*\n/, '') // -line0
       .split(/\n/) // => array
       .slice(traceStart) // -line*2: new Error('trace')
 
-    // reg:                   file.ext       ?query   :line :col  )
-    var m = trace[0].match(/([^/?=&#:() ]+)(\?[^?]*?)?(:\d+)(:\d+)\)?$/)
+    // reg:               file.ext        ?query    :line :col
+    var m = stack.match(/([^/?=&#:() ]+)(\?[^?]*?)?(:\d+)(:\d+)/)
     // file.ext:line
     trace.__string__ = m ? `${m[1]}${m[3]}` : trace[0]
-    // trace._stack = error.stack // dev
+    trace[''] = {stack:stack} // dev
 
     return trace
   }
@@ -1177,10 +1179,10 @@
 
   // console toggle
   f12El.onclick = function() {
-    if (console.show == 2) {
-      console.show = 1
+    if (console.f12 == 2) {
+      console.f12 = 1
     } else {
-      console.show = 2
+      console.f12 = 2
     }
   }
 
@@ -1258,8 +1260,8 @@
         printLi('error', [e], e.error ? getTrace(e.error) : '')
 
         // auto open console
-        if (console.show === 1) {
-          console.show = 2
+        if (console.f12 === 1) {
+          console.f12 = 2
         }
       },
       true // true: catch (js, css, img) error
@@ -1322,24 +1324,25 @@
             [
               {
                 __string__: `[${method}] (${status}) ${time}ms ${subUrl}`,
-                url,
-                requestHeaders,
-                requestBody: (function() {
-                  requestBody = decodeURIComponent(requestBody)
-                  try {
-                    return JSON.parse(requestBody)
-                  } catch (e) {}
-                  return requestBody
-                })(),
-                xhr,
-                responseHeaders: xhr.getAllResponseHeaders(),
-                responseBody: (function() {
-                  try {
-                    var response = xhr.response || xhr.responseText
-                    return JSON.parse(response)
-                  } catch (e) {}
-                  return response
-                })(),
+                request: {
+                  url,
+                  xhr,
+                  headers: requestHeaders,
+                  body: (function() {
+                    try { requestBody = decodeURIComponent(requestBody) } catch (e) {}
+                    try { requestBody = JSON.parse(requestBody) } catch (e) {}
+                    return requestBody
+                  })(),
+                },
+                response: {
+                  headers: xhr.getAllResponseHeaders(),
+                  body: (function() {
+                    var response = xhr.responseText
+                    try { response = xhr.response } catch (e) {}
+                    try { response = JSON.parse(response) } catch (e) {}
+                    return response
+                  })(),
+                },
               },
             ],
             trace
@@ -1347,15 +1350,6 @@
           liEl.parentNode.replaceChild(liEl2, liEl)
         }
 
-        // // setTimeout: xhr.send(); xhr.onreadystatechange
-        // if (!onreadystatechange) {
-        //   setTimeout(function() {
-        //     onreadystatechange = xhr.onreadystatechange
-        //     xhr.onreadystatechange = readystatechange
-        //   }, 0)
-        // } else {
-        //   xhr.onreadystatechange = readystatechange
-        // }
         xhr.addEventListener('loadend', readystatechange)
 
         // send
@@ -1405,24 +1399,30 @@
                   [
                     {
                       __string__: `[${method}] (${status}) ${time}ms ${subUrl}`,
-                      url,
-                      requestInit,
-                      response: res,
-                      responseHeaders: (function() {
-                        var keys = res.headers.keys()
-                        var next
-                        var obj = {}
-                        while (((next = keys.next()), !next.done)) {
-                          obj[next.value] = res.headers.get(next.value)
-                        }
-                        return obj
-                      })(),
-                      responseBody: (function() {
-                        try {
-                          return JSON.parse(text)
-                        } catch (e) {}
-                        return text
-                      })(),
+                      request: {
+                        url,
+                        requestInit,
+                        headers: requestInit.headers,
+                        body: requestInit.data,
+                      },
+                      response: {
+                        response: res,
+                        headers: (function() {
+                          var keys = res.headers.keys()
+                          var next
+                          var obj = {}
+                          while (((next = keys.next()), !next.done)) {
+                            obj[next.value] = res.headers.get(next.value)
+                          }
+                          return obj
+                        })(),
+                        body: (function() {
+                          try {
+                            return JSON.parse(text)
+                          } catch (e) {}
+                          return text
+                        })(),
+                      },
                     },
                   ],
                   trace
@@ -1487,12 +1487,12 @@
   </style>
   `)
 
-  // console.show = true || 1 || 2
-  var consoleShow = console.show
-  Object.defineProperty(console, 'show', {
+  // console.f12 = 0 || 1 || 2
+  var f12 = console.f12 || 0
+  Object.defineProperty(console, 'f12', {
     configurable: true,
     set(value) {
-      consoleShow = value
+      f12 = value
       consoleOpenStyle.parentNode && headEl.removeChild(consoleOpenStyle)
 
       removeAttribute(consoleEl, 'open')
@@ -1512,26 +1512,25 @@
       }
     },
     get() {
-      return consoleShow
+      return f12
     },
   })
-  if (consoleShow) {
-    console.show = consoleShow
-  }
+  console.f12 = f12
+
   // mobile
-  if (navigator.userAgent.match(/mobile/i)) {
+  if (navigator.userAgent.match(/mobile|android|iphone|ipad/i)) {
     intercept()
   }
   // pc when #f12
   if (location.href.match(/[?&#]f12\b/)) {
-    console.show = 1
+    console.f12 = 1
   }
   // #f12
   addEventListener('hashchange', function(e) {
     if (location.hash.match(/#f12\b/)) {
-      console.show = 1
+      console.f12 = 1
     } else {
-      // console.show = 0
+      // console.f12 = 0
     }
   })
 })(window)
