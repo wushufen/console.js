@@ -3,17 +3,20 @@ const babel = require('gulp-babel')
 const uglify = require('gulp-uglify')
 
 var tasks = {
-  js(){
-    return src('src/*.js')
-    .pipe(babel({
-      "presets": ["@babel/preset-env"]
-    }))
-    .pipe(uglify({
-      output: {
-        comments: 'some'
-      }
-    }))
-    .pipe(dest('dist/'))
+  js() {
+    setTimeout(() => {
+      console.log('gulp ok')
+    }, 5000)
+    return src('src/console.js')
+      .pipe(babel({
+        presets: ['@babel/preset-env'],
+      }))
+      .pipe(uglify({
+        output: {
+          comments: 'some',
+        },
+      }))
+      .pipe(dest('dist/'))
   },
   css(){},
   watch(){

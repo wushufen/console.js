@@ -1504,7 +1504,7 @@
         intercept()
         removeAttribute(consoleEl, 'hidden')
       }
-      if (value == 2) {
+      if (value == 2) {                 
         setTimeout(function() {
           setAttribute(consoleEl, 'open')
           removeAttribute(boxEl, 'hide')

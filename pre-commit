@@ -71,3 +71,7 @@ if [[ $error != 0 ]]; then
 
 	exit 1
 fi
+
+
+npm run gulp
+git add ./dist/console.js

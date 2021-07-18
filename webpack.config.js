@@ -2,8 +2,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   entry: {
-    'console': './src/console.js',
-    'console.loader': './src/console.loader.js',
+    console: './src/console.js',
+    // 'console.loader': './src/console.loader.js',
   },
   output: {
     path: `${__dirname}/dist`,
