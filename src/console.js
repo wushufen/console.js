@@ -3,6 +3,7 @@
  *
  * Console for mobile browser or webview
  */
+
 !(function(window) {
   /**
    * do nothing
@@ -129,7 +130,7 @@
   function on(el, event, cb, options) {
     el.addEventListener(event, cb, options)
   }
-  
+
   /**
    * tween
    * @param {number} start
@@ -629,7 +630,7 @@
         setAttribute(_liEl, type)
         printLi_.apply(this, [_liEl, type, valueList, trace])
         listEl.appendChild(_liEl)
-      }, 0);
+      }, 0)
       return _liEl
     } catch (e) {
       console.warn('[console.js error]', e)
@@ -652,7 +653,7 @@
       for (var ci = 0; ci < obj0m.length; ci++) {
         printKeyValue(mapEl, '', obj0m[ci].slice(2)).setAttribute(
           'style',
-          valueList[ci + 1]
+          valueList[ci + 1],
         )
       }
       valueList = ['']
@@ -785,7 +786,7 @@
       tween(
         listEl.scrollTop,
         listEl.scrollTop + diffTop - 26 * 2 - 4,
-        (v) => (listEl.scrollTop = v)
+        (v) => (listEl.scrollTop = v),
       )
     }, 150)
 
@@ -795,7 +796,7 @@
       tween(
         parentEl.scrollLeft,
         keyValueEl.offsetLeft - 12 * 4,
-        (v) => (parentEl.scrollLeft = v)
+        (v) => (parentEl.scrollLeft = v),
       )
     }, 150)
 
@@ -864,7 +865,7 @@
   // touch||click||mouseover show box
   function listerBox() {
     var body = document.body
-    
+
     if (!body) {
       setTimeout(() => {
         listerBox()
@@ -938,7 +939,7 @@
           : rect.top -
               rootRect.top -
               (window.innerHeight - 320 - rect.height - 16 * 3),
-        (v) => window.scrollTo(0, v)
+        (v) => window.scrollTo(0, v),
       )
     }
   }
@@ -1092,9 +1093,9 @@
       tween(
         listEl.scrollTop,
         listEl.scrollTop + listEl.scrollHeight,
-        (v) => (listEl.scrollTop = v)
+        (v) => (listEl.scrollTop = v),
       )
-    }, 42);
+    }, 42)
   }
 
   /**
@@ -1122,7 +1123,7 @@
         inputEl.focus()
         inputEl.setSelectionRange(99, 99)
       },
-      true
+      true,
     )
 
     // scroll
@@ -1212,7 +1213,7 @@
   on(adjustEl, 'mousedown', ontouchstart)
   on(document, 'mousemove', ontouchmove)
   on(document, 'mouseup', ontouchend)
-  
+
   function getConsoleHeight() {
     return parseFloat(getComputedStyle(consoleEl).height)
   }
@@ -1264,7 +1265,7 @@
           console.f12 = 2
         }
       },
-      true // true: catch (js, css, img) error
+      true, // true: catch (js, css, img) error
     )
 
     // intercept Uncaught (in promise)
@@ -1345,7 +1346,7 @@
                 },
               },
             ],
-            trace
+            trace,
           )
           liEl.parentNode.replaceChild(liEl2, liEl)
         }
@@ -1425,7 +1426,7 @@
                       },
                     },
                   ],
-                  trace
+                  trace,
                 )
                 liEl.parentNode.replaceChild(liEl2, liEl)
               })
@@ -1443,7 +1444,7 @@
                   response: e.message,
                 },
               ],
-              trace
+              trace,
             )
             liEl.parentNode.replaceChild(liEl2, liEl)
 
@@ -1477,7 +1478,7 @@
       padding-bottom: 24px;
     }
   </style>
-  `)
+  `),
   )
   var consoleOpenStyle = parse(`
   <style console open>

@@ -1,5 +1,5 @@
 var soursemap = {
-  mappings: ``
+  mappings: '',
 }
 
 mappings =

@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+
+# .git/hooks/pre-commit
+: << !
+#!/usr/bin/env bash
+if [ -f "pre-commit" ];then . "pre-commit";fi
+!
+
+
+# eslint exists
+eslint="./node_modules/.bin/eslint"
+if [[ ! -f $eslint ]]; then
+  eslint="eslint"
+  if [[ ! -n $(command -v $eslint) ]]; then
+    echo -e "\033[31m  !eslint  \033[0m"
+    # exit 0
+  fi
+
+  npm i -D -f eslint
+  eslint="npx eslint"
+fi
+
+
+# files
+files=$(git diff --cached --name-only | egrep "(.js|.jsx|.ts|.tsx|.vue)$")
+
+
+# -deleted
+for file in $files; do
+  if [[ ! -f $file ]]; then
+    files=$(echo "$files" | egrep -v "^$file$")
+  fi
+done
+
+
+# has not files to eslint
+files=$(echo "$files" | egrep -v "^$")
+if [[ -z $files ]]; then
+  # echo "has not files to eslint"
+  exit 0
+fi
+
+
+# lint fix
+# add again
+# echo "$eslint"
+rs=$($eslint $files --cache=true --cache-file=node_modules/.eslintcache --fix=true --quiet=true -f=codeframe --color)
+error=$?
+echo "$files"
+git add $files
+
+
+# # error warning with color
+# rs=${rs//error/"\033[31merror\033[0m"}
+rs=${rs//warnings/"\033[33mwarnings\033[0m"}
+# rs=${rs//.js//"\033[33m\033[4m.js\033[0m"}
+# rs=$(echo "$rs" | egrep "error")
+
+
+# error?
+if [[ $error != 0 ]]; then
+	echo -e "
+	请修复问题代码之后再提交
+	"
+	echo -e "$rs"
+	echo -e "
+	\033[31m\033[1m
+	请修复问题代码之后再提交
+	\033[0m"
+
+	exit 1
+fi
