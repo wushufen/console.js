@@ -44,26 +44,28 @@ fi
 
 # lint fix
 # add again
-# echo "$eslint"
-rs=$($eslint $files --cache=true --cache-file=node_modules/.eslintcache --fix=true --quiet=true -f=codeframe --color)
+rs=$($eslint $files --cache=false --cache-file=node_modules/.eslintcache --fix=true --quiet=true -f=codeframe --color=true)
 error=$?
-echo "$files"
 git add $files
+# echo "$eslint"
+# echo "$files"
+# echo "$rs"
 
 
 # # error warning with color
 # rs=${rs//error/"\033[31merror\033[0m"}
-rs=${rs//warnings/"\033[33mwarnings\033[0m"}
-# rs=${rs//.js//"\033[33m\033[4m.js\033[0m"}
+# rs=${rs//warning/"\033[33mwarning\033[0m"}
 # rs=$(echo "$rs" | egrep "error")
 
 
 # error?
 if [[ $error != 0 ]]; then
-	echo -e "
-	请修复问题代码之后再提交
-	"
-	echo -e "$rs"
+	echo "
+  请修复问题代码之后再提交
+  "
+
+  echo "$rs"
+
 	echo -e "
 	\033[31m\033[1m
 	请修复问题代码之后再提交

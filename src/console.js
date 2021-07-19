@@ -3,7 +3,6 @@
  *
  * Console for mobile browser or webview
  */
-
 !(function(window) {
   /**
    * do nothing
