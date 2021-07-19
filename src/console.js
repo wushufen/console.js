@@ -172,6 +172,7 @@
         color: #333;
         text-align: left;
         cursor: default;
+        user-select: contain;
         transition: .3s, opacity .6s;
         touch-action: manipulation;
         -webkit-tap-highlight-color: transparent;
@@ -250,7 +251,7 @@
         touch-action: pan-x;
         border-top: solid 1px rgba(255, 255, 255, 0.2);
         border-bottom: solid 1px rgba(200, 200, 200, 0.2);
-        background: rgba(250, 250, 250, 0.5);
+        background: rgba(250, 250, 250, 0.8);
         -webkit-backdrop-filter: blur(1.5px);
         backdrop-filter: blur(1.5px);
       }
@@ -626,10 +627,10 @@
   function printLi(type, valueList, trace) {
     try {
       var _liEl = liEl.cloneNode(true)
+      listEl.appendChild(_liEl)
+      setAttribute(_liEl, type)
       setTimeout(() => {
-        setAttribute(_liEl, type)
         printLi_.apply(this, [_liEl, type, valueList, trace])
-        listEl.appendChild(_liEl)
       }, 0)
       return _liEl
     } catch (e) {
@@ -1071,11 +1072,9 @@
               .join('.')
             : '' // svg className is object
         var selector = `
-        <span style="white-space:nowrap">
-          <tag>${tagName}</tag>${id ? '#' + id : ''}${
-    className ? '.' + className : ''
-  }
-        </span>`
+          <span style="white-space:nowrap">
+            <tag>${tagName}</tag>${id ? '#' + id : ''}${className ? '.' + className : ''}
+          </span>`
         path.push(selector)
 
         // too long
@@ -1262,7 +1261,7 @@
 
         // auto open console
         if (console.f12 === 1) {
-          console.f12 = 2
+          // console.f12 = 2
         }
       },
       true, // true: catch (js, css, img) error
@@ -1469,23 +1468,23 @@
   // toggle style
   headEl.appendChild(
     parse(`
-  <style console>
-    html{
-      padding-bottom: 0;
-      transition: .3s;
-    }
-    box{
-      padding-bottom: 24px;
-    }
-  </style>
+      <style console>
+        html{
+          padding-bottom: 0;
+          transition: .3s;
+        }
+        box{
+          padding-bottom: 24px;
+        }
+      </style>
   `),
   )
   var consoleOpenStyle = parse(`
-  <style console open>
-    html{
-      padding-bottom: calc(100vh - 30px);
-    }
-  </style>
+    <style console open>
+      html{
+        padding-bottom: calc(100vh - 30px);
+      }
+    </style>
   `)
 
   // console.f12 = 0 || 1 || 2
@@ -1504,7 +1503,7 @@
         intercept()
         removeAttribute(consoleEl, 'hidden')
       }
-      if (value == 2) {                 
+      if (value == 2) {
         setTimeout(function() {
           setAttribute(consoleEl, 'open')
           removeAttribute(boxEl, 'hide')
