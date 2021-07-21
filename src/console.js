@@ -171,7 +171,8 @@
         color: #333;
         text-align: left;
         cursor: default;
-        user-select: contain;
+        -webkit-user-select: text;
+        user-select: text;
         transition: .3s, opacity .6s;
         touch-action: manipulation;
         -webkit-tap-highlight-color: transparent;
