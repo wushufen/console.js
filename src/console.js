@@ -1337,8 +1337,8 @@
                 response: {
                   headers: xhr.getAllResponseHeaders(),
                   body: (function() {
-                    var response = xhr.responseText
-                    try { response = xhr.response } catch (e) {}
+                    var response
+                    try { response = xhr.response || xhr.responseText } catch (e) {}
                     try { response = JSON.parse(response) } catch (e) {}
                     return response
                   })(),
