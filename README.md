@@ -46,9 +46,9 @@ console.f12 = 2 // open console view
 
 ## PREVIEW
 
-https://wusfen.github.io/console.js/example/example.html
+https://wushufen.github.io/console.js/example/example.html
 
-![console](https://cdn.jsdelivr.net/gh/wusfen/console.js@master/example/console.js.png)
+![console](https://cdn.jsdelivr.net/gh/wushufen/console.js@master/example/console.js.png)
 
 ## INSTALL BY JS
 
@@ -57,18 +57,18 @@ https://wusfen.github.io/console.js/example/example.html
   if (/[?&#]f12\b/.test(location.href)) {
     // sync
     document.write(
-      '<script f12 src=https://cdn.jsdelivr.net/gh/wusfen/console.js@master/dist/console.js></script>'
+      '<script f12 src=https://cdn.jsdelivr.net/gh/wushufen/console.js@master/dist/console.js></script>'
     )
 
     // async
     if (!document.querySelector('[f12]')) {
       var s = document.createElement('script')
       s.src =
-        'https://cdn.jsdelivr.net/gh/wusfen/console.js@master/dist/console.js'
+        'https://cdn.jsdelivr.net/gh/wushufen/console.js@master/dist/console.js'
       document.body.appendChild(s)
     }
   }
 })()
 ```
 
-<!-- https://purge.jsdelivr.net/gh/wusfen/console.js@master/dist/console.js -->
+<!-- https://purge.jsdelivr.net/gh/wushufen/console.js@master/dist/console.js -->
